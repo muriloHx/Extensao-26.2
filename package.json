@@ -1,0 +1,16 @@
+{
+  "name": "acessibilidade-checker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "vite": "^7.0.0"
+  }
+}

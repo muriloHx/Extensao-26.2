@@ -1,0 +1,130 @@
+id: portas
+nome: Portas
+norma:
+  nome: ABNT NBR 9050
+  versao: "2020"
+
+parametros:
+  largura_vao:
+    label: "Largura do vão livre"
+    tipo: number
+    unidade: m
+    obrigatorio: true
+
+  altura_vao:
+    label: "Altura do vão livre"
+    tipo: number
+    unidade: m
+    obrigatorio: true
+
+  tipo_macaneta:
+    label: "Tipo de maçaneta"
+    tipo: select
+    opcoes:
+      - alavanca
+      - outro
+
+  comprimento_macaneta:
+    label: "Comprimento da maçaneta"
+    tipo: number
+    unidade: mm
+
+  afastamento_macaneta:
+    label: "Afastamento da maçaneta em relação à superfície"
+    tipo: number
+    unidade: mm
+
+  altura_macaneta:
+    label: "Altura da maçaneta"
+    tipo: number
+    unidade: m
+
+  desnivel_soleira:
+    label: "Desnível da soleira"
+    tipo: number
+    unidade: mm
+    obrigatorio: true
+
+  possui_chanfro:
+    label: "Possui chanfro na soleira"
+    tipo: boolean
+
+  giro_porta_ok:
+    label: "O giro da porta não invade o espaço livre?"
+    tipo: boolean
+
+regras:
+  - id: largura_minima
+    nome: "Vão livre mínimo"
+    parametro: largura_vao
+    operador: ">="
+    valor: 0.80
+    referencia: "ABNT NBR 9050:2020 — 6.11.2"
+
+  - id: altura_minima
+    nome: "Altura mínima do vão"
+    parametro: altura_vao
+    operador: ">="
+    valor: 2.10
+    referencia: "ABNT NBR 9050:2020 — 6.11.2"
+
+  - id: comprimento_macaneta
+    nome: "Comprimento mínimo da maçaneta"
+    parametro: comprimento_macaneta
+    operador: ">="
+    valor: 100
+    referencia: "ABNT NBR 9050:2020 — 4.6.6"
+
+  - id: afastamento_macaneta
+    nome: "Afastamento mínimo da superfície"
+    parametro: afastamento_macaneta
+    operador: ">="
+    valor: 40
+    referencia: "ABNT NBR 9050:2020 — 4.6.6"
+
+  - id: altura_macaneta_min
+    nome: "Altura mínima da maçaneta"
+    parametro: altura_macaneta
+    operador: ">="
+    valor: 0.80
+    referencia: "ABNT NBR 9050:2020 — 4.6.6"
+
+  - id: altura_macaneta_max
+    nome: "Altura máxima da maçaneta"
+    parametro: altura_macaneta
+    operador: "<="
+    valor: 1.10
+    referencia: "ABNT NBR 9050:2020 — 4.6.6"
+
+  - id: giro_porta
+    nome: "Giro da porta"
+    tipo: checklist
+    parametro: giro_porta_ok
+    referencia: "ABNT NBR 9050:2020 — 6.11.2"
+
+  - id: desnivel_soleira
+    nome: "Tratamento do desnível da soleira"
+    tipo: conditional
+    parametro: desnivel_soleira
+    condicoes:
+      - quando:
+          operador: "<="
+          valor: 5
+        resultado: conforme
+        mensagem: "Desnível dentro do limite que dispensa tratamento."
+
+      - quando:
+          operador: "<="
+          valor: 15
+        verificar:
+          parametro: possui_chanfro
+          operador: "=="
+          valor: true
+        mensagem: "Para este intervalo, deve existir tratamento adequado."
+
+      - quando:
+          operador: ">"
+          valor: 15
+        resultado: atencao
+        mensagem: "O desnível deve ser tratado como rampa."
+    referencia: "ABNT NBR 9050:2020 — 6.11.2"
