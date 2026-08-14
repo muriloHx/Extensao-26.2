@@ -1,0 +1,103 @@
+id: escadas
+nome: Escadas
+norma:
+  nome: ABNT NBR 9050
+  versao: "2020"
+
+parametros:
+  espelho_degrau:
+    label: "Altura do espelho (e)"
+    tipo: number
+    unidade: m
+    obrigatorio: true
+
+  piso_degrau:
+    label: "Profundidade do piso (p)"
+    tipo: number
+    unidade: m
+    obrigatorio: true
+
+  largura_livre_escada:
+    label: "Largura livre da escada"
+    tipo: number
+    unidade: m
+    obrigatorio: true
+
+  prolongamento_corrimao_escada:
+    label: "Prolongamento do corrimão"
+    tipo: number
+    unidade: m
+
+  secao_corrimao:
+    label: "Diâmetro da seção do corrimão"
+    tipo: number
+    unidade: mm
+
+  distancia_parede_corrimao:
+    label: "Distância livre entre corrimão e parede"
+    tipo: number
+    unidade: mm
+
+regras:
+  - id: espelho_minimo
+    nome: "Altura mínima do espelho"
+    parametro: espelho_degrau
+    operador: ">="
+    valor: 0.16
+    referencia: "ABNT NBR 9050:2020 — 6.7 e 6.8"
+
+  - id: espelho_maximo
+    nome: "Altura máxima do espelho"
+    parametro: espelho_degrau
+    operador: "<="
+    valor: 0.18
+    referencia: "ABNT NBR 9050:2020 — 6.7 e 6.8"
+
+  - id: piso_minimo
+    nome: "Profundidade mínima do piso do degrau"
+    parametro: piso_degrau
+    operador: ">="
+    valor: 0.28
+    referencia: "ABNT NBR 9050:2020 — 6.7 e 6.8"
+
+  - id: piso_maximo
+    nome: "Profundidade máxima do piso do degrau"
+    parametro: piso_degrau
+    operador: "<="
+    valor: 0.32
+    referencia: "ABNT NBR 9050:2020 — 6.7 e 6.8"
+
+  - id: largura_livre_minima_escada
+    nome: "Largura livre mínima da escada"
+    parametro: largura_livre_escada
+    operador: ">="
+    valor: 1.20
+    referencia: "ABNT NBR 9050:2020 — 6.7 e 6.8"
+
+  - id: prolongamento_corrimao_escadas
+    nome: "Prolongamento mínimo do corrimão na escada"
+    parametro: prolongamento_corrimao_escada
+    operador: ">="
+    valor: 0.30
+    referencia: "ABNT NBR 9050:2020 — 6.7 e 6.8"
+
+  - id: secao_corrimao_min
+    nome: "Diâmetro mínimo da seção do corrimão"
+    parametro: secao_corrimao
+    operador: ">="
+    valor: 30
+    referencia: "ABNT NBR 9050:2020 — 6.7 e 6.8"
+
+  - id: secao_corrimao_max
+    nome: "Diâmetro máximo da seção do corrimão"
+    parametro: secao_corrimao
+    operador: "<="
+    valor: 45
+    referencia: "ABNT NBR 9050:2020 — 6.7 e 6.8"
+
+  - id: distancia_parede_min
+    nome: "Distância livre mínima da parede"
+    parametro: distancia_parede_corrimao
+    operador: ">="
+    valor: 40
+    referencia: "ABNT NBR 9050:2020 — 6.7 e 6.8"

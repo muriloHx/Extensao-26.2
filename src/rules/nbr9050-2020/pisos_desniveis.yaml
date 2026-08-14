@@ -1,0 +1,102 @@
+id: pisos_desniveis
+nome: Pisos e Desníveis
+norma:
+  nome: ABNT NBR 9050
+  versao: "2020"
+
+parametros:
+  desnivel_fisico:
+    label: "Altura do desnível físico"
+    tipo: number
+    unidade: mm
+    obrigatorio: true
+
+  possui_chanfro:
+    label: "Possui chanfro (inclinação max 1:2)?"
+    tipo: boolean
+
+  inclinacao_transversal:
+    label: "Inclinação transversal do piso"
+    tipo: number
+    unidade: "%"
+    obrigatorio: true
+
+  eh_area_externa:
+    label: "O piso está em área externa?"
+    tipo: boolean
+
+  inclinacao_longitudinal:
+    label: "Inclinação longitudinal do piso"
+    tipo: number
+    unidade: "%"
+    obrigatorio: true
+
+regras:
+  - id: tratamento_desnivel_fisico
+    nome: "Tratamento de desníveis físicos"
+    tipo: conditional
+    parametro: desnivel_fisico
+    condicoes:
+      - quando:
+          operador: "<="
+          valor: 5
+        resultado: conforme
+        mensagem: "Desnível de até 5mm dispensa tratamento."
+
+      - quando:
+          operador: "<="
+          valor: 15
+        verificar:
+          parametro: possui_chanfro
+          operador: "=="
+          valor: true
+        mensagem: "Desníveis entre 5mm e 15mm exigem chanfro com inclinação máxima de 1:2 (50%)."
+
+      - quando:
+          operador: ">"
+          valor: 15
+        resultado: atencao
+        mensagem: "Desníveis superiores a 15mm exigem rampa ou equipamento de elevação."
+    referencia: "ABNT NBR 9050:2020 — 6.3.2"
+
+  - id: inclinacao_transversal_maxima
+    nome: "Inclinação transversal máxima do piso"
+    tipo: conditional
+    parametro: eh_area_externa
+    condicoes:
+      - quando:
+          operador: "=="
+          valor: true
+        verificar:
+          parametro: inclinacao_transversal
+          operador: "<="
+          valor: 3.0
+        mensagem: "Para áreas externas, a inclinação transversal máxima é de 3%."
+
+      - quando:
+          operador: "=="
+          valor: false
+        verificar:
+          parametro: inclinacao_transversal
+          operador: "<="
+          valor: 2.0
+        mensagem: "Para áreas internas, a inclinação transversal máxima é de 2%."
+    referencia: "ABNT NBR 9050:2020 — 6.3.3"
+
+  - id: classificacao_inclinacao_longitudinal
+    nome: "Classificação da inclinação longitudinal"
+    tipo: conditional
+    parametro: inclinacao_longitudinal
+    condicoes:
+      - quando:
+          operador: "<"
+          valor: 5.0
+        resultado: conforme
+        mensagem: "Considerado piso/circulação comum."
+
+      - quando:
+          operador: ">="
+          valor: 5.0
+        resultado: atencao
+        mensagem: "Inclinação igual ou superior a 5% é considerada rampa e deve seguir a seção 6.6."
+    referencia: "ABNT NBR 9050:2020 — 6.3.3"

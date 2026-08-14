@@ -1,0 +1,177 @@
+id: rampas
+nome: Rampas
+norma:
+  nome: ABNT NBR 9050
+  versao: "2020"
+
+parametros:
+  inclinacao:
+    label: "Inclinação da rampa"
+    tipo: number
+    unidade: "%"
+    obrigatorio: true
+
+  desnivel_lance:
+    label: "Desnível do lance (h)"
+    tipo: number
+    unidade: m
+    obrigatorio: true
+
+  comprimento_lance:
+    label: "Comprimento do lance (L)"
+    tipo: number
+    unidade: m
+
+  eh_reforma:
+    label: "Trata-se de uma obra de reforma/exceção?"
+    tipo: boolean
+
+  largura_livre:
+    label: "Largura livre da rampa"
+    tipo: number
+    unidade: m
+    obrigatorio: true
+
+  eh_excepcional:
+    label: "É um caso excepcional para largura reduzida?"
+    tipo: boolean
+
+  dimensao_patamar:
+    label: "Dimensão longitudinal do patamar"
+    tipo: number
+    unidade: m
+    obrigatorio: true
+
+  altura_corrmao_superior:
+    label: "Altura do corrimão superior"
+    tipo: number
+    unidade: m
+
+  altura_corrmao_inferior:
+    label: "Altura do corrimão inferior"
+    tipo: number
+    unidade: m
+
+  prolongamento_corrmao:
+    label: "Prolongamento do corrimão nas extremidades"
+    tipo: number
+    unidade: m
+
+  delimitada_por_paredes:
+    label: "A rampa é delimitada por paredes?"
+    tipo: boolean
+
+  altura_guia_balizamento:
+    label: "Altura da guia de balizamento"
+    tipo: number
+    unidade: m
+
+regras:
+  - id: limites_inclinacao_desnivel
+    nome: "Limites de desnível e comprimento por inclinação"
+    tipo: conditional
+    parametro: inclinacao
+    condicoes:
+      - quando:
+          operador: "<="
+          valor: 6.25
+        verificar:
+          parametro: desnivel_lance
+          operador: "<="
+          valor: 1.00
+        mensagem: "Para inclinação até 6.25%, o desnível máximo é 1,00m."
+
+      - quando:
+          operador: "<="
+          valor: 8.33
+        verificar:
+          parametro: desnivel_lance
+          operador: "<="
+          valor: 0.80
+        mensagem: "Para inclinação entre 6.25% e 8.33%, o desnível máximo é 0,80m."
+
+      - quando:
+          operador: "<="
+          valor: 10.00
+        verificar:
+          parametro: desnivel_lance
+          operador: "<="
+          valor: 0.20
+        mensagem: "Para reformas com inclinação até 10%, o desnível máximo é 0,20m."
+
+      - quando:
+          operador: "<="
+          valor: 12.50
+        verificar:
+          parametro: desnivel_lance
+          operador: "<="
+          valor: 0.09
+        mensagem: "Para reformas com inclinação até 12.5%, o desnível máximo é 0,09m."
+    referencia: "ABNT NBR 9050:2020 — 6.6 (Tabelas 4 e 5)"
+
+  - id: largura_minima_rampa
+    nome: "Largura livre mínima da rampa"
+    tipo: conditional
+    parametro: eh_excepcional
+    condicoes:
+      - quando:
+          operador: "=="
+          valor: true
+        verificar:
+          parametro: largura_livre
+          operador: ">="
+          valor: 0.90
+        mensagem: "Em casos excepcionais, a largura mínima é 0,90m."
+
+      - quando:
+          operador: "=="
+          valor: false
+        verificar:
+          parametro: largura_livre
+          operador: ">="
+          valor: 1.20
+        mensagem: "A largura livre recomendada/padrão é no mínimo 1,20m."
+    referencia: "ABNT NBR 9050:2020 — 6.6.2"
+
+  - id: patamar_dimensao_minima
+    nome: "Dimensão mínima do patamar"
+    parametro: dimensao_patamar
+    operador: ">="
+    valor: 1.20
+    referencia: "ABNT NBR 9050:2020 — 6.6.3"
+
+  - id: corrmao_altura_superior
+    nome: "Altura do corrimão superior"
+    parametro: altura_corrmao_superior
+    operador: "=="
+    valor: 0.92
+    referencia: "ABNT NBR 9050:2020 — 6.6.4"
+
+  - id: corrmao_altura_inferior
+    nome: "Altura do corrimão inferior"
+    parametro: altura_corrmao_inferior
+    operador: "=="
+    valor: 0.70
+    referencia: "ABNT NBR 9050:2020 — 6.6.4"
+
+  - id: corrmao_prolongamento
+    nome: "Prolongamento do corrimão"
+    parametro: prolongamento_corrmao
+    operador: ">="
+    valor: 0.30
+    referencia: "ABNT NBR 9050:2020 — 6.6.4"
+
+  - id: guia_balizamento
+    nome: "Altura da guia de balizamento"
+    tipo: conditional
+    parametro: delimitada_por_paredes
+    condicoes:
+      - quando:
+          operador: "=="
+          valor: false
+        verificar:
+          parametro: altura_guia_balizamento
+          operador: ">="
+          valor: 0.05
+        mensagem: "Quando não delimitada por paredes, exige guia de balizamento de no mínimo 0,05m."
+    referencia: "ABNT NBR 9050:2020 — 6.6.5"
