@@ -1,3 +1,5 @@
+export const SUPPORTED_OPERATORS = new Set([">=", "<=", ">", "<", "==", "!="]);
+
 export function compare(actual, operator, expected) {
   switch (operator) {
     case ">=": return actual >= expected;
