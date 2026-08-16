@@ -1,22 +1,21 @@
-import { loadRuleFile } from "./services/ruleLoader.js";
-import { evaluateChecklist } from "./services/evaluationService.js";
+import { createApplicationServices } from "./services/applicationServices.js";
+import { loadBuiltInRuleSets } from "./services/ruleLoader.js";
+import { startApp } from "./ui/app.js";
+import "./ui/styles/index.css";
 
 async function main() {
+  const [services, builtInRuleSets] = await Promise.all([
+    createApplicationServices(),
+    loadBuiltInRuleSets()
+  ]);
 
+  startApp(document.querySelector("#app"), { services, builtInRuleSets });
 
-  const checklist_sanitario = await loadRuleFile("rules/nbr9050-2020/sanitario_acessivel.yaml")
-  const dados = {
-    diametro_giro: 1.3,
-    vao_livre_porta_sanitario: 2,
-    comprimento_puxador_sanitario: 1,
-    altura_assento_bacia: 2.1,
-    eixo_bacia_parede: 1.2,
-    altura_lavatorio_borda: 2,
-    altura_livre_sob_lavatorio: 2.5,
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("/service-worker.js").catch(() => {});
   }
-  const resultados = evaluateChecklist(checklist_sanitario, dados);
-
-  console.table(resultados);
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  document.querySelector("#app").innerHTML = `<main class="fatal-error"><h1>Não foi possível abrir o aplicativo</h1><p>${error.message}</p></main>`;
+});

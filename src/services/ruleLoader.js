@@ -18,3 +18,11 @@ export async function loadRuleFile(filePath) {
 
   return yaml.load(fileContent);
 }
+
+// Conjuntos oficiais que acompanham o aplicativo. Eles não são persistidos:
+// assim, continuam distinguíveis dos conjuntos criados pelo usuário.
+export async function loadBuiltInRuleSets() {
+  return Object.entries(ruleFiles)
+    .map(([path, content]) => ({ path, ruleSet: yaml.load(content) }))
+    .sort((left, right) => left.ruleSet.nome.localeCompare(right.ruleSet.nome));
+}

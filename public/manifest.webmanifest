@@ -1,0 +1,9 @@
+{
+  "name": "Acesso Verificador",
+  "short_name": "Acesso",
+  "start_url": "/#/projects",
+  "display": "standalone",
+  "background_color": "#f6f8f6",
+  "theme_color": "#16784d",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+}

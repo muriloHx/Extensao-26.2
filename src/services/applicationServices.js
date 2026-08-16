@@ -23,6 +23,9 @@ export async function createApplicationServices({ indexedDB } = {}) {
     projectService: new ProjectService(repositories),
     evaluationService: new EvaluationService(repositories),
     ruleSetService: new RuleSetService(repositories),
+    // A interface também usa os repositórios para operações de remoção que não
+    // pertencem aos casos de uso de criação e avaliação.
+    repositories,
     close: () => database.close()
   };
 }
