@@ -30,6 +30,7 @@ export function startApp(root, context) {
     try {
       if (parts[0] === "rules") {
         area = "rules";
+        pageContext.params = { source: decodeURIComponent(parts[1] ?? ""), groupId: decodeURIComponent(parts[2] ?? "") };
         content = await rulesPage({ ...pageContext, builtInRuleSets: context.builtInRuleSets });
       } else if (parts[0] === "elements") {
         const custom = await context.services.ruleSetService.list();
@@ -103,10 +104,18 @@ export function startApp(root, context) {
     }
     if (input.dataset.action !== "import-rule" || !input.files?.[0]) return;
     try {
-      const file = input.files[0]; const content = await file.text();
-      if (/\.json$/i.test(file.name)) await context.services.ruleSetService.importFromJson(content);
-      else await context.services.ruleSetService.importFromYaml(content);
-      notify("Conjunto de regras importado"); await rerender();
+      const files = [...input.files];
+      const folder = files[0].webkitRelativePath?.split("/")[0];
+      const group = {
+        id: `importado-${folder || crypto.randomUUID()}`,
+        nome: folder || (files.length === 1 ? files[0].name.replace(/\.(json|ya?ml)$/i, "") : "Regras importadas")
+      };
+      for (const file of files) {
+        const content = await file.text();
+        if (/\.json$/i.test(file.name)) await context.services.ruleSetService.importFromJson(content, group);
+        else await context.services.ruleSetService.importFromYaml(content, group);
+      }
+      notify(files.length === 1 ? "Conjunto de regras importado" : "Conjunto de regras importado"); await rerender();
     } catch (error) { window.alert(error.message); }
   });
   document.addEventListener("submit", async (event) => {

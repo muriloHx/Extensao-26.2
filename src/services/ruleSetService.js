@@ -28,7 +28,7 @@ export class RuleSetService {
     return this.ruleSetRepository.put(stored);
   }
 
-  async importFromJson(serializedRuleSet) {
+  async importFromJson(serializedRuleSet, group) {
     let ruleSet;
     try {
       ruleSet = JSON.parse(serializedRuleSet);
@@ -36,10 +36,10 @@ export class RuleSetService {
       throw new TypeError("Arquivo de regras inválido: JSON malformado.");
     }
 
-    return this.save(ruleSet);
+    return this.save(group ? { ...ruleSet, grupo: group } : ruleSet);
   }
 
-  async importFromYaml(serializedRuleSet) {
+  async importFromYaml(serializedRuleSet, group) {
     let ruleSet;
     try {
       ruleSet = yaml.load(serializedRuleSet);
@@ -47,7 +47,7 @@ export class RuleSetService {
       throw new TypeError("Arquivo de regras inválido: YAML malformado.");
     }
 
-    return this.save(ruleSet);
+    return this.save(group ? { ...ruleSet, grupo: group } : ruleSet);
   }
 
   exportToJson(ruleSet) {
