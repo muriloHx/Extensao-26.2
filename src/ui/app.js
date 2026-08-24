@@ -30,7 +30,9 @@ export function startApp(root, context) {
     try {
       if (parts[0] === "rules") {
         area = "rules";
-        pageContext.params = { source: decodeURIComponent(parts[1] ?? ""), groupId: decodeURIComponent(parts[2] ?? "") };
+        pageContext.params = parts[1] === "documentation"
+          ? { documentation: true }
+          : { source: decodeURIComponent(parts[1] ?? ""), groupId: decodeURIComponent(parts[2] ?? "") };
         content = await rulesPage({ ...pageContext, builtInRuleSets: context.builtInRuleSets });
       } else if (parts[0] === "elements") {
         const custom = await context.services.ruleSetService.list();
