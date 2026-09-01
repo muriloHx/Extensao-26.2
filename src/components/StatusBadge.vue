@@ -1,0 +1,1 @@
+<script setup>defineProps({ status: { type: String, default: "nao_avaliado" } }); const labels = { conforme: "Conforme", nao_conforme: "Não conforme", nao_avaliado: "Pendente", invalido: "Pendente", erro: "Pendente", atencao: "Atenção", manual: "Verificar" };</script><template><span class="status" :class="`status--${status}`">{{ labels[status] ?? "Pendente" }}</span></template>

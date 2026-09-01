@@ -1,0 +1,23 @@
+import { defineConfig } from "vite";
+import vue from "@vitejs/plugin-vue";
+import { VitePWA } from "vite-plugin-pwa";
+
+export default defineConfig({
+  plugins: [
+    vue(),
+    VitePWA({
+      registerType: "autoUpdate",
+      includeAssets: ["icon.svg"],
+      manifest: {
+        name: "Acesso Verificador",
+        short_name: "Acesso",
+        start_url: "/projects",
+        display: "standalone",
+        background_color: "#f6f8f6",
+        theme_color: "#16784d",
+        icons: [{ src: "icon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" }]
+      },
+      workbox: { navigateFallback: "/index.html" }
+    })
+  ]
+});
