@@ -146,47 +146,127 @@ onMounted(load);
       title="Crie e importe regras"
       description="Monte checklists em YAML para avaliar os elementos do seu projeto."
     >
-      <template #action>
-        <a class="button button--outline" href="/rule-engine-skill/SKILL.md" download="SKILL.md">
-          Baixar SKILL.md
-        </a>
-      </template>
+
     </PageHeader>
 
     <div class="documentation">
-      <section class="documentation__intro">
-        <span class="documentation__icon" aria-hidden="true">?</span>
-        <div>
-          <h2>Como o conjunto é organizado</h2>
-          <p>Um arquivo YAML representa um checklist. Ao importar uma pasta, seus arquivos são agrupados na biblioteca.</p>
-        </div>
-      </section>
 
       <section class="documentation__section">
-        <h2>Formato mínimo</h2>
-        <pre class="documentation-code"><code>id: bebedouro
+        <h2>Formato mínimo de um checklist</h2>
+        <p>Cada arquivo é um checklist independente. Os campos obrigatórios são <code>id</code>, <code>nome</code>, <code>parametros</code> (objeto) e <code>regras</code> (lista). YAML e JSON são aceitos.</p>
+        <pre class="documentation-code"><code>id: bebedouros
 nome: Bebedouros
+norma:
+  nome: Norma interna
+  versao: "1"
 parametros:
   altura_bica:
+    label: Altura da bica
     tipo: number
+    unidade: m
     obrigatorio: true
+  possui_area_livre:
+    label: Possui área livre
+    tipo: boolean
 regras:
   - id: altura_maxima
+    nome: Altura máxima da bica
     parametro: altura_bica
     operador: "&lt;="
-    valor: 0.90</code></pre>
+    valor: 0.90
+    referencia: "Norma interna — item 4.2"</code></pre>
         <p class="documentation__note">
-          Os tipos disponíveis para parâmetros são <code>number</code>, <code>boolean</code> e <code>select</code>.
-          Regras importadas são validadas pela mesma lógica de domínio usada no restante do aplicativo.
+          <code>label</code>, <code>unidade</code>, <code>norma</code> e <code>referencia</code> são metadados
+          opcionais. <code>obrigatorio: true</code> faz o motor marcar a regra como <code>invalido</code> quando
+          o valor não foi preenchido; num campo não obrigatório, o valor ausente vira <code>nao_avaliado</code>.
         </p>
       </section>
 
       <section class="documentation__section">
+        <h2>Tipos de parâmetro</h2>
+        <p>Um parâmetro pode ser <code>number</code>, <code>boolean</code> ou <code>select</code> (lista fixa de opções):</p>
+        <pre class="documentation-code"><code>tipo_piso:
+  label: Tipo de piso
+  tipo: select
+  opcoes: [liso, antiderrapante, irregular]
+  obrigatorio: true</code></pre>
+      </section>
+
+      <section class="documentation__section">
+        <h2>Tipos de regra</h2>
+        <p>Uma regra sem <code>tipo</code> é uma comparação direta — use <code>&gt;=</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>==</code> ou <code>!=</code>. O resultado é <code>conforme</code> ou <code>nao_conforme</code>:</p>
+        <pre class="documentation-code"><code>- id: largura_minima
+  nome: Largura mínima
+  parametro: largura
+  operador: "&gt;="
+  valor: 0.80</code></pre>
+
+        <details class="documentation__details">
+          <summary>Verificação manual (<code>tipo: checklist</code>)</summary>
+          <p>Para algo que exige julgamento humano (não dá pra medir automaticamente). Não compara nada — só registra o que a pessoa marcou, como <code>manual</code>:</p>
+          <pre class="documentation-code"><code>- id: rota_livre
+  nome: Rota livre de obstáculos
+  tipo: checklist
+  parametro: possui_rota_livre</code></pre>
+        </details>
+
+        <details class="documentation__details">
+          <summary>Faixas e exceções (<code>tipo: conditional</code>)</summary>
+          <p>As condições são avaliadas em ordem; a primeira cujo <code>quando</code> for verdadeiro decide o resultado:</p>
+          <pre class="documentation-code"><code>- id: tratamento_desnivel
+  nome: Tratamento do desnível
+  tipo: conditional
+  parametro: desnivel
+  condicoes:
+    - quando: { operador: "&lt;=", valor: 5 }
+      resultado: conforme
+      mensagem: Sem tratamento adicional.
+    - quando: { operador: "&lt;=", valor: 15 }
+      verificar:
+        parametro: possui_chanfro
+        operador: "=="
+        valor: true
+    - quando: { operador: "&gt;", valor: 15 }
+      resultado: atencao
+      mensagem: Avaliar como rampa.</code></pre>
+          <p class="documentation__note">
+            Se nenhuma condição bater, o resultado fica <code>nao_avaliado</code>. Um parâmetro usado dentro de
+            <code>verificar</code> (aqui, <code>possui_chanfro</code>) também precisa estar declarado em
+            <code>parametros</code>.
+          </p>
+        </details>
+      </section>
+
+      <section class="documentation__section">
+        <h2>Resultados possíveis</h2>
+        <ul class="documentation__list">
+          <li><code>conforme</code> / <code>nao_conforme</code> — comparação direta, ou condição explícita.</li>
+          <li><code>manual</code> — regra do tipo <code>checklist</code>.</li>
+          <li><code>atencao</code> — resultado explícito opcional numa condição de <code>conditional</code>.</li>
+          <li><code>nao_avaliado</code> — parâmetro opcional sem valor, ou nenhuma condição satisfeita.</li>
+          <li><code>invalido</code> — parâmetro obrigatório sem valor preenchido.</li>
+        </ul>
+      </section>
+
+      <section class="documentation__intro">
+        <span class="documentation__icon" aria-hidden="true">?</span>
+        <div>
+          <h1>Crie suas regras com IA</h1>
+            <a class="button button--outline" href="/rule-engine-skill/SKILL.md" download="SKILL.md">
+              Baixar SKILL.md
+            </a>
+            <p>Um arquivo de texto com instruções prontas para uma IA (Claude, ChatGPT, Cursor) gerar checklists neste formato a partir do que você descrever.
+            Baixe, cole numa conversa com a IA e peça a regra que precisa — sem aprender YAML.</p>
+        </div>
+      </section>
+
+      <section class="documentation__section">
         <h2>Importação</h2>
-        <p>Escolha um ou mais arquivos YAML/JSON, ou uma pasta com vários checklists. Eles ficam armazenados somente neste navegador.</p>
+        <p>Escolha um ou mais arquivos YAML/JSON, ou uma pasta com vários checklists — arquivos que não forem <code>.yaml</code>, <code>.yml</code> ou <code>.json</code> são ignorados automaticamente. Tudo fica armazenado somente neste navegador.</p>
         <RouterLink class="button" to="/rules">Ir para importação</RouterLink>
       </section>
     </div>
+
   </template>
 
   <!-- Detalhe de um conjunto -->

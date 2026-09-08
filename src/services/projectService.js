@@ -23,13 +23,19 @@ export class ProjectService {
     return this.projectRepository.get(id);
   }
 
-  async renameProject(id, name) {
+  async updateProject(id, { name, description }) {
     const current = await this.#require(this.projectRepository.get(id), "Projeto");
     return this.projectRepository.put(createProject({
       ...current,
       name,
+      description,
       updatedAt: new Date()
     }));
+  }
+
+  async renameProject(id, name) {
+    const current = await this.#require(this.projectRepository.get(id), "Projeto");
+    return this.updateProject(id, { name, description: current.description });
   }
 
   async createEnvironment(projectId, input) {
