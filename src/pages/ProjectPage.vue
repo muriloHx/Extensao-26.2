@@ -14,7 +14,6 @@ const services = inject("services");
 const project = ref(null);
 const environments = ref([]);
 const name = ref("");
-const description = ref("");
 const editing = ref(null);
 
 // Funções de Negócio
