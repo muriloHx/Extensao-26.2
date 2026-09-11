@@ -122,11 +122,11 @@ onMounted(loadData);
     </form>
 
     <!-- Lista de Ambientes -->
-    <div v-if="environments.length" class="card-list">
+    <div v-if="environments.length" class="card-grid-environment">
       <article
         v-for="environment in environments"
         :key="environment.id"
-        class="card"
+        class="card-environment"
       >
         <RouterLink
           class="card__link"
@@ -135,9 +135,8 @@ onMounted(loadData);
           <span class="card__icon">⌂</span>
           <div>
             <h2>{{ environment.name }}</h2>
-            <p>Ambiente do projeto</p>
+            <p>Ambiente</p>
           </div>
-          <span class="chevron">›</span>
         </RouterLink>
 
         <div class="card__menu">

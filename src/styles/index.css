@@ -4,14 +4,26 @@
 
 :root {
   /* Cores Principais */
-  --green: #16784d;
-  --green-soft: #e8f5ed;
-  --ink: #17211c;
-  --muted: #657169;
-  --line: #dce5df;
+  --green: #1f5c3f;
+  --green-dark: #163f2b;
+  --green-soft: #e7f0ea;
+  --ink: #1c231f;
+  --muted: #666f68;
+  --line: #dcdfd5;
+  --line-strong: #c6cec6;
   --surface: #ffffff;
-  --page: #f6f8f6;
-  --danger: #c43d39;
+  --page: #f7f6f2;
+  --danger: #b3413d;
+
+  /* Acentos da marca (uso decorativo/pontual — ver observação sobre contraste) */
+  --orange-accent: #b5651d;
+  --blue-accent: #2b5fa5;
+
+  /* Escala de raio — intencional, por hierarquia, não uniforme */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
 
   /* Tipografia Base */
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -47,18 +59,21 @@ h1, h2, h3, p {
 h1 {
   margin-bottom: 8px;
   font-size: clamp(1.7rem, 5vw, 2.25rem);
-  line-height: 1.1;
-  letter-spacing: -0.04em;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  font-weight: 700;
 }
 
 h2 {
   margin-bottom: 4px;
   font-size: 1.02rem;
+  font-weight: 600;
 }
 
 h3 {
   margin: 8px 0 5px;
   font-size: 0.96rem;
+  font-weight: 600;
 }
 
 p,
@@ -86,8 +101,8 @@ a {
 code {
   padding: 0.1em 0.32em;
   border-radius: 4px;
-  background: #eef2ef;
-  color: #26533a;
+  background: var(--green-soft);
+  color: #1d4a33;
   font-family: "SFMono-Regular", Consolas, monospace;
   font-size: 0.88em;
 }
@@ -127,10 +142,8 @@ code {
 .eyebrow {
   margin-bottom: 8px !important;
   color: var(--green) !important;
-  font-size: 0.75rem !important;
-  font-weight: 750;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.8rem !important;
+  font-weight: 600;
 }
 
 .back-link {
@@ -138,7 +151,7 @@ code {
   margin-bottom: 22px;
   color: var(--green);
   font-size: 0.9rem;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 
@@ -155,18 +168,18 @@ code {
   min-height: 44px;
   padding: 10px 15px;
   border: 1px solid var(--green);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--green);
   color: #ffffff;
   font-size: 0.91rem;
-  font-weight: 720;
+  font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
   transition: transform 0.16s, background 0.16s;
 }
 
 .button:hover {
-  background: #10633d;
+  background: var(--green-dark);
   transform: translateY(-1px);
 }
 
@@ -190,7 +203,7 @@ code {
   background: transparent;
   color: var(--green);
   font-size: 0.82rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
 }
 
@@ -204,8 +217,8 @@ code {
   width: 32px;
   height: 32px;
   border: 0;
-  border-radius: 9px;
-  background: #f0f3f0;
+  border-radius: var(--radius-sm);
+  background: #f0f2ef;
   font-size: 1.35rem;
   cursor: pointer;
 }
@@ -218,13 +231,13 @@ code {
   padding: 5px 9px;
   border-radius: 999px;
   font-size: 0.72rem;
-  font-weight: 760;
+  font-weight: 700;
   white-space: nowrap;
 }
 
 .status--conforme {
-  color: #12623d;
-  background: #dff4e6;
+  color: #135939;
+  background: #dcefe3;
 }
 
 .status--nao_conforme {
@@ -254,19 +267,65 @@ code {
 .card {
   overflow: hidden;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: 0 2px 8px rgba(24, 48, 33, 0.025);
   animation: enter 0.2s ease-out both;
 }
 
+/* Container Flex para organizar os cards lado a lado */
+.card-grid-environment {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+/* Card quadrado com tamanho fixo */
+.card-environment {
+  width: 180px;
+  height: 180px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  animation: enter 0.2s ease-out both;
+  transition: transform 0.14s, border-color 0.14s;
+}
+
+.card-environment:hover {
+  transform: translateY(-1px);
+  border-color: var(--green);
+}
+
+/* Tons derivados da própria paleta da marca em vez de cores aleatórias */
+.card-environment:nth-child(3n + 1) { background-color: var(--green-soft); }
+.card-environment:nth-child(3n + 2) { background-color: #f3f1e9; }
+.card-environment:nth-child(3n + 3) { background-color: #e9edf2; }
+
+/* Ajuste dos elementos internos para o layout do quadrado */
+.card-environment .card__link {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0;
+  gap: 8px;
+}
+
+.card-environment .card__menu {
+  display: flex;
+  gap: 12px;
+  padding: 0;
+}
 .card--interactive {
-  transition: transform 0.16s, box-shadow 0.16s;
+  transition: transform 0.14s, border-color 0.14s;
 }
 
 .card--interactive:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(24, 48, 33, 0.08);
+  transform: translateY(-1px);
+  border-color: var(--green);
 }
 
 .card__link {
@@ -286,7 +345,7 @@ code {
   place-items: center;
   width: 38px;
   height: 38px;
-  border-radius: 11px;
+  border-radius: var(--radius-sm);
   background: var(--green-soft);
   color: var(--green);
   font-size: 1.25rem;
@@ -307,8 +366,8 @@ code {
 /* 4.4 Estado Vazio (Empty State) */
 .empty-state {
   padding: 54px 20px;
-  border: 1px dashed #bfd0c5;
-  border-radius: 18px;
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-lg);
   color: var(--muted);
   text-align: center;
 }
@@ -328,7 +387,7 @@ code {
   width: 45px;
   height: 45px;
   margin: 0 auto 14px;
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--green-soft);
   color: var(--green);
   font-size: 1.6rem;
@@ -340,7 +399,7 @@ code {
   gap: 18px;
   padding: 20px;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   background: var(--surface);
 }
 
@@ -349,7 +408,7 @@ code {
   gap: 7px;
   color: #354139;
   font-size: 0.88rem;
-  font-weight: 670;
+  font-weight: 600;
 }
 
 .field small {
@@ -362,8 +421,8 @@ code {
   width: 100%;
   min-height: 46px;
   padding: 10px 12px;
-  border: 1px solid #bdcabe;
-  border-radius: 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
   background: #ffffff;
   color: var(--ink);
   outline: none;
@@ -372,7 +431,7 @@ code {
 .field input:focus,
 .field select:focus {
   border-color: var(--green);
-  box-shadow: 0 0 0 3px rgba(22, 120, 77, 0.12);
+  box-shadow: 0 0 0 3px rgba(31, 92, 63, 0.14);
 }
 
 .fields-grid {
@@ -418,17 +477,32 @@ code {
   min-height: 100vh;
   min-height: 100dvh;
   padding: 24px;
-  background: linear-gradient(145deg, #e8f5ed, #f6f8f6 58%);
+  background: var(--page);
 }
 
 .install-screen__card {
+  position: relative;
   width: min(100%, 420px);
-  padding: 32px 26px;
+  padding: 36px 26px 32px;
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: var(--radius-xl);
   background: var(--surface);
-  box-shadow: 0 18px 48px rgba(24, 48, 33, 0.12);
+  box-shadow: 0 18px 48px rgba(28, 35, 31, 0.1);
   text-align: center;
+  overflow: hidden;
+}
+
+/* Único momento decorativo "de marca": uma faixa fina com as três cores
+   (verde, laranja, azul) no topo do cartão — usada como cor, não como texto,
+   então o contraste do laranja/azul em fundo branco não é um problema aqui. */
+.install-screen__card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--orange-accent), var(--green) 50%, var(--blue-accent));
 }
 
 .install-screen__card h1 {
@@ -451,11 +525,11 @@ code {
   width: 56px;
   height: 56px;
   margin: 0 auto 20px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--green);
   color: #ffffff;
   font-size: 2rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .install-screen__status {
@@ -491,10 +565,10 @@ code {
   gap: 3px;
   min-width: 78px;
   height: 54px;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--muted);
   font-size: 0.72rem;
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .nav-item > span:first-child {
@@ -512,7 +586,7 @@ code {
   padding: 22px;
   margin-bottom: 23px;
   border: 1px solid #f0db95;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   background: #fff3cd;
 }
 
@@ -548,11 +622,11 @@ code {
 }
 
 .result-row:first-of-type {
-  border-radius: 14px 14px 0 0;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
 }
 
 .result-row:last-child {
-  border-radius: 0 0 14px 14px;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
 .result-row--conforme {
@@ -615,7 +689,7 @@ code {
   margin-bottom: 7px;
   color: var(--green);
   font-size: 0.72rem;
-  font-weight: 750;
+  font-weight: 600;
 }
 
 .rules-card__actions {
@@ -646,8 +720,8 @@ code {
   display: flex;
   gap: 14px;
   padding: 18px;
-  border: 1px solid #cfe5d7;
-  border-radius: 16px;
+  border: 1px solid #cfe0d5;
+  border-radius: var(--radius-lg);
   background: var(--green-soft);
 }
 
@@ -672,10 +746,10 @@ code {
   place-items: center;
   width: 34px;
   height: 34px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   background: var(--green);
   color: #ffffff;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .documentation__section {
@@ -704,7 +778,7 @@ code {
   background: var(--green-soft);
   color: var(--green);
   font-size: 0.8rem;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .documentation__heading h2,
@@ -724,9 +798,9 @@ code {
   overflow: auto;
   margin: 16px 0 13px;
   padding: 16px;
-  border-radius: 13px;
-  background: #17211c;
-  color: #e7f6ec;
+  border-radius: var(--radius-md);
+  background: var(--ink);
+  color: #e7f0e6;
   font: 0.78rem/1.55 "SFMono-Regular", Consolas, monospace;
 }
 
@@ -751,7 +825,7 @@ code {
 .documentation-card {
   padding: 14px;
   border: 1px solid var(--line);
-  border-radius: 13px;
+  border-radius: var(--radius-md);
   background: #ffffff;
 }
 
@@ -796,7 +870,7 @@ code {
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgba(14, 29, 20, 0.4);
+  background: rgba(20, 26, 22, 0.44);
   animation: fade 0.16s;
 }
 
@@ -804,7 +878,7 @@ code {
   width: min(100%, 400px);
   padding: 20px;
   border: 0;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   background: #ffffff;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   animation: enter 0.18s;
@@ -825,14 +899,14 @@ code {
   display: grid;
   gap: 7px;
   font-size: 0.88rem;
-  font-weight: 650;
+  font-weight: 600;
 }
 
 .dialog input {
   min-height: 45px;
   padding: 10px;
-  border: 1px solid #bdcabe;
-  border-radius: 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
 }
 
 .dialog__actions {
@@ -848,8 +922,8 @@ code {
   left: 50%;
   z-index: 20;
   padding: 10px 14px;
-  border-radius: 10px;
-  background: #1e3025;
+  border-radius: var(--radius-sm);
+  background: var(--ink);
   color: #ffffff;
   font-size: 0.86rem;
   pointer-events: none;
@@ -875,7 +949,7 @@ code {
 @keyframes enter {
   from {
     opacity: 0;
-    transform: translateY(6px);
+    transform: translateY(4px);
   }
   to {
     opacity: 1;
@@ -920,14 +994,14 @@ code {
     align-items: center;
     gap: 10px;
     margin: 0 7px 32px;
-    font-weight: 780;
+    font-weight: 700;
     line-height: 1.05;
   }
 
   .brand small {
     color: var(--muted);
     font-size: 0.73rem;
-    font-weight: 550;
+    font-weight: 500;
   }
 
   .brand__mark {
@@ -935,7 +1009,7 @@ code {
     place-items: center;
     width: 34px;
     height: 34px;
-    border-radius: 10px;
+    border-radius: var(--radius-sm);
     background: var(--green);
     color: #ffffff;
   }
@@ -979,5 +1053,48 @@ code {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==========================================================================
+   AJUSTES PARA CELULAR (Telas menores que 600px)
+   ========================================================================== */
+@media (max-width: 600px) {
+  /* Torna os cards responsivos em 2 colunas no celular */
+  .card-grid-environment {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  /* Remove dimensões fixas para caber na grade da tela */
+  .card-environment {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    padding: 12px;
+  }
+
+  /* Reduz o ícone e fonte para caber no card menor */
+  .card-environment .card__icon {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+  }
+
+  .card-environment h2 {
+    font-size: 0.9rem;
+  }
+
+  .card-environment p {
+    font-size: 0.78rem;
+  }
+
+  .card-environment .card__menu {
+    gap: 8px;
+  }
+
+  .card-environment .text-button {
+    font-size: 0.75rem;
   }
 }
