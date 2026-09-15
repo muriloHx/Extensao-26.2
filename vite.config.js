@@ -45,7 +45,7 @@ export default defineConfig({
       },
 
       workbox: {
-        navigateFallback: "/index.html"
+        navigateFallback: "/Extensao-26.2/index.html"
       }
     })
   ]
