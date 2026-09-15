@@ -1,4 +1,5 @@
 <script setup>
+import { ChevronLeft } from "@lucide/vue";
 import { computed, inject, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
@@ -82,7 +83,7 @@ onMounted(loadData);
   <!-- Cenário 1: Elemento e Avaliação Carregados -->
   <template v-if="element && evaluation">
     <RouterLink class="back-link" :to="`/elements/${element.id}`">
-      ‹ {{ element.name }}
+      <ChevronLeft :size="18" aria-hidden="true" />{{ element.name }}
     </RouterLink>
 
     <PageHeader
@@ -134,7 +135,7 @@ onMounted(loadData);
   <!-- Cenário 2: Elemento encontrado, mas sem avaliação -->
   <template v-else-if="element">
     <RouterLink class="back-link" :to="`/elements/${element.id}`">
-      ‹ Elemento
+      <ChevronLeft :size="18" aria-hidden="true" />Elemento
     </RouterLink>
 
     <EmptyState

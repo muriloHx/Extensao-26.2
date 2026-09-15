@@ -1,5 +1,6 @@
 <script setup>
 import { inject, onMounted, ref } from "vue";
+import { Box, ChevronLeft, ChevronRight, Plus, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
@@ -46,6 +47,28 @@ function getElementStatus(evaluations) {
   return "conforme";
 }
 
+async function deleteElement(element) {
+  const confirmed = window.confirm(
+    `Excluir o elemento ${element.name} e suas avaliações?`)
+
+  if (!confirmed) return;
+
+  const evaluations = await services.evaluationService.listEvaluations(
+    element.id
+  );
+
+  console.log("ELEMENT NAME: " + element.name);
+  for (const evaluation of evaluations) {
+    await services.repositories.evaluationRepository.delete(evaluation.id);
+    console.log("EVAL ID: " + evaluation.id);
+  }
+
+  await services.repositories.elementRepository.delete(element.id);
+
+  await loadData();
+}
+
+
 async function loadData() {
   // 1. Carrega dados do Ambiente
   environment.value = await services.repositories.environmentRepository.get(
@@ -90,12 +113,11 @@ onMounted(loadData);
       class="back-link"
       :to="`/projects/${environment.projectId}`"
     >
-      ‹ {{ project?.name ?? "Projeto" }}
+      <ChevronLeft :size="18" aria-hidden="true" />{{ project?.name ?? "Projeto" }}
     </RouterLink>
 
     <!-- Cabeçalho -->
     <PageHeader
-      eyebrow="Ambiente"
       :title="environment.name"
       description="Elementos e situação da última avaliação."
     >
@@ -107,29 +129,44 @@ onMounted(loadData);
             query: { environmentId: environment.id },
           }"
         >
-          + Adicionar elemento
+          <Plus :size="18" aria-hidden="true" />Adicionar elemento
         </RouterLink>
       </template>
     </PageHeader>
 
     <!-- Lista de Elementos -->
     <div v-if="rows.length" class="card-list">
-      <RouterLink
+      <article
         v-for="row in rows"
         :key="row.element.id"
         class="card card--interactive"
-        :to="`/elements/${row.element.id}`"
       >
-        <div class="card__link">
-          <span class="card__icon">◇</span>
+        <!-- Link navegável do card -->
+        <RouterLink
+          class="card__link"
+          :to="`/elements/${row.element.id}`"
+        >
+          <span class="card__icon"><Box :size="22" aria-hidden="true" /></span>
           <div>
             <h2>{{ row.element.name }}</h2>
             <p>{{ row.element.type }}</p>
           </div>
           <StatusBadge :status="row.status" />
-          <span class="chevron">›</span>
+          <ChevronRight :size="20" class="chevron" aria-hidden="true" />
+        </RouterLink>
+
+        <!-- Área de ações (dentro do card, abaixo ou ao lado) -->
+        <div class="card__menu">
+          <button
+            class="icon-button icon-button--danger"
+            title="Excluir"
+            aria-label="Excluir"
+            @click="deleteElement(row.element)"
+          >
+            <Trash2 :size="18" aria-hidden="true" />
+          </button>
         </div>
-      </RouterLink>
+      </article>
     </div>
 
     <!-- Estado Vazio (Sem elementos no ambiente) -->
@@ -145,7 +182,7 @@ onMounted(loadData);
           query: { environmentId: environment.id },
         }"
       >
-        + Adicionar elemento
+        <Plus :size="18" aria-hidden="true" />Adicionar elemento
       </RouterLink>
     </EmptyState>
   </template>

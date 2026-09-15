@@ -1,5 +1,6 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from "vue";
+import { Download } from "@lucide/vue";
 import { RouterView } from "vue-router";
 import { useRegisterSW } from "virtual:pwa-register/vue";
 import AppLayout from "./layouts/AppLayout.vue";
@@ -90,7 +91,7 @@ window.addEventListener("beforeinstallprompt", (event) => {
     aria-labelledby="install-title"
   >
     <section class="install-screen__card">
-      <span class="install-screen__icon">↓</span>
+      <span class="install-screen__icon"><Download :size="32" aria-hidden="true" /></span>
 
       <p class="eyebrow">Acesso pelo aplicativo</p>
 

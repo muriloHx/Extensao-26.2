@@ -118,6 +118,7 @@ code {
 
 .content {
   width: min(100%, 860px);
+  min-height: 100%;
   margin: auto;
   padding: 28px 18px 96px;
   outline: none;
@@ -147,7 +148,9 @@ code {
 }
 
 .back-link {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   margin-bottom: 22px;
   color: var(--green);
   font-size: 0.9rem;
@@ -211,6 +214,11 @@ code {
   color: var(--danger);
 }
 
+.text-button--danger:hover {
+  opacity: 0.7;
+}
+
+
 .icon-button {
   display: grid;
   place-items: center;
@@ -221,6 +229,14 @@ code {
   background: #f0f2ef;
   font-size: 1.35rem;
   cursor: pointer;
+}
+
+.icon-button--danger {
+  color: var(--danger);
+}
+
+.icon-button--danger:hover {
+  opacity: 0.7;
 }
 
 /* 4.2 Badges de Status */
@@ -571,7 +587,7 @@ code {
   font-weight: 600;
 }
 
-.nav-item > span:first-child {
+.nav-item > :first-child {
   font-size: 1.2rem;
   line-height: 1;
 }
@@ -1035,6 +1051,7 @@ code {
     grid-column: 2;
     width: min(100%, 940px);
     padding: 46px 40px;
+
   }
 
   .toast {

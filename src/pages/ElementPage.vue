@@ -1,4 +1,5 @@
 <script setup>
+import { ChevronLeft } from "@lucide/vue";
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
@@ -97,7 +98,38 @@ function normalizeFormData() {
   return processedData;
 }
 
-async function save() {
+// Salva apenas o cadastro do elemento e retorna para a EnvironmentPage
+async function saveOnly() {
+  if (!activeChecklist.value) {
+    return window.alert("Selecione um conjunto de regras.");
+  }
+
+  const payload = {
+    name: form.name,
+    type: activeChecklist.value.nome,
+    rule: activeChecklist.value.id,
+  };
+
+  try {
+    if (element.value) {
+      await services.projectService.updateElement(element.value.id, payload);
+    } else {
+      await services.projectService.createElement(
+        environment.value.id,
+        payload
+      );
+    }
+
+    router.push(
+      `/projects/${environment.value.projectId}/environments/${environment.value.id}`
+    );
+  } catch (error) {
+    window.alert(error.message);
+  }
+}
+
+// Salva o elemento, avalia os dados preenchidos e vai para a página de resultado
+async function saveAndEvaluate() {
   if (!activeChecklist.value) {
     return window.alert("Selecione um conjunto de regras.");
   }
@@ -154,7 +186,7 @@ onMounted(loadData);
       class="back-link"
       :to="`/projects/${environment.projectId}/environments/${environment.id}`"
     >
-      ‹ {{ environment.name }}
+      <ChevronLeft :size="18" aria-hidden="true" />{{ environment.name }}
     </RouterLink>
 
     <PageHeader
@@ -163,16 +195,7 @@ onMounted(loadData);
       description="Escolha o tipo e informe as medidas observadas."
     />
 
-    <form class="form-card" @submit.prevent="save">
-      <label class="field">
-        <span>Nome do elemento *</span>
-        <input
-          v-model="form.name"
-          required
-          placeholder="Ex.: Porta principal"
-        />
-      </label>
-
+    <form class="form-card" @submit.prevent>
       <label class="field">
         <span>Tipo de elemento *</span>
         <select v-model="form.ruleSet">
@@ -184,6 +207,15 @@ onMounted(loadData);
             {{ ruleSet.nome }}
           </option>
         </select>
+      </label>
+
+      <label class="field">
+        <span>Nome do elemento *</span>
+        <input
+          v-model="form.name"
+          required
+          placeholder="Ex.: Porta principal"
+        />
       </label>
 
       <div class="form-divider">
@@ -203,22 +235,18 @@ onMounted(loadData);
             <small v-if="parameter.unidade"> ({{ parameter.unidade }})</small>
           </span>
 
-          <!-- 1. PRIMEIRO ITEM: USA v-if -->
           <select
             v-if="parameter.tipo === 'boolean'"
             v-model="form.data[key]"
-            :required="parameter.obrigatorio"
           >
             <option value="">Não informado</option>
             <option :value="true">Sim</option>
             <option :value="false">Não</option>
           </select>
 
-          <!-- 2. ITENS INTERMEDIÁRIOS: USAM v-else-if -->
           <select
             v-else-if="parameter.tipo === 'select'"
             v-model="form.data[key]"
-            :required="parameter.obrigatorio"
           >
             <option value="">Selecione</option>
             <option
@@ -230,14 +258,12 @@ onMounted(loadData);
             </option>
           </select>
 
-          <!-- 3. ÚLTIMO ITEM (PADRÃO): USA v-else -->
           <input
             v-else
             v-model="form.data[key]"
             type="number"
             inputmode="decimal"
             step="any"
-            :required="parameter.obrigatorio"
           />
         </label>
       </div>
@@ -250,8 +276,14 @@ onMounted(loadData);
           Cancelar
         </RouterLink>
 
-        <button class="button" type="submit">
-          {{ isNew ? "Salvar elemento" : "Salvar alterações" }}
+        <!-- Opção 1: Salva o elemento e volta para a EnvironmentPage -->
+        <button class="button button--outline" type="button" @click="saveOnly">
+          Salvar e voltar
+        </button>
+
+        <!-- Opção 2: Salva, realiza a avaliação e vai para a página de resultado -->
+        <button class="button" type="button" @click="saveAndEvaluate">
+          Salvar e avaliar
         </button>
 
         <RouterLink

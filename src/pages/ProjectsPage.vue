@@ -1,5 +1,6 @@
 <script setup>
 import { inject, onMounted, ref } from "vue";
+import { ChevronRight, FolderKanban, FolderPlus, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
@@ -102,7 +103,7 @@ onMounted(loadProjects);
     description="Acompanhe seus locais e avaliações."
   >
     <template #action>
-      <button class="button" @click="startCreate">+ Novo projeto</button>
+      <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
     </template>
   </PageHeader>
 
@@ -130,21 +131,21 @@ onMounted(loadProjects);
   <div v-if="projects.length" class="card-list">
     <article v-for="project in projects" :key="project.id" class="card project-card">
       <RouterLink class="card__link" :to="`/projects/${project.id}`">
-        <span class="card__icon">▦</span>
+        <span class="card__icon"><FolderKanban :size="22" aria-hidden="true" /></span>
         <div>
           <h2>{{ project.name }}</h2>
           <p>Atualizado em {{ formatDate(project.updatedAt) }}</p>
           <p v-if="project.description">{{ project.description }}</p>
         </div>
-        <span class="chevron">›</span>
+        <ChevronRight :size="20" class="chevron" aria-hidden="true" />
       </RouterLink>
 
       <div class="card__menu">
         <button class="text-button" @click="startEdit(project)">
           Editar
         </button>
-        <button class="text-button text-button--danger" @click="remove(project)">
-          Excluir
+        <button class="icon-button icon-button--danger" title="Excluir" aria-label="Excluir" @click="remove(project)">
+          <Trash2 :size="18" aria-hidden="true" />
         </button>
       </div>
     </article>
@@ -156,6 +157,6 @@ onMounted(loadProjects);
     title="Comece por um projeto"
     text="Organize as avaliações de acessibilidade por obra ou local."
   >
-    <button class="button" @click="startCreate">+ Novo projeto</button>
+    <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
   </EmptyState>
 </template>

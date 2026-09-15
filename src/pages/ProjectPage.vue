@@ -1,5 +1,6 @@
 <script setup>
 import { inject, onMounted, ref } from "vue";
+import { ChevronLeft, FolderPlus, House, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
@@ -89,16 +90,15 @@ onMounted(loadData);
 <template>
   <!-- Cenário 1: Projeto encontrado -->
   <template v-if="project">
-    <RouterLink class="back-link" to="/projects">‹ Projetos</RouterLink>
+    <RouterLink class="back-link" to="/projects"><ChevronLeft :size="18" aria-hidden="true" />Projetos</RouterLink>
 
     <PageHeader
-      eyebrow="Projeto"
       :title="project.name"
       :description="`${environments.length} ambiente${environments.length === 1 ? '' : 's'} cadastrado${environments.length === 1 ? '' : 's'}.
       \n${project.description}`"
     >
       <template #action>
-        <button class="button" @click="startCreate">+ Novo ambiente</button>
+        <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
       </template>
     </PageHeader>
 
@@ -132,7 +132,7 @@ onMounted(loadData);
           class="card__link"
           :to="`/projects/${project.id}/environments/${environment.id}`"
         >
-          <span class="card__icon">⌂</span>
+          <span class="card__icon"><House :size="22" aria-hidden="true" /></span>
           <div>
             <h2>{{ environment.name }}</h2>
             <p>Ambiente</p>
@@ -144,10 +144,12 @@ onMounted(loadData);
             Editar
           </button>
           <button
-            class="text-button text-button--danger"
+            class="icon-button icon-button--danger"
+            title="Excluir"
+            aria-label="Excluir"
             @click="remove(environment)"
           >
-            Excluir
+            <Trash2 :size="18" aria-hidden="true" />
           </button>
         </div>
       </article>
@@ -159,7 +161,7 @@ onMounted(loadData);
       title="Nenhum ambiente ainda"
       text="Adicione espaços como entrada, banheiro ou circulação."
     >
-      <button class="button" @click="startCreate">+ Novo ambiente</button>
+      <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
     </EmptyState>
   </template>
 

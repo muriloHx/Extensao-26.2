@@ -1,5 +1,6 @@
 <script setup>
 import { computed, inject, onMounted, ref } from "vue";
+import { ChevronLeft, ChevronRight, CircleHelp, ClipboardCheck, Trash2 } from "@lucide/vue";
 import { RouterLink, useRouter } from "vue-router";
 import { groupBuiltInRuleSets, groupCustomRuleSets } from "../domain/ruleGroup.js";
 import PageHeader from "../components/PageHeader.vue";
@@ -139,7 +140,7 @@ onMounted(load);
 <template>
   <!-- Documentação -->
   <template v-if="documentation">
-    <RouterLink class="back-link" to="/rules">‹ Conjuntos de regras</RouterLink>
+    <RouterLink class="back-link" to="/rules"><ChevronLeft :size="18" aria-hidden="true" />Conjuntos de regras</RouterLink>
 
     <PageHeader
       eyebrow="Documentação"
@@ -249,7 +250,7 @@ regras:
       </section>
 
       <section class="documentation__intro">
-        <span class="documentation__icon" aria-hidden="true">?</span>
+        <span class="documentation__icon"><CircleHelp :size="24" aria-hidden="true" /></span>
         <div>
           <h1>Crie suas regras com IA</h1>
             <a class="button button--outline" href="/rule-engine-skill/SKILL.md" download="SKILL.md">
@@ -271,7 +272,7 @@ regras:
 
   <!-- Detalhe de um conjunto -->
   <template v-else-if="groupId">
-    <RouterLink class="back-link" to="/rules">‹ Conjuntos de regras</RouterLink>
+    <RouterLink class="back-link" to="/rules"><ChevronLeft :size="18" aria-hidden="true" />Conjuntos de regras</RouterLink>
 
     <template v-if="loading">
       <p class="muted" role="status">Carregando…</p>
@@ -299,7 +300,7 @@ regras:
             <div v-if="source === 'user'" class="rules-card__actions">
               <button class="text-button" @click="exportRule(ruleSet, 'yaml')">Exportar YAML</button>
               <button class="text-button" @click="exportRule(ruleSet, 'json')">Exportar JSON</button>
-              <button class="text-button text-button--danger" @click="remove(ruleSet)">Excluir</button>
+              <button class="icon-button icon-button--danger" title="Excluir" aria-label="Excluir" @click="remove(ruleSet)"><Trash2 :size="18" aria-hidden="true" /></button>
             </div>
           </article>
         </div>
@@ -348,13 +349,13 @@ regras:
             class="card card--interactive rules-card"
             :to="groupPath(group)"
           >
-            <span class="card__icon" aria-hidden="true">✓</span>
+            <span class="card__icon"><ClipboardCheck :size="22" aria-hidden="true" /></span>
             <div>
               <div class="rule-source">Padrão</div>
               <h2>{{ group.nome }}</h2>
               <p>{{ group.ruleSets.length }} checklists · {{ totalRuleCount(group) }} regras</p>
             </div>
-            <span class="chevron" aria-hidden="true">›</span>
+            <ChevronRight :size="20" class="chevron" aria-hidden="true" />
           </RouterLink>
         </div>
       </section>
@@ -368,13 +369,13 @@ regras:
             class="card card--interactive rules-card"
             :to="groupPath(group)"
           >
-            <span class="card__icon" aria-hidden="true">✓</span>
+            <span class="card__icon"><ClipboardCheck :size="22" aria-hidden="true" /></span>
             <div>
               <div class="rule-source">Adicionada por você</div>
               <h2>{{ group.nome }}</h2>
               <p>{{ group.ruleSets.length }} checklists</p>
             </div>
-            <span class="chevron" aria-hidden="true">›</span>
+            <ChevronRight :size="20" class="chevron" aria-hidden="true" />
           </RouterLink>
         </div>
         <EmptyState v-else title="Nenhum conjunto importado" text="Importe arquivos ou uma pasta para começar." />
