@@ -22,7 +22,7 @@ export default defineConfig({
       manifest: {
         name: "Acesso Verificador",
         short_name: "Acesso",
-        start_url: "/projects",
+        start_url: "/Extensao-26.2/projects",
         scope: "/",
         display: "standalone",
         background_color: "#f6f8f6",
