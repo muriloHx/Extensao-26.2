@@ -23,7 +23,7 @@ export default defineConfig({
         name: "Acesso Verificador",
         short_name: "Acesso",
         start_url: "/Extensao-26.2/projects",
-        scope: "/",
+        scope: "/Extensao-26.2/",
         display: "standalone",
         background_color: "#f6f8f6",
         theme_color: "#16784d",
