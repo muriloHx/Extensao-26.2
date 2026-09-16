@@ -15,6 +15,8 @@ const props = defineProps({
 const services = inject("services");
 const builtInRuleSets = inject("builtInRuleSets");
 const router = useRouter();
+const downloadUrl = computed(() => `${import.meta.env.BASE_URL}rule-engine-skill/SKILL.md`)
+
 
 const groups = ref([]);
 const loading = ref(true);
@@ -253,7 +255,7 @@ regras:
         <span class="documentation__icon"><CircleHelp :size="24" aria-hidden="true" /></span>
         <div>
           <h1>Crie suas regras com IA</h1>
-            <a class="button button--outline" href="/rule-engine-skill/SKILL.md" download="SKILL.md">
+          <a class="button button--outline" :href="`${downloadUrl}`" download="SKILL.md">
               Baixar SKILL.md
             </a>
             <p>Um arquivo de texto com instruções prontas para uma IA (Claude, ChatGPT, Cursor) gerar checklists neste formato a partir do que você descrever.
