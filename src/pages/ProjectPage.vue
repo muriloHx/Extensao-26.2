@@ -4,6 +4,7 @@ import { ChevronLeft, FolderPlus, House, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
+import EvaluationSummary from "../components/EvaluationSummary.vue";
 
 const props = defineProps({
   projectId: String,
@@ -16,15 +17,17 @@ const project = ref(null);
 const environments = ref([]);
 const name = ref("");
 const editing = ref(null);
+const summary = ref(null);
 
 // Funções de Negócio
 async function loadData() {
   project.value = await services.projectService.getProject(props.projectId);
 
   if (project.value) {
-    environments.value = await services.projectService.listEnvironments(
-      props.projectId
-    );
+    [environments.value, summary.value] = await Promise.all([
+      services.projectService.listEnvironments(props.projectId),
+      services.evaluationService.getProjectSummary(props.projectId),
+    ]);
   }
 }
 
@@ -101,6 +104,8 @@ onMounted(loadData);
         <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
       </template>
     </PageHeader>
+
+    <EvaluationSummary v-if="summary" :summary="summary" scope="projeto" />
 
     <!-- Form Modal/Card para criação/edição -->
     <form v-if="editing" class="form-card" @submit.prevent="save">

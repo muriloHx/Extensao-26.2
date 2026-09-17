@@ -280,6 +280,62 @@ code {
   gap: 12px;
 }
 
+/* Resumo consolidado de avaliações */
+.evaluation-summary {
+  margin-bottom: 24px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+}
+
+.evaluation-summary__heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.evaluation-summary__heading h2 { margin-bottom: 5px; }
+
+.evaluation-summary__score {
+  flex: 0 0 auto;
+  text-align: right;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.evaluation-summary__score strong {
+  display: block;
+  color: var(--green);
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.evaluation-summary__cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.evaluation-summary__card {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+}
+
+.evaluation-summary__card strong { font-size: 1.5rem; }
+.evaluation-summary__card--conforme { background: #dcefe3; color: #135939; }
+.evaluation-summary__card--nao_conforme { background: #fce4e3; color: #a82e2b; }
+.evaluation-summary__card--nao_avaliado { background: #fff3cd; color: #856000; }
+
+@media (max-width: 440px) {
+  .evaluation-summary__cards { grid-template-columns: 1fr; }
+}
+
 .card {
   overflow: hidden;
   border: 1px solid var(--line);
@@ -1114,4 +1170,16 @@ code {
   .card-environment .text-button {
     font-size: 0.75rem;
   }
+}
+
+.ruleset-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ruleset-norma {
+  color: #666;
+  font-size: 0.85em;
 }

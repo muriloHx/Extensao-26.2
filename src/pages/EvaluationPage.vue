@@ -63,6 +63,28 @@ function formatDate(dateString) {
   }).format(new Date(dateString));
 }
 
+function formatExpected(operator, value, unit = "") {
+  const formattedValue =
+    typeof value === "boolean" ? (value ? "Sim" : "Não") : value;
+  const valueWithUnit = `${formattedValue}${unit ?? ""}`;
+
+  switch (operator) {
+    case ">=":
+      return `no mínimo, ${valueWithUnit}`;
+    case "<=":
+      return `no máximo, ${valueWithUnit}`;
+    case ">":
+      return `maior que ${valueWithUnit}`;
+    case "<":
+      return `menor que ${valueWithUnit}`;
+    case "==":
+    case "eq":
+      return `igual a ${valueWithUnit}`;
+    default:
+      return valueWithUnit;
+  }
+}
+
 async function loadData() {
   element.value = await services.repositories.elementRepository.get(
     props.elementId
@@ -122,7 +144,10 @@ onMounted(loadData);
             Informado: <strong>{{ item.valorInformado }}</strong>
             <template v-if="item.unidade"> {{ item.unidade }}</template>
             <template v-if="item.valorEsperado !== undefined">
-              · Esperado: {{ item.valorEsperado }}
+              · Esperado:
+              {{
+                formatExpected(item.operador, item.valorEsperado, item.unidade)
+              }}
             </template>
           </p>
 

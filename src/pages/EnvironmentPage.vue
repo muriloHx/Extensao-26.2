@@ -5,6 +5,8 @@ import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import StatusBadge from "../components/StatusBadge.vue";
+import EvaluationSummary from "../components/EvaluationSummary.vue";
+import { getEvaluationStatus } from "../services/evaluationService.js";
 
 const props = defineProps({
   projectId: String,
@@ -17,35 +19,7 @@ const services = inject("services");
 const environment = ref(null);
 const project = ref(null);
 const rows = ref([]);
-
-/**
- * Determina o status geral do elemento com base nas avaliações
- */
-function getElementStatus(evaluations) {
-  const result = evaluations[0]?.result;
-
-  if (!result?.length) {
-    return "nao_avaliado";
-  }
-
-  // Se houver qualquer item com erro ou não conforme
-  const hasNonConformity = result.some((item) =>
-    ["nao_conforme", "erro", "invalido"].includes(item.status)
-  );
-  if (hasNonConformity) {
-    return "nao_conforme";
-  }
-
-  // Se houver itens pendentes de verificação manual ou atenção
-  const hasPendingItems = result.some((item) =>
-    ["atencao", "manual", "nao_avaliado"].includes(item.status)
-  );
-  if (hasPendingItems) {
-    return "nao_avaliado";
-  }
-
-  return "conforme";
-}
+const summary = ref(null);
 
 async function deleteElement(element) {
   const confirmed = window.confirm(
@@ -89,18 +63,24 @@ async function loadData() {
     environment.value.id
   );
 
-  rows.value = await Promise.all(
-    elements.map(async (element) => {
-      const evaluations = await services.evaluationService.listEvaluations(
-        element.id
-      );
+  const [loadedRows, loadedSummary] = await Promise.all([
+    Promise.all(
+      elements.map(async (element) => {
+        const evaluations = await services.evaluationService.listEvaluations(
+          element.id
+        );
 
-      return {
-        element,
-        status: getElementStatus(evaluations),
-      };
-    })
-  );
+        return {
+          element,
+          status: getEvaluationStatus(evaluations),
+        };
+      })
+    ),
+    services.evaluationService.getEnvironmentSummary(environment.value.id),
+  ]);
+
+  rows.value = loadedRows;
+  summary.value = loadedSummary;
 }
 
 onMounted(loadData);
@@ -133,6 +113,8 @@ onMounted(loadData);
         </RouterLink>
       </template>
     </PageHeader>
+
+    <EvaluationSummary v-if="summary" :summary="summary" scope="ambiente" />
 
     <!-- Lista de Elementos -->
     <div v-if="rows.length" class="card-list">

@@ -2,6 +2,8 @@
 import { ChevronLeft } from "@lucide/vue";
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
+import vSelect from 'vue-select';
+import 'vue-select/dist/vue-select.css';
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import StatusBadge from "../components/StatusBadge.vue";
@@ -21,6 +23,7 @@ const element = ref(null);
 const environment = ref(null);
 const ruleSets = ref([]);
 const evaluation = ref(null);
+const selectedNorma = ref("todas");
 
 const form = reactive({
   name: "",
@@ -30,9 +33,28 @@ const form = reactive({
 
 // Computed Properties
 const isNew = computed(() => !props.elementId);
+
 const activeChecklist = computed(() =>
   ruleSets.value.find((item) => item.id === form.ruleSet)
 );
+
+// Lista dinâmica de normas únicas disponíveis nos ruleSets
+const normasDisponiveis = computed(() => {
+  const normas = ruleSets.value
+    .map((item) => item.norma?.nome)
+    .filter(Boolean);
+  return ["todas", ...new Set(normas)];
+});
+
+// Filtra a lista de ruleSets exibida no v-select de acordo com a norma escolhida
+const filteredRuleSets = computed(() => {
+  if (selectedNorma.value === "todas") {
+    return ruleSets.value;
+  }
+  return ruleSets.value.filter(
+    (item) => item.norma?.nome === selectedNorma.value
+  );
+});
 
 // Métodos
 async function loadData() {
@@ -161,6 +183,16 @@ async function saveAndEvaluate() {
   }
 }
 
+// Quando a norma filtrada muda, seleciona automaticamente o primeiro elemento da nova lista se o atual não fizer parte dela
+watch(selectedNorma, () => {
+  const currentExists = filteredRuleSets.value.some(
+    (item) => item.id === form.ruleSet
+  );
+  if (!currentExists) {
+    form.ruleSet = filteredRuleSets.value[0]?.id ?? "";
+  }
+});
+
 // Limpa chaves do formulário que não pertencem às regras do checklist ativo
 watch(
   () => form.ruleSet,
@@ -176,6 +208,22 @@ watch(
     });
   }
 );
+
+// Permite buscar por nome do elemento, norma ou regras internas dentro do v-select
+function filterRuleSets(option, label, search) {
+  const query = (search || '').toLowerCase().trim();
+  if (!query) return true;
+
+  const matchNome = option.nome?.toLowerCase().includes(query);
+  const matchNorma = option.norma?.nome?.toLowerCase().includes(query);
+  const matchRegras = option.regras?.some(
+    (regra) =>
+      regra.nome?.toLowerCase().includes(query) ||
+      regra.id?.toLowerCase().includes(query)
+  );
+
+  return Boolean(matchNome || matchNorma || matchRegras);
+}
 
 onMounted(loadData);
 </script>
@@ -196,18 +244,43 @@ onMounted(loadData);
     />
 
     <form class="form-card" @submit.prevent>
-      <label class="field">
-        <span>Tipo de elemento *</span>
-        <select v-model="form.ruleSet">
-          <option
-            v-for="ruleSet in ruleSets"
-            :key="ruleSet.id"
-            :value="ruleSet.id"
+      <!-- Seleção de Norma e Elemento em Cascata -->
+      <div class="ruleset-grid">
+        <label class="field">
+          <span>Norma de referência</span>
+          <select v-model="selectedNorma">
+            <option value="todas">Todas as normas</option>
+            <option
+              v-for="norma in normasDisponiveis.filter((n) => n !== 'todas')"
+              :key="norma"
+              :value="norma"
+            >
+              {{ norma }}
+            </option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Tipo de elemento *</span>
+          <v-select
+            v-model="form.ruleSet"
+            :options="filteredRuleSets"
+            label="nome"
+            :reduce="(ruleSet) => ruleSet.id"
+            :filter-by="filterRuleSets"
+            placeholder="Pesquise o elemento ou regra..."
           >
-            {{ ruleSet.nome }}
-          </option>
-        </select>
-      </label>
+            <template #option="option">
+              <div class="ruleset-option">
+                <span class="ruleset-title">{{ option.nome }}</span>
+                <small v-if="option.norma?.nome" class="ruleset-norma">
+                  ({{ option.norma.nome }})
+                </small>
+              </div>
+            </template>
+          </v-select>
+        </label>
+      </div>
 
       <label class="field">
         <span>Nome do elemento *</span>
@@ -308,3 +381,29 @@ onMounted(loadData);
     <RouterLink class="button" to="/projects">Projetos</RouterLink>
   </EmptyState>
 </template>
+
+<style scoped>
+.ruleset-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .ruleset-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ruleset-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ruleset-norma {
+  color: #666;
+  font-size: 0.85em;
+}
+</style>
