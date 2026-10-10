@@ -1,59 +1,106 @@
-# Acessibilidade Checker
+# Acesso Verificador
 
-Protótipo de uma plataforma open source para verificação de requisitos de acessibilidade em ambientes e elementos arquitetônicos.
+Aplicação web para organizar e apoiar avaliações de acessibilidade em ambientes e elementos arquitetônicos. O projeto permite registrar locais, preencher checklists e acompanhar resultados com base em conjuntos de regras configuráveis.
 
-## Conceito
+> **Importante:** os resultados são uma ferramenta de apoio e não substituem uma avaliação profissional. Confira os critérios na edição oficial da ABNT NBR 9050 e nas demais normas aplicáveis antes de tomar decisões ou declarar conformidade.
 
-As regras normativas são mantidas em YAML e o `RuleEngine` interpreta essas regras para avaliar os dados fornecidos pelo usuário.
+## Funcionalidades
 
-Fluxo:
+- Organização das avaliações em projetos, ambientes e elementos.
+- Avaliação completa dentro de um projeto ou avaliação rápida de um elemento.
+- Checklists padrão baseados na ABNT NBR 9050:2020, agrupados por assunto.
+- Importação e exportação de conjuntos personalizados em YAML e JSON.
+- Resumo dos resultados por projeto e ambiente.
+- Persistência local no navegador, sem necessidade de uma conta ou backend.
 
-Projeto → Ambiente → Checklist → Dados → RuleEngine → Resultados
+## Começando
 
-Persistência e serviços (para a futura interface):
+### Requisitos
 
-UI → Services (`ProjectService`, `EvaluationService`) → Repositories → IndexedDB
+- Node.js e npm instalados.
 
-Conjuntos de regras personalizados seguem o mesmo formato de checklist dos YAMLs
-(`id`, `nome`, `parametros` e `regras`). A futura UI pode passar o texto de um arquivo
-YAML para `RuleSetService.importFromYaml()`: ele é validado e salvo no store `ruleSets`
-do IndexedDB. `exportByIdToYaml()` produz esse mesmo formato portátil (há também as
-variantes JSON). As regras oficiais continuam incorporadas ao bundle por
-`import.meta.glob()`; ambas são passadas ao `RuleEngine` como checklist, sem origem
-especial no motor.
-
-As entidades em `src/domain/` são objetos puros e serializáveis: usam UUIDs e datas
-em ISO 8601. Elas não dependem do navegador, do IndexedDB, da UI ou do motor de regras.
-Os YAMLs de regras também são incorporados ao bundle de produção; não há backend para
-carregá-los. A instalação PWA (manifest e service worker) fica para a etapa de UI.
-
-## Estrutura
-
-- `src/core/` — motor de regras
-- `src/rules/` — critérios normativos em YAML
-- `src/domain/` — entidades de projeto, ambiente, elemento e avaliação
-- `src/services/` — casos de uso e coordenação
-- `src/repositories/` — adaptadores de persistência IndexedDB
-- `src/ui/` — interface futura
-- `src/tests/` — testes
-
-## Desenvolvimento
+### Instalação e execução
 
 ```bash
 npm install
 npm run dev
 ```
 
-Testes:
+O Vite exibirá o endereço local para abrir a aplicação no navegador.
+
+### Outros comandos
 
 ```bash
-npm test
+npm test       # executa os testes
+npm run build  # gera a versão de produção em dist/
+npm run preview # serve localmente a versão de produção
 ```
 
-## Escopo
+## Como usar
 
-O MVP não interpreta plantas baixas nem avalia automaticamente rotas acessíveis. A primeira versão é focada em verificações objetivas de portas, rampas, pisos/desníveis, escadas e sanitários acessíveis.
+1. Crie um projeto para o local ou obra que deseja avaliar.
+2. Adicione ambientes, como entrada, circulação ou sanitário.
+3. Cadastre os elementos que serão avaliados, como portas, rampas, pisos e equipamentos.
+4. Selecione os checklists pertinentes, preencha os dados solicitados e consulte os resultados.
+5. Acompanhe o resumo no projeto ou no ambiente.
 
-## Observação
+Para uma verificação pontual, use **Avaliação rápida**. Na área **Regras**, consulte os conjuntos disponíveis ou importe arquivos YAML/JSON próprios. Os arquivos importados ficam associados ao navegador em uso.
 
-Os critérios normativos deste protótipo devem ser conferidos diretamente na edição oficial da ABNT NBR 9050 antes de serem utilizados como implementação normativa definitiva.
+## Conjuntos de regras personalizados
+
+Cada arquivo representa um checklist independente. YAML e JSON são aceitos; os campos principais são `id`, `nome`, `parametros` e `regras`.
+
+```yaml
+id: bebedouros
+nome: Bebedouros
+norma:
+  nome: Norma interna
+  versao: "1"
+parametros:
+  altura_bica:
+    label: Altura da bica
+    tipo: number
+    unidade: m
+    obrigatorio: true
+regras:
+  - id: altura_maxima
+    nome: Altura máxima da bica
+    parametro: altura_bica
+    operador: "<="
+    valor: 0.90
+```
+
+Parâmetros podem ser do tipo `number`, `boolean` ou `select`. Regras podem usar comparações (`>=`, `<=`, `>`, `<`, `==`, `!=`), verificações manuais (`tipo: checklist`) ou condições (`tipo: conditional`). A tela **Regras → Como criar regras** documenta o formato completo e os resultados possíveis.
+
+## Dados e privacidade
+
+Projetos, ambientes, elementos, avaliações e regras importadas são armazenados localmente no navegador, usando IndexedDB. Não há serviço de backend configurado para sincronizar esses dados. Limpar os dados do site ou trocar de navegador/dispositivo pode removê-los ou torná-los indisponíveis; exporte conjuntos personalizados para mantê-los fora do navegador.
+
+Os conjuntos padrão são incluídos no bundle da aplicação e não precisam ser importados.
+
+## Estrutura do projeto
+
+```text
+src/
+├── core/          # motor e validação de regras
+├── domain/        # entidades e modelos do domínio
+├── pages/         # telas da aplicação
+├── repositories/  # persistência local em IndexedDB
+├── rules/         # conjuntos padrão em YAML
+├── services/      # casos de uso e coordenação
+├── tests/         # testes automatizados
+└── components/    # componentes compartilhados da interface
+```
+
+## Escopo e limitações
+
+O aplicativo avalia os dados informados nos checklists. Não interpreta plantas baixas, não inspeciona ambientes automaticamente e não substitui medições, análise técnica ou responsabilidade profissional. A cobertura depende dos conjuntos de regras selecionados e dos dados preenchidos.
+
+## Tecnologias
+
+- Vue 3
+- Vite
+- JavaScript (ES modules)
+- IndexedDB para persistência local
+- YAML para os conjuntos de regras padrão
+
