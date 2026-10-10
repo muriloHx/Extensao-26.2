@@ -2,106 +2,177 @@ id: rampas
 nome: Rampas
 norma:
   nome: ABNT NBR 9050
-  versao: "2020"
-
+  versao: 2020 - versão corrigida 2021
 parametros:
-  inclinacao_rampa:
-    label: "Inclinação da rampa"
+  inclinacao:
+    label: Inclinação
     tipo: number
-    unidade: "%"
+    unidade: '%'
     obrigatorio: true
-
-  desnivel_lance:
-    label: "Desnível (h) do lance"
-    tipo: number
-    unidade: m
-    obrigatorio: true
-
-  comprimento_lance:
-    label: "Comprimento (L) do lance"
-    tipo: number
-    unidade: m
-
-  largura_livre:
-    label: "Largura livre da rampa"
+  desnivel_segmento:
+    label: Desnível de cada segmento
     tipo: number
     unidade: m
     obrigatorio: true
-
-  possui_patamar:
-    label: "Possui patamar no início e término"
-    tipo: boolean
-
-  possui_corrimao_duplo:
-    label: "Possui corrimão em duas alturas de ambos os lados"
-    tipo: boolean
-
-  prolongamento_corrimao:
-    label: "Prolongamento do corrimão nas extremidades"
+  numero_segmentos:
+    label: Número de segmentos
+    tipo: number
+    unidade: segmentos
+    obrigatorio: true
+  largura:
+    label: Largura livre
     tipo: number
     unidade: m
-
-  possui_guia_balizamento:
-    label: "Possui guia de balizamento"
-    tipo: boolean
-
-  altura_guia_balizamento:
-    label: "Altura da guia de balizamento"
+    obrigatorio: true
+  inclinacao_transversal:
+    label: Inclinação transversal
+    tipo: number
+    unidade: '%'
+    obrigatorio: true
+  ambiente:
+    label: Local da rampa
+    tipo: select
+    opcoes:
+    - interno
+    - externo
+  patamar_inicial_final:
+    label: Comprimento do patamar inicial/final
     tipo: number
     unidade: m
-
+    obrigatorio: true
+  patamar_intermediario:
+    label: Comprimento do patamar intermediário
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  raio_curva:
+    label: Raio interno da curva
+    tipo: number
+    unidade: m
+  rampa_curva:
+    label: Rampa em curva
+    tipo: boolean
+    obrigatorio: true
+  guia_balizamento:
+    label: Possui guia de balizamento
+    tipo: boolean
+    obrigatorio: true
 regras:
-  - id: rampa_inclinacao_comprimento
-    nome: "Limites de inclinação e comprimento por lance"
-    tipo: conditional
-    parametro: inclinacao_rampa
-    condicoes:
-      - quando:
-          operador: "<="
-          valor: 6.25
-        verificar:
-          parametro: desnivel_lance
-          operador: "<="
-          valor: 1.00
-        referencia: "ABNT NBR 9050:2020 — 6.6 (Tabela 4)"
-      - quando:
-          operador: "<="
-          valor: 8.33
-        verificar:
-          parametro: desnivel_lance
-          operador: "<="
-          valor: 0.80
-        referencia: "ABNT NBR 9050:2020 — 6.6 (Tabela 4)"
-
-  - id: largura_minima_rampa
-    nome: "Largura livre mínima da rampa"
-    parametro: largura_livre
-    operador: ">="
-    valor: 1.20
-    referencia: "ABNT NBR 9050:2020 — 6.6"
-
-  - id: patamares_rampa
-    nome: "Presença de patamares"
-    tipo: checklist
-    parametro: possui_patamar
-    referencia: "ABNT NBR 9050:2020 — 6.6"
-
-  - id: corrimao_duplo
-    nome: "Corrimãos em duas alturas"
-    tipo: checklist
-    parametro: possui_corrimao_duplo
-    referencia: "ABNT NBR 9050:2020 — 6.6"
-
-  - id: prolongamento_corrimao_rampa
-    nome: "Prolongamento mínimo do corrimão"
-    parametro: prolongamento_corrimao
-    operador: ">="
-    valor: 0.30
-    referencia: "ABNT NBR 9050:2020 — 6.6"
-
-  - id: guia_balizamento_altura
-    nome: "Altura mínima da guia de balizamento"
-    parametro: altura_guia_balizamento
-    operador: ">="
-    valor: 0.05
-    referencia: "ABNT NBR 9050:2020 — 6.6"
+- id: inclinacao_por_tabela
+  nome: Dimensionamento da inclinação e desnível
+  tipo: conditional
+  parametro: inclinacao
+  condicoes:
+  - quando:
+      operador: <=
+      valor: 5.0
+    verificar:
+      parametro: desnivel_segmento
+      operador: <=
+      valor: 1.5
+    mensagem: Para inclinação de até 5 %, o desnível de cada segmento deve ser de até 1,50 m.
+  - quando:
+      operador: <=
+      valor: 6.25
+    verificar:
+      parametro: desnivel_segmento
+      operador: <=
+      valor: 1.0
+    mensagem: Para inclinação acima de 5 % até 6,25 %, o desnível de cada segmento deve ser de até 1,00 m.
+  - quando:
+      operador: <=
+      valor: 8.33
+    verificar:
+      parametro: desnivel_segmento
+      operador: <=
+      valor: 0.8
+    mensagem: Para inclinação acima de 6,25 % até 8,33 %, o desnível de cada segmento deve ser de até 0,80 m.
+  referencia: ABNT NBR 9050:2020 — 6.6.2.1 e Tabela 4
+- id: numero_segmentos_inclinacao_alta
+  nome: Número máximo de segmentos para inclinação acima de 6,25 %
+  tipo: conditional
+  parametro: inclinacao
+  condicoes:
+  - quando:
+      operador: <=
+      valor: 6.25
+    resultado: conforme
+  - quando:
+      operador: <=
+      valor: 8.33
+    verificar:
+      parametro: numero_segmentos
+      operador: <=
+      valor: 15
+    mensagem: Para inclinação acima de 6,25 % até 8,33 %, são permitidos no máximo 15 segmentos.
+  referencia: ABNT NBR 9050:2020 — 6.6.2.1 e Tabela 4
+- id: largura_minima
+  nome: Largura livre mínima
+  parametro: largura
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 6.6.2.5
+- id: inclinacao_transversal
+  nome: Inclinação transversal máxima
+  tipo: conditional
+  parametro: ambiente
+  condicoes:
+  - quando:
+      operador: ==
+      valor: interno
+    verificar:
+      parametro: inclinacao_transversal
+      operador: <=
+      valor: 2
+    mensagem: Em rampas internas, a inclinação transversal não pode exceder 2 %.
+  - quando:
+      operador: ==
+      valor: externo
+    verificar:
+      parametro: inclinacao_transversal
+      operador: <=
+      valor: 3
+    mensagem: Em rampas externas, a inclinação transversal não pode exceder 3 %.
+  referencia: ABNT NBR 9050:2020 — 6.6.2.4
+- id: patamar_inicial_final
+  nome: Patamar inicial e final
+  parametro: patamar_inicial_final
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 6.6.4
+- id: patamar_intermediario
+  nome: Patamar intermediário
+  parametro: patamar_intermediario
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 6.6.4
+- id: raio_rampa_curva
+  nome: Raio mínimo da rampa em curva
+  tipo: conditional
+  parametro: rampa_curva
+  condicoes:
+  - quando:
+      operador: ==
+      valor: false
+    resultado: conforme
+  - quando:
+      operador: ==
+      valor: true
+    verificar:
+      parametro: raio_curva
+      operador: '>='
+      valor: 3.0
+    mensagem: Rampas em curva devem ter raio mínimo de 3,00 m.
+  referencia: ABNT NBR 9050:2020 — 6.6.2.3
+- id: guia_balizamento
+  nome: Guia de balizamento
+  parametro: guia_balizamento
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.6.3
+- id: inclinacao_transversal_maxima
+  nome: Inclinação transversal absoluta
+  parametro: inclinacao_transversal
+  operador: <=
+  valor: 3
+  referencia: ABNT NBR 9050:2020 — 6.6.2.4

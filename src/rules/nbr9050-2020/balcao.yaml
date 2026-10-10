@@ -1,0 +1,121 @@
+id: balcao
+nome: Balcão
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  tipo_balcao:
+    label: Tipo de balcão
+    tipo: select
+    opcoes:
+    - atendimento
+    - caixa_bancario
+    - pagamento
+    - bilheteria
+    - informacao
+    obrigatorio: true
+  facilmente_identificado:
+    label: Facilmente identificado
+    tipo: boolean
+    obrigatorio: true
+  localizado_em_rota_acessivel:
+    label: Localizado em rota acessível
+    tipo: boolean
+    obrigatorio: true
+  aproximacao_frontal:
+    label: Aproximação frontal
+    tipo: boolean
+  circulacao_giro_180:
+    label: Circulação adjacente para giro de 180 graus
+    tipo: boolean
+  largura_superficie:
+    label: Largura da superfície
+    tipo: number
+    unidade: m
+  altura_superficie:
+    label: Altura da superfície
+    tipo: number
+    unidade: m
+  largura_livre_inferior:
+    label: Largura livre sob a superfície
+    tipo: number
+    unidade: m
+  altura_livre_inferior:
+    label: Altura livre sob a superfície
+    tipo: number
+    unidade: m
+  profundidade_livre_inferior:
+    label: Profundidade livre sob a superfície
+    tipo: number
+    unidade: m
+  passagem_lateral:
+    label: Largura da passagem lateral
+    tipo: number
+    unidade: m
+regras:
+- id: identificacao
+  nome: Identificação
+  parametro: facilmente_identificado
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.2.1.1 e 9.2.2.1
+- id: rota_acessivel
+  nome: Rota acessível
+  parametro: localizado_em_rota_acessivel
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.2.1.1 e 9.2.2.1
+- id: aproximacao_frontal
+  nome: Aproximação frontal
+  parametro: aproximacao_frontal
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.2.1.2
+- id: giro_180
+  nome: Giro de 180 graus
+  parametro: circulacao_giro_180
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.2.1.2
+- id: largura_superficie
+  nome: Largura mínima da superfície
+  parametro: largura_superficie
+  operador: '>='
+  valor: 0.9
+  referencia: ABNT NBR 9050:2020 — 9.2.1.4
+- id: altura_minima
+  nome: Altura mínima da superfície
+  parametro: altura_superficie
+  operador: '>='
+  valor: 0.75
+  referencia: ABNT NBR 9050:2020 — 9.2.1.4
+- id: altura_maxima
+  nome: Altura máxima da superfície
+  parametro: altura_superficie
+  operador: <=
+  valor: 0.85
+  referencia: ABNT NBR 9050:2020 — 9.2.1.4
+- id: largura_livre
+  nome: Largura livre mínima sob a superfície
+  parametro: largura_livre_inferior
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 9.2.1.4
+- id: altura_livre
+  nome: Altura livre mínima sob a superfície
+  parametro: altura_livre_inferior
+  operador: '>='
+  valor: 0.73
+  referencia: ABNT NBR 9050:2020 — 9.2.1.5
+- id: profundidade_livre
+  nome: Profundidade livre mínima
+  parametro: profundidade_livre_inferior
+  operador: '>='
+  valor: 0.3
+  referencia: ABNT NBR 9050:2020 — 9.2.1.5
+- id: passagem_lateral
+  nome: Passagem lateral mínima
+  parametro: passagem_lateral
+  operador: '>='
+  valor: 0.9
+  referencia: ABNT NBR 9050:2020 — 9.2.2.2

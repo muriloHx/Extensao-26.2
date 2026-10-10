@@ -1,0 +1,119 @@
+id: degraus-isolados
+nome: Degraus isolados
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  quantidade_degraus:
+    label: Quantidade de degraus
+    tipo: number
+    unidade: degraus
+    obrigatorio: true
+  piso:
+    label: Piso do degrau
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  espelho:
+    label: Espelho do degrau
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  possui_corrimao:
+    label: Possui corrimão
+    tipo: boolean
+    obrigatorio: true
+  possui_sinalizacao:
+    label: Possui sinalização em toda a extensão
+    tipo: boolean
+    obrigatorio: true
+  largura_rampa_associada:
+    label: Largura livre da rampa associada
+    tipo: number
+    unidade: m
+  possui_bocel:
+    label: Possui bocel ou espelho inclinado
+    tipo: boolean
+    obrigatorio: true
+  projecao_bocel:
+    label: Projeção da aresta
+    tipo: number
+    unidade: m
+regras:
+- id: quantidade_maxima
+  nome: Quantidade máxima para degrau isolado
+  parametro: quantidade_degraus
+  operador: <=
+  valor: 2
+  referencia: ABNT NBR 9050:2020 — 6.7.2
+- id: quantidade_minima
+  nome: Quantidade mínima de degraus
+  parametro: quantidade_degraus
+  operador: '>='
+  valor: 1
+  referencia: ABNT NBR 9050:2020 — 6.7.2
+- id: piso_minimo
+  nome: Piso mínimo
+  parametro: piso
+  operador: '>='
+  valor: 0.28
+  referencia: ABNT NBR 9050:2020 — 6.7.2 e 6.8.2
+- id: piso_maximo
+  nome: Piso máximo
+  parametro: piso
+  operador: <=
+  valor: 0.32
+  referencia: ABNT NBR 9050:2020 — 6.7.2 e 6.8.2
+- id: espelho_minimo
+  nome: Espelho mínimo
+  parametro: espelho
+  operador: '>='
+  valor: 0.16
+  referencia: ABNT NBR 9050:2020 — 6.7.2 e 6.8.2
+- id: espelho_maximo
+  nome: Espelho máximo
+  parametro: espelho
+  operador: <=
+  valor: 0.18
+  referencia: ABNT NBR 9050:2020 — 6.7.2 e 6.8.2
+- id: corrimao_obrigatorio
+  nome: Corrimão obrigatório
+  parametro: possui_corrimao
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.7.2
+- id: sinalizacao_obrigatoria
+  nome: Sinalização obrigatória
+  parametro: possui_sinalizacao
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.7.2 e 5.4.4.1
+- id: largura_rampa_associada
+  nome: Largura mínima da rampa junto ao degrau
+  parametro: largura_rampa_associada
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 6.7.2 e 6.6.2.5
+- id: projecao_bocel
+  nome: Projeção máxima da aresta
+  tipo: conditional
+  parametro: possui_bocel
+  condicoes:
+  - quando:
+      operador: ==
+      valor: false
+    resultado: conforme
+  - quando:
+      operador: ==
+      valor: true
+    verificar:
+      parametro: projecao_bocel
+      operador: <=
+      valor: 0.015
+    mensagem: A projeção da aresta não pode exceder 1,5 cm.
+  referencia: ABNT NBR 9050:2020 — 6.7.1
+- id: relacao_piso_espelho
+  nome: Relação entre piso e espelho
+  tipo: checklist
+  parametro: piso
+  referencia: ABNT NBR 9050:2020 — 6.7.2 e 6.8.2 alínea a; verificar 0,63 m ≤ p + 2e ≤ 0,65 m.

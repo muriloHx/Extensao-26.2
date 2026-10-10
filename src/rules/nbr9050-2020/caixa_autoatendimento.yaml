@@ -1,0 +1,98 @@
+id: caixa_autoatendimento
+nome: Caixa/autoatendimento
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  vao_livre_acessivel:
+    label: Vão livre da passagem acessível
+    tipo: number
+    unidade: m
+  localizado_em_rota_acessivel:
+    label: Localizado em rota acessível
+    tipo: boolean
+  circulacao_giro_180:
+    label: Circulação adjacente para giro de 180 graus
+    tipo: boolean
+  alcance_manual_visual:
+    label: Atende ao alcance manual e visual
+    tipo: boolean
+  iluminacao_adequada:
+    label: Iluminação adequada sem reflexos
+    tipo: boolean
+  intercomunicador:
+    label: Possui intercomunicador
+    tipo: boolean
+  suporte_bengala_muleta:
+    label: Possui suporte para bengalas ou muletas
+    tipo: boolean
+  piso_nivelado:
+    label: Piso nivelado e livre de obstruções
+    tipo: boolean
+  mr_aproximacao_frontal:
+    label: Módulo de referência para aproximação frontal
+    tipo: boolean
+  alcance_visual_frontal_lateral:
+    label: Alcance visual frontal ou lateral
+    tipo: boolean
+regras:
+- id: vao_livre
+  nome: Vão livre mínimo
+  parametro: vao_livre_acessivel
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 9.4.1.1
+- id: rota
+  nome: Rota acessível
+  parametro: localizado_em_rota_acessivel
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.1.2 e 9.4.3.1
+- id: giro
+  nome: Giro de 180 graus
+  parametro: circulacao_giro_180
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.1.2
+- id: alcance
+  nome: Alcance manual e visual
+  parametro: alcance_manual_visual
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.2.1
+- id: iluminacao
+  nome: Iluminação sem reflexos
+  parametro: iluminacao_adequada
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.2.1 e 9.4.3.3
+- id: intercomunicador
+  nome: Intercomunicador
+  parametro: intercomunicador
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.2.2
+- id: suporte
+  nome: Suporte para bengalas ou muletas
+  parametro: suporte_bengala_muleta
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.2.3
+- id: piso
+  nome: Piso nivelado
+  parametro: piso_nivelado
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.3.2
+- id: mr
+  nome: Módulo de referência para aproximação
+  parametro: mr_aproximacao_frontal
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.3.4
+- id: alcance_visual
+  nome: Alcance visual acessível
+  parametro: alcance_visual_frontal_lateral
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.3.4

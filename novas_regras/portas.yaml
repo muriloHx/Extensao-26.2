@@ -1,0 +1,146 @@
+id: portas
+nome: Portas
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  vao_livre:
+    label: Vão livre
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  altura_livre:
+    label: Altura livre
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  forca_acionamento:
+    label: Força de acionamento
+    tipo: number
+    unidade: N
+    obrigatorio: true
+  altura_macaneta:
+    label: Altura da maçaneta
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  possui_macaneta_alavanca:
+    label: Maçaneta do tipo alavanca
+    tipo: boolean
+    obrigatorio: true
+  abertura_um_movimento:
+    label: Abertura com um único movimento
+    tipo: boolean
+    obrigatorio: true
+  tipo_puxador:
+    label: Tipo de puxador
+    tipo: select
+    opcoes:
+    - nenhum
+    - vertical
+    - horizontal
+  diametro_puxador:
+    label: Diâmetro do puxador
+    tipo: number
+    unidade: m
+  comprimento_puxador:
+    label: Comprimento do puxador
+    tipo: number
+    unidade: m
+  afastamento_puxador:
+    label: Afastamento do puxador da porta
+    tipo: number
+    unidade: m
+  afastamento_batente_puxador:
+    label: Afastamento do puxador do batente
+    tipo: number
+    unidade: m
+  altura_puxador:
+    label: Altura do puxador
+    tipo: number
+    unidade: m
+regras:
+- id: vao_livre_minimo
+  nome: Vão livre mínimo
+  parametro: vao_livre
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 6.11.2.4 e 6.11.2.7
+- id: altura_livre_minima
+  nome: Altura livre mínima
+  parametro: altura_livre
+  operador: '>='
+  valor: 2.1
+  referencia: ABNT NBR 9050:2020 — Figura 86 / 6.11.2
+- id: forca_maxima_acionamento
+  nome: Força máxima de acionamento
+  parametro: forca_acionamento
+  operador: <=
+  valor: 36
+  referencia: ABNT NBR 9050:2020 — 6.11.2.5
+- id: altura_macaneta_minima
+  nome: Altura mínima da maçaneta
+  parametro: altura_macaneta
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 6.11.2.6 e 4.6.6.1
+- id: altura_macaneta_maxima
+  nome: Altura máxima da maçaneta
+  parametro: altura_macaneta
+  operador: <=
+  valor: 1.1
+  referencia: ABNT NBR 9050:2020 — 6.11.2.6 e 4.6.6.1
+- id: macaneta_alavanca
+  nome: Maçaneta do tipo alavanca
+  parametro: possui_macaneta_alavanca
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.11.2.6
+- id: abertura_um_movimento
+  nome: Abertura com um único movimento
+  parametro: abertura_um_movimento
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.11.2.6
+- id: diametro_puxador_minimo
+  nome: Diâmetro mínimo do puxador
+  parametro: diametro_puxador
+  operador: '>='
+  valor: 0.025
+  referencia: ABNT NBR 9050:2020 — 4.6.6.2 e 4.6.6.3
+- id: diametro_puxador_maximo
+  nome: Diâmetro máximo do puxador
+  parametro: diametro_puxador
+  operador: <=
+  valor: 0.035
+  referencia: ABNT NBR 9050:2020 — 4.6.6.2 e 4.6.6.3
+- id: comprimento_puxador_minimo
+  nome: Comprimento mínimo do puxador
+  parametro: comprimento_puxador
+  operador: '>='
+  valor: 0.3
+  referencia: ABNT NBR 9050:2020 — 4.6.6.2
+- id: afastamento_puxador_minimo
+  nome: Afastamento mínimo do puxador
+  parametro: afastamento_puxador
+  operador: '>='
+  valor: 0.04
+  referencia: ABNT NBR 9050:2020 — 4.6.6.2 e 4.6.6.3
+- id: afastamento_batente_puxador
+  nome: Afastamento do puxador do batente
+  parametro: afastamento_batente_puxador
+  operador: '>='
+  valor: 0.1
+  referencia: ABNT NBR 9050:2020 — 4.6.6.2 e 4.6.6.3
+- id: altura_puxador_minima
+  nome: Altura mínima do puxador
+  parametro: altura_puxador
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 4.6.6.2 e 4.6.6.3
+- id: altura_puxador_maxima
+  nome: Altura máxima do puxador
+  parametro: altura_puxador
+  operador: <=
+  valor: 1.1
+  referencia: ABNT NBR 9050:2020 — 4.6.6.2 e 4.6.6.3

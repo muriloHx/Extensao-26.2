@@ -1,0 +1,141 @@
+id: escadas
+nome: Escadas
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  piso:
+    label: Piso do degrau
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  espelho:
+    label: Espelho do degrau
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  largura:
+    label: Largura
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  distancia_primeiro_ultimo:
+    label: Distância do primeiro e último degraus da circulação adjacente
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  inclinacao_transversal:
+    label: Inclinação transversal
+    tipo: number
+    unidade: '%'
+    obrigatorio: true
+  ambiente:
+    label: Local da escada
+    tipo: select
+    opcoes:
+    - interno
+    - externo
+  possui_espelho_vazado:
+    label: Possui espelho vazado
+    tipo: boolean
+    obrigatorio: true
+  possui_guia_balizamento:
+    label: Possui guia de balizamento
+    tipo: boolean
+    obrigatorio: true
+  piso_espelho_constantes:
+    label: Pisos e espelhos constantes
+    tipo: boolean
+    obrigatorio: true
+  sinalizacao_degraus:
+    label: Degraus sinalizados
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: piso_minimo
+  nome: Piso mínimo
+  parametro: piso
+  operador: '>='
+  valor: 0.28
+  referencia: ABNT NBR 9050:2020 — 6.8.2
+- id: piso_maximo
+  nome: Piso máximo
+  parametro: piso
+  operador: <=
+  valor: 0.32
+  referencia: ABNT NBR 9050:2020 — 6.8.2
+- id: espelho_minimo
+  nome: Espelho mínimo
+  parametro: espelho
+  operador: '>='
+  valor: 0.16
+  referencia: ABNT NBR 9050:2020 — 6.8.2
+- id: espelho_maximo
+  nome: Espelho máximo
+  parametro: espelho
+  operador: <=
+  valor: 0.18
+  referencia: ABNT NBR 9050:2020 — 6.8.2
+- id: largura_minima
+  nome: Largura mínima em rota acessível
+  parametro: largura
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 6.8.3
+- id: distancia_primeiro_ultimo
+  nome: Distância mínima do primeiro e último degraus
+  parametro: distancia_primeiro_ultimo
+  operador: '>='
+  valor: 0.3
+  referencia: ABNT NBR 9050:2020 — 6.8.4
+- id: inclinacao_transversal
+  nome: Inclinação transversal máxima
+  tipo: conditional
+  parametro: ambiente
+  condicoes:
+  - quando:
+      operador: ==
+      valor: interno
+    verificar:
+      parametro: inclinacao_transversal
+      operador: <=
+      valor: 1
+    mensagem: Em escadas internas, a inclinação transversal não pode exceder 1 %.
+  - quando:
+      operador: ==
+      valor: externo
+    verificar:
+      parametro: inclinacao_transversal
+      operador: <=
+      valor: 2
+    mensagem: Em escadas externas, a inclinação transversal não pode exceder 2 %.
+  referencia: ABNT NBR 9050:2020 — 6.8.5
+- id: espelho_vazado
+  nome: Espelho não vazado
+  parametro: possui_espelho_vazado
+  operador: ==
+  valor: false
+  referencia: ABNT NBR 9050:2020 — 6.7.1
+- id: guia_balizamento
+  nome: Guia de balizamento
+  parametro: possui_guia_balizamento
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.8.3 e 6.6.3
+- id: pisos_espelhos_constantes
+  nome: Pisos e espelhos constantes
+  parametro: piso_espelho_constantes
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.8.2
+- id: sinalizacao_degraus
+  nome: Sinalização dos degraus
+  parametro: sinalizacao_degraus
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.8.4 e Seção 5
+- id: relacao_piso_espelho
+  nome: Relação entre piso e espelho
+  tipo: checklist
+  parametro: piso_espelho_constantes
+  referencia: ABNT NBR 9050:2020 — 6.8.2 alínea a; verificar 0,63 m ≤ p + 2e ≤ 0,65 m.

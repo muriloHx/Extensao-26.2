@@ -1,0 +1,110 @@
+id: vagas_acessiveis
+nome: Vagas acessíveis
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  possui_sinalizacao:
+    label: Vaga sinalizada
+    tipo: boolean
+    obrigatorio: true
+  possui_faixa_circulacao:
+    label: Possui faixa adicional de circulação
+    tipo: boolean
+    obrigatorio: true
+  largura_faixa_circulacao:
+    label: Largura da faixa adicional de circulação
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  piso_regular_estavel:
+    label: Piso regular e estável
+    tipo: boolean
+    obrigatorio: true
+  distancia_acesso:
+    label: Distância até o acesso à edificação ou elevador
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  evita_circulacao_entre_veiculos:
+    label: Localização evita circulação entre veículos
+    tipo: boolean
+    obrigatorio: true
+  vinculada_rota_acessivel:
+    label: Vinculada à rota acessível
+    tipo: boolean
+    obrigatorio: true
+  sinalizacao_nao_interfere:
+    label: Sinalização não interfere na circulação
+    tipo: boolean
+    obrigatorio: true
+  faixa_pedestre_estacionamento:
+    label: Faixa de circulação de pedestres no estacionamento
+    tipo: boolean
+    obrigatorio: true
+  largura_faixa_pedestre:
+    label: Largura da faixa de circulação de pedestres
+    tipo: number
+    unidade: m
+    obrigatorio: true
+regras:
+- id: sinalizacao
+  nome: Sinalização da vaga
+  parametro: possui_sinalizacao
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.1 e 5.5.2.3
+- id: faixa_circulacao
+  nome: Faixa adicional de circulação
+  parametro: possui_faixa_circulacao
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 b
+- id: largura_faixa_circulacao
+  nome: Largura mínima da faixa adicional
+  parametro: largura_faixa_circulacao
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 b
+- id: piso_regular_estavel
+  nome: Piso regular e estável
+  parametro: piso_regular_estavel
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 e
+- id: distancia_acesso
+  nome: Distância máxima até acesso ou elevador
+  parametro: distancia_acesso
+  operador: <=
+  valor: 50
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 f
+- id: evita_circulacao_entre_veiculos
+  nome: Localização segura da vaga
+  parametro: evita_circulacao_entre_veiculos
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 d
+- id: vinculada_rota_acessivel
+  nome: Vinculação à rota acessível
+  parametro: vinculada_rota_acessivel
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 c
+- id: sinalizacao_nao_interfere
+  nome: Sinalização sem interferência
+  parametro: sinalizacao_nao_interfere
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.1
+- id: faixa_pedestre_estacionamento
+  nome: Faixa de circulação de pedestres
+  parametro: faixa_pedestre_estacionamento
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.2
+- id: largura_faixa_pedestre
+  nome: Largura mínima da faixa de circulação de pedestres
+  parametro: largura_faixa_pedestre
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 6.14.2

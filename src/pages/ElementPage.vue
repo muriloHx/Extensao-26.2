@@ -10,6 +10,7 @@ import StatusBadge from "../components/StatusBadge.vue";
 
 const props = defineProps({
   elementId: String,
+  quick: Boolean,
 });
 
 const services = inject("services");
@@ -21,9 +22,11 @@ const router = useRouter();
 // Estado da Tela
 const element = ref(null);
 const environment = ref(null);
+const environmentElements = ref([]);
 const ruleSets = ref([]);
 const evaluation = ref(null);
 const selectedNorma = ref("todas");
+const autoName = ref(localStorage.getItem("elementAutoName") === "true");
 
 const form = reactive({
   name: "",
@@ -37,6 +40,41 @@ const isNew = computed(() => !props.elementId);
 const activeChecklist = computed(() =>
   ruleSets.value.find((item) => item.id === form.ruleSet)
 );
+
+const expectedByParameter = computed(() => {
+  const expected = {};
+  for (const rule of activeChecklist.value?.regras ?? []) {
+    const checks = [];
+    if (rule.operador && rule.valor !== undefined) checks.push({ ...rule, parametro: rule.parametro });
+    for (const condition of rule.condicoes ?? []) {
+      if (condition.quando) {
+        checks.push({ ...condition.quando, parametro: rule.parametro });
+      }
+      if (condition.verificar) checks.push(condition.verificar);
+    }
+    for (const check of checks) {
+      if (!check.parametro || check.valor === undefined) continue;
+      expected[check.parametro] ??= [];
+      const description = formatExpected(check.operador, check.valor, activeChecklist.value.parametros?.[check.parametro]?.unidade);
+      if (!expected[check.parametro].includes(description)) expected[check.parametro].push(description);
+    }
+  }
+  return expected;
+});
+
+function formatExpected(operator, value, unit = "") {
+  const formattedValue = typeof value === "boolean" ? (value ? "Sim" : "Não") : value;
+  const valueWithUnit = `${formattedValue}${unit ?? ""}`;
+  switch (operator) {
+    case ">=": return `no mínimo, ${valueWithUnit}`;
+    case "<=": return `no máximo, ${valueWithUnit}`;
+    case ">": return `maior que ${valueWithUnit}`;
+    case "<": return `menor que ${valueWithUnit}`;
+    case "==":
+    case "eq": return `igual a ${valueWithUnit}`;
+    default: return valueWithUnit;
+  }
+}
 
 // Lista dinâmica de normas únicas disponíveis nos ruleSets
 const normasDisponiveis = computed(() => {
@@ -58,6 +96,10 @@ const filteredRuleSets = computed(() => {
 
 // Métodos
 async function loadData() {
+  if (props.quick) {
+    services.quickEvaluationService.clear();
+  }
+
   const loadedRuleSets = await services.ruleSetService.list();
   ruleSets.value = [
     ...builtInRuleSets.map((entry) => entry.ruleSet),
@@ -73,12 +115,17 @@ async function loadData() {
   const environmentId =
     element.value?.environmentId ?? route.query.environmentId;
 
-  if (!environmentId || (!isNew.value && !element.value)) {
+  if (!props.quick && (!environmentId || (!isNew.value && !element.value))) {
     return;
   }
 
-  environment.value =
-    await services.repositories.environmentRepository.get(environmentId);
+  if (!props.quick) {
+    environment.value =
+      await services.repositories.environmentRepository.get(environmentId);
+    environmentElements.value = await services.projectService.listElements(
+      environmentId
+    );
+  }
 
   if (element.value) {
     const evaluations = await services.evaluationService.listEvaluations(
@@ -150,6 +197,43 @@ async function saveOnly() {
   }
 }
 
+function getAutoName(baseName) {
+  if (!baseName) return "";
+
+  const existingNames = new Set(
+    environmentElements.value
+      .filter((item) => item.id !== element.value?.id)
+      .map((item) => item.name)
+  );
+
+  if (!existingNames.has(baseName)) {
+    return baseName;
+  }
+
+  let counter = 1;
+  let newName = `${baseName} (${counter})`;
+
+  while (existingNames.has(newName)) {
+    counter++;
+    newName = `${baseName} (${counter})`;
+  }
+
+  return newName;
+}
+
+watch([autoName, () => form.ruleSet], ([isAuto, newRuleSet]) => {
+  localStorage.setItem("elementAutoName", String(isAuto));
+
+  if (isAuto) {
+    const ruleSet = ruleSets.value.find(
+      (item) => item.id === newRuleSet
+    );
+
+    const baseName = ruleSet?.nome ?? "";
+    form.name = getAutoName(baseName);
+  }
+});
+
 // Salva o elemento, avalia os dados preenchidos e vai para a página de resultado
 async function saveAndEvaluate() {
   if (!activeChecklist.value) {
@@ -157,6 +241,21 @@ async function saveAndEvaluate() {
   }
 
   const data = normalizeFormData();
+
+  if (props.quick) {
+    try {
+      services.quickEvaluationService.evaluate({
+        name: form.name,
+        checklist: activeChecklist.value,
+        data,
+      });
+      router.push("/quick-evaluation/result");
+    } catch (error) {
+      window.alert(error.message);
+    }
+    return;
+  }
+
   const payload = {
     name: form.name,
     type: activeChecklist.value.nome,
@@ -226,11 +325,13 @@ function filterRuleSets(option, label, search) {
 }
 
 onMounted(loadData);
+
 </script>
 
 <template>
-  <template v-if="environment">
+  <template v-if="quick || environment">
     <RouterLink
+      v-if="!quick"
       class="back-link"
       :to="`/projects/${environment.projectId}/environments/${environment.id}`"
     >
@@ -238,8 +339,7 @@ onMounted(loadData);
     </RouterLink>
 
     <PageHeader
-      :eyebrow="isNew ? 'Cadastro' : 'Elemento'"
-      :title="isNew ? 'Novo elemento' : element.name"
+      :title="quick ? 'Avaliação rápida' : isNew ? 'Novo elemento' : element.name"
       description="Escolha o tipo e informe as medidas observadas."
     />
 
@@ -281,14 +381,22 @@ onMounted(loadData);
           </v-select>
         </label>
       </div>
+      <label v-if="!quick" class="field">
+          <div class="field-name-input">
+              <span>Nome do elemento *</span>
 
-      <label class="field">
-        <span>Nome do elemento *</span>
+              <div id="field-name-input__checkbox">
+                  <input type="checkbox" id="auto-name-chk" v-model="autoName" />
+                  <p @click.stop="autoName = !autoName">Auto Nomear</p>
+              </div>
+          </div>
         <input
           v-model="form.name"
           required
           placeholder="Ex.: Porta principal"
+          :disabled="autoName"
         />
+
       </label>
 
       <div class="form-divider">
@@ -306,6 +414,10 @@ onMounted(loadData);
             {{ parameter.label ?? key }}
             <template v-if="parameter.obrigatorio"> *</template>
             <small v-if="parameter.unidade"> ({{ parameter.unidade }})</small>
+            <small v-if="expectedByParameter[key]?.length" class="expected-value">
+              Esperado: {{ expectedByParameter[key].join(' ou ') }}
+            </small>
+
           </span>
 
           <select
@@ -338,25 +450,25 @@ onMounted(loadData);
             inputmode="decimal"
             step="any"
           />
+
         </label>
       </div>
 
       <div class="form-actions">
         <RouterLink
           class="button button--ghost"
-          :to="`/projects/${environment.projectId}/environments/${environment.id}`"
+          :to="quick ? '/projects' : `/projects/${environment.projectId}/environments/${environment.id}`"
         >
           Cancelar
         </RouterLink>
 
-        <!-- Opção 1: Salva o elemento e volta para a EnvironmentPage -->
-        <button class="button button--outline" type="button" @click="saveOnly">
+        <button v-if="!quick" class="button button--outline" type="button" @click="saveOnly">
           Salvar e voltar
         </button>
 
         <!-- Opção 2: Salva, realiza a avaliação e vai para a página de resultado -->
         <button class="button" type="button" @click="saveAndEvaluate">
-          Salvar e avaliar
+          {{ quick ? 'Avaliar' : 'Salvar e avaliar' }}
         </button>
 
         <RouterLink
@@ -405,5 +517,12 @@ onMounted(loadData);
 .ruleset-norma {
   color: #666;
   font-size: 0.85em;
+}
+
+.expected-value {
+  display: block;
+  margin-top: 0.25rem;
+  color: #666;
+  font-weight: normal;
 }
 </style>

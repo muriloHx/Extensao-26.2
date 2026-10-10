@@ -1,0 +1,82 @@
+id: estacionamento
+nome: Estacionamento
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  sinalizacao_vertical:
+    label: Sinalização vertical adequada
+    tipo: boolean
+  espaco_circulacao:
+    label: Largura do espaço adicional de circulação
+    tipo: number
+    unidade: m
+  vinculada_rota_acessivel:
+    label: Vaga vinculada à rota acessível
+    tipo: boolean
+  evita_circulacao_veiculos:
+    label: Evita circulação entre veículos
+    tipo: boolean
+  piso_regular_estavel:
+    label: Piso regular e estável
+    tipo: boolean
+  distancia_acesso:
+    label: Distância até acesso à edificação ou elevadores
+    tipo: number
+    unidade: m
+  faixa_pedestre:
+    label: Faixa de circulação de pedestres
+    tipo: number
+    unidade: m
+  vaga_reservada:
+    label: Existe vaga reservada quando aplicável
+    tipo: boolean
+regras:
+- id: sinalizacao
+  nome: Sinalização da vaga
+  parametro: sinalizacao_vertical
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 5.5.2.3 e 6.14.1
+- id: espaco_circulacao
+  nome: Espaço adicional de circulação
+  parametro: espaco_circulacao
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 b
+- id: rota
+  nome: Vinculação à rota acessível
+  parametro: vinculada_rota_acessivel
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 c
+- id: circulacao
+  nome: Evitar circulação entre veículos
+  parametro: evita_circulacao_veiculos
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 d
+- id: piso
+  nome: Piso regular e estável
+  parametro: piso_regular_estavel
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 e
+- id: distancia
+  nome: Distância máxima até acesso
+  parametro: distancia_acesso
+  operador: <=
+  valor: 50
+  referencia: ABNT NBR 9050:2020 — 6.14.1.2 f
+- id: faixa_pedestre
+  nome: Faixa de circulação de pedestres
+  parametro: faixa_pedestre
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 6.14.2
+- id: vaga_reservada
+  nome: Previsão de vagas reservadas
+  parametro: vaga_reservada
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.14.3

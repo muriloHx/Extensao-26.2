@@ -98,7 +98,6 @@ onMounted(loadProjects);
 
 <template>
   <PageHeader
-    eyebrow="Visão geral"
     title="Projetos"
     description="Acompanhe seus locais e avaliações."
   >

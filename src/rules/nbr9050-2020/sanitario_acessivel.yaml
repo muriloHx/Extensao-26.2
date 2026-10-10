@@ -1,160 +1,125 @@
 id: sanitario_acessivel
-nome: Sanitário Acessível
+nome: Sanitário acessível
 norma:
   nome: ABNT NBR 9050
-  versao: "2020"
-
+  versao: 2020 - versão corrigida 2021
 parametros:
-  diametro_giro:
-    label: "Diâmetro livre para giro de 360°"
+  entrada_independente:
+    label: Possui entrada independente
+    tipo: boolean
+    obrigatorio: true
+  sinalizacao:
+    label: Possui sinalização
+    tipo: boolean
+    obrigatorio: true
+  alarme_emergencia:
+    label: Possui alarme de emergência
+    tipo: boolean
+    obrigatorio: true
+  area_manobra_360:
+    label: Possui área de manobra de 360 graus
+    tipo: boolean
+    obrigatorio: true
+  diametro_manobra:
+    label: Diâmetro da área de manobra
     tipo: number
     unidade: m
     obrigatorio: true
-
-  vao_livre_porta_sanitario:
-    label: "Vão livre mínimo da porta do sanitário"
+  vao_porta:
+    label: Vão livre da porta
     tipo: number
     unidade: m
     obrigatorio: true
-
-  comprimento_puxador_sanitario:
-    label: "Comprimento do puxador horizontal interno"
-    tipo: number
-    unidade: m
-
-  altura_puxador_sanitario:
-    label: "Altura do puxador interno"
-    tipo: number
-    unidade: m
-
-  altura_assento_bacia:
-    label: "Altura do assento da bacia sanitária"
-    tipo: number
-    unidade: m
+  porta_abre_externamente:
+    label: Porta abre para o lado externo
+    tipo: boolean
     obrigatorio: true
-
-  eixo_bacia_parede:
-    label: "Distância do eixo da bacia até a parede lateral"
+  comprimento_puxador:
+    label: Comprimento do puxador
     tipo: number
     unidade: m
-    obrigatorio: true
-
-  altura_descarga:
-    label: "Altura de acionamento da válvula de descarga"
+  afastamento_puxador:
+    label: Afastamento do puxador
+    tipo: number
+    unidade: mm
+  diametro_puxador:
+    label: Diâmetro do puxador
+    tipo: number
+    unidade: mm
+  distancia_maxima:
+    label: Distância até o sanitário
     tipo: number
     unidade: m
-
-  altura_lavatorio_borda:
-    label: "Altura da borda superior do lavatório"
-    tipo: number
-    unidade: m
-    obrigatorio: true
-
-  altura_livre_sob_lavatorio:
-    label: "Altura livre inferior sob a cuba"
-    tipo: number
-    unidade: m
-
-  profundidade_livre_lavatorio:
-    label: "Profundidade livre inferior para joelhos"
-    tipo: number
-    unidade: m
-
 regras:
-  - id: sanitario_giro_360
-    nome: "Diâmetro livre mínimo para giro de 360°"
-    parametro: diametro_giro
-    operador: ">="
-    valor: 1.50
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_vao_porta
-    nome: "Vão livre mínimo da porta"
-    parametro: vao_livre_porta_sanitario
-    operador: ">="
-    valor: 0.80
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_puxador_comprimento
-    nome: "Comprimento mínimo do puxador horizontal"
-    parametro: comprimento_puxador_sanitario
-    operador: ">="
-    valor: 0.40
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_puxador_altura_min
-    nome: "Altura mínima do puxador interno"
-    parametro: altura_puxador_sanitario
-    operador: ">="
-    valor: 0.80
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_puxador_altura_max
-    nome: "Altura máxima do puxador interno"
-    parametro: altura_puxador_sanitario
-    operador: "<="
-    valor: 1.10
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_assento_min
-    nome: "Altura mínima do assento da bacia"
-    parametro: altura_assento_bacia
-    operador: ">="
-    valor: 0.43
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_assento_max
-    nome: "Altura máxima do assento da bacia"
-    parametro: altura_assento_bacia
-    operador: "<="
-    valor: 0.45
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_eixo_bacia_min
-    nome: "Distância mínima do eixo da bacia à parede"
-    parametro: eixo_bacia_parede
-    operador: ">="
-    valor: 0.42
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_eixo_bacia_max
-    nome: "Distância máxima do eixo da bacia à parede"
-    parametro: eixo_bacia_parede
-    operador: "<="
-    valor: 0.45
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_descarga_max
-    nome: "Altura máxima de acionamento da descarga"
-    parametro: altura_descarga
-    operador: "<="
-    valor: 1.00
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_lavatorio_borda_min
-    nome: "Altura mínima da borda superior do lavatório"
-    parametro: altura_lavatorio_borda
-    operador: ">="
-    valor: 0.78
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_lavatorio_borda_max
-    nome: "Altura máxima da borda superior do lavatório"
-    parametro: altura_lavatorio_borda
-    operador: "<="
-    valor: 0.80
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_lavatorio_altura_livre
-    nome: "Altura livre mínima sob a cuba"
-    parametro: altura_livre_sob_lavatorio
-    operador: ">="
-    valor: 0.73
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
-
-  - id: sanitario_lavatorio_profundidade_livre
-    nome: "Profundidade livre mínima para joelhos"
-    parametro: profundidade_livre_lavatorio
-    operador: ">="
-    valor: 0.25
-    referencia: "ABNT NBR 9050:2020 — 7.5, 7.6, 7.7 e 7.8"
+- id: entrada_independente
+  nome: Entrada independente
+  parametro: entrada_independente
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 7.4.2
+- id: sinalizacao
+  nome: Sinalização
+  parametro: sinalizacao
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 7.3.1 e 5.3.5.3
+- id: alarme
+  nome: Alarme de emergência
+  parametro: alarme_emergencia
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 7.4.2.2 e 5.6.4.1
+- id: manobra
+  nome: Área de manobra de 360 graus
+  parametro: area_manobra_360
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 7.5 e Figura 100
+- id: diametro
+  nome: Diâmetro mínimo da manobra
+  parametro: diametro_manobra
+  operador: '>='
+  valor: 1.5
+  referencia: ABNT NBR 9050:2020 — 4.3.4 e Figura 100
+- id: vao
+  nome: Vão livre mínimo da porta
+  parametro: vao_porta
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 6.11.2.4 e 7.5
+- id: abertura
+  nome: Abertura externa
+  parametro: porta_abre_externamente
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 7.5
+- id: puxador_comprimento
+  nome: Comprimento mínimo do puxador
+  parametro: comprimento_puxador
+  operador: '>='
+  valor: 0.4
+  referencia: ABNT NBR 9050:2020 — 7.5
+- id: puxador_afastamento
+  nome: Afastamento máximo do puxador
+  parametro: afastamento_puxador
+  operador: <=
+  valor: 40
+  referencia: ABNT NBR 9050:2020 — 7.5
+- id: puxador_diametro_minimo
+  nome: Diâmetro mínimo do puxador
+  parametro: diametro_puxador
+  operador: '>='
+  valor: 25
+  referencia: ABNT NBR 9050:2020 — 7.5
+- id: puxador_diametro_maximo
+  nome: Diâmetro máximo do puxador
+  parametro: diametro_puxador
+  operador: <=
+  valor: 35
+  referencia: ABNT NBR 9050:2020 — 7.5
+- id: distancia
+  nome: Distância máxima recomendada
+  parametro: distancia_maxima
+  operador: <=
+  valor: 50
+  referencia: ABNT NBR 9050:2020 — 7.3.2

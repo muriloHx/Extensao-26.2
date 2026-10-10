@@ -1,0 +1,146 @@
+id: corrimaos
+nome: Corrimãos
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  altura_superior:
+    label: Altura do corrimão superior
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  altura_inferior:
+    label: Altura do corrimão inferior
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  prolongamento:
+    label: Prolongamento nas extremidades
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  diametro:
+    label: Diâmetro da seção circular
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  afastamento_parede:
+    label: Afastamento da parede ou obstáculo
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  quantidade_lados:
+    label: Quantidade de lados com corrimão
+    tipo: number
+    unidade: lados
+    obrigatorio: true
+  largura_escada_rampa:
+    label: Largura da escada ou rampa
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  possui_corrimao_intermediario:
+    label: Possui corrimão intermediário
+    tipo: boolean
+    obrigatorio: true
+  patamar_intermediario:
+    label: Comprimento do patamar
+    tipo: number
+    unidade: m
+  espacamento_corrimao_intermediario:
+    label: Espaçamento entre segmentos do corrimão intermediário
+    tipo: number
+    unidade: m
+  extremidades_seguras:
+    label: Extremidades sem protuberância
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: altura_superior
+  nome: Altura do corrimão superior
+  parametro: altura_superior
+  operador: ==
+  valor: 0.92
+  referencia: ABNT NBR 9050:2020 — 6.9.3.3
+- id: altura_inferior
+  nome: Altura do corrimão inferior
+  parametro: altura_inferior
+  operador: ==
+  valor: 0.7
+  referencia: ABNT NBR 9050:2020 — 6.9.3.3
+- id: prolongamento_minimo
+  nome: Prolongamento mínimo
+  parametro: prolongamento
+  operador: '>='
+  valor: 0.3
+  referencia: ABNT NBR 9050:2020 — 6.9.3.4
+- id: diametro_minimo
+  nome: Diâmetro mínimo
+  parametro: diametro
+  operador: '>='
+  valor: 0.03
+  referencia: ABNT NBR 9050:2020 — 4.6.5
+- id: diametro_maximo
+  nome: Diâmetro máximo
+  parametro: diametro
+  operador: <=
+  valor: 0.045
+  referencia: ABNT NBR 9050:2020 — 4.6.5
+- id: afastamento_minimo
+  nome: Afastamento mínimo da parede ou obstáculo
+  parametro: afastamento_parede
+  operador: '>='
+  valor: 0.04
+  referencia: ABNT NBR 9050:2020 — 4.6.5
+- id: dois_lados
+  nome: Corrimãos nos dois lados
+  parametro: quantidade_lados
+  operador: '>='
+  valor: 2
+  referencia: ABNT NBR 9050:2020 — 6.9.3.2
+- id: corrimao_intermediario
+  nome: Corrimão intermediário para largura igual ou superior a 2,40 m
+  tipo: conditional
+  parametro: largura_escada_rampa
+  condicoes:
+  - quando:
+      operador: <
+      valor: 2.4
+    resultado: conforme
+  - quando:
+      operador: '>='
+      valor: 2.4
+    verificar:
+      parametro: possui_corrimao_intermediario
+      operador: ==
+      valor: true
+    mensagem: Para largura igual ou superior a 2,40 m, deve ser atendida uma das condições previstas em 6.9.3.5.
+  referencia: ABNT NBR 9050:2020 — 6.9.3.5
+- id: interrupcao_corrimao_intermediario
+  nome: Condição para interrupção do corrimão intermediário
+  tipo: conditional
+  parametro: patamar_intermediario
+  condicoes:
+  - quando:
+      operador: <=
+      valor: 1.4
+    verificar:
+      parametro: espacamento_corrimao_intermediario
+      operador: ==
+      valor: 0.0
+    mensagem: O corrimão intermediário não deve ser interrompido quando o patamar não for superior a 1,40 m.
+  - quando:
+      operador: '>'
+      valor: 1.4
+    verificar:
+      parametro: espacamento_corrimao_intermediario
+      operador: '>='
+      valor: 0.8
+    mensagem: Quando interrompido, deve haver espaçamento mínimo de 0,80 m entre segmentos.
+  referencia: ABNT NBR 9050:2020 — 6.9.3.6
+- id: extremidades
+  nome: Extremidades seguras
+  parametro: extremidades_seguras
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.9.3.4

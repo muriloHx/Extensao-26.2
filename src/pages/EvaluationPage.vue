@@ -8,6 +8,7 @@ import StatusBadge from "../components/StatusBadge.vue";
 
 const props = defineProps({
   elementId: String,
+  quick: Boolean,
 });
 
 const services = inject("services");
@@ -86,6 +87,13 @@ function formatExpected(operator, value, unit = "") {
 }
 
 async function loadData() {
+  if (props.quick) {
+    const current = services.quickEvaluationService.getCurrent();
+    element.value = current?.element ?? null;
+    evaluation.value = current?.evaluation ?? null;
+    return;
+  }
+
   element.value = await services.repositories.elementRepository.get(
     props.elementId
   );
@@ -104,7 +112,7 @@ onMounted(loadData);
 <template>
   <!-- Cenário 1: Elemento e Avaliação Carregados -->
   <template v-if="element && evaluation">
-    <RouterLink class="back-link" :to="`/elements/${element.id}`">
+    <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : `/elements/${element.id}`">
       <ChevronLeft :size="18" aria-hidden="true" />{{ element.name }}
     </RouterLink>
 
@@ -155,11 +163,15 @@ onMounted(loadData);
         </div>
       </article>
     </section>
+
+    <RouterLink v-if="quick" class="button" to="/quick-evaluation">
+      Nova avaliação rápida
+    </RouterLink>
   </template>
 
   <!-- Cenário 2: Elemento encontrado, mas sem avaliação -->
   <template v-else-if="element">
-    <RouterLink class="back-link" :to="`/elements/${element.id}`">
+    <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : `/elements/${element.id}`">
       <ChevronLeft :size="18" aria-hidden="true" />Elemento
     </RouterLink>
 
@@ -167,8 +179,8 @@ onMounted(loadData);
       title="Ainda não há avaliação"
       text="Preencha os dados do elemento para executar as regras."
     >
-      <RouterLink class="button" :to="`/elements/${element.id}`">
-        Avaliar elemento
+      <RouterLink class="button" :to="quick ? '/quick-evaluation' : `/elements/${element.id}`">
+        {{ quick ? 'Nova avaliação rápida' : 'Avaliar elemento' }}
       </RouterLink>
     </EmptyState>
   </template>
@@ -177,8 +189,8 @@ onMounted(loadData);
   <EmptyState
     v-else
     title="Avaliação não encontrada"
-    text="O elemento pode ter sido removido."
+    :text="quick ? 'Inicie uma avaliação rápida para ver o resultado.' : 'O elemento pode ter sido removido.'"
   >
-    <RouterLink class="button" to="/projects">Projetos</RouterLink>
+    <RouterLink class="button" :to="quick ? '/quick-evaluation' : '/projects'">{{ quick ? 'Avaliação rápida' : 'Projetos' }}</RouterLink>
   </EmptyState>
 </template>

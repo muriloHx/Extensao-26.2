@@ -1,0 +1,148 @@
+id: corredor
+nome: Corredores
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  uso:
+    label: Tipo de uso
+    tipo: select
+    opcoes:
+    - comum
+    - público
+    - grande_fluxo
+    - comum_edificacao_existente
+    obrigatorio: true
+  extensao:
+    label: Extensão do corredor
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  largura:
+    label: Largura livre
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  largura_obstaculo:
+    label: Extensão do obstáculo
+    tipo: number
+    unidade: m
+  possui_bolsao_retorno:
+    label: Possui bolsão de retorno
+    tipo: boolean
+  distancia_bolsao:
+    label: Distância entre bolsões de retorno
+    tipo: number
+    unidade: m
+regras:
+- id: largura_corredor
+  nome: Largura mínima conforme uso e extensão
+  tipo: conditional
+  parametro: uso
+  condicoes:
+  - quando:
+      operador: ==
+      valor: comum
+    verificar:
+      parametro: largura
+      operador: '>='
+      valor: 0.9
+    mensagem: Corredor de uso comum com extensão de até 4 m deve ter largura mínima de 0,90 m.
+  - quando:
+      operador: ==
+      valor: público
+    verificar:
+      parametro: largura
+      operador: '>='
+      valor: 1.5
+    mensagem: Corredor de uso público deve ter largura mínima de 1,50 m.
+  - quando:
+      operador: ==
+      valor: grande_fluxo
+    verificar:
+      parametro: largura
+      operador: '>'
+      valor: 1.5
+    mensagem: Corredores de grande fluxo devem ter largura superior a 1,50 m, conforme o cálculo de fluxo aplicável.
+  - quando:
+      operador: ==
+      valor: comum_edificacao_existente
+    verificar:
+      parametro: largura
+      operador: '>='
+      valor: 0.9
+    mensagem: Em edificações existentes onde a adequação for impraticável, o corredor pode ter largura mínima de 0,90 m com bolsões de retorno.
+  referencia: ABNT NBR 9050:2020 — 6.11.1
+- id: largura_comum_ate_10m
+  nome: Corredor de uso comum com extensão até 10 m
+  tipo: conditional
+  parametro: extensao
+  condicoes:
+  - quando:
+      operador: <=
+      valor: 4
+    resultado: conforme
+    mensagem: Para até 4 m, a largura mínima é de 0,90 m.
+  - quando:
+      operador: <=
+      valor: 10
+    verificar:
+      parametro: largura
+      operador: '>='
+      valor: 1.2
+    mensagem: Para corredores de uso comum com extensão de até 10 m, a largura mínima é de 1,20 m.
+  - quando:
+      operador: '>'
+      valor: 10
+    verificar:
+      parametro: largura
+      operador: '>='
+      valor: 1.5
+    mensagem: Para corredores de uso comum com extensão superior a 10 m, a largura mínima é de 1,50 m.
+  referencia: ABNT NBR 9050:2020 — 6.11.1
+- id: obstaculo_ate_040
+  nome: Transposição de obstáculo de até 0,40 m
+  tipo: conditional
+  parametro: largura_obstaculo
+  condicoes:
+  - quando:
+      operador: <=
+      valor: 0.4
+    verificar:
+      parametro: largura
+      operador: '>='
+      valor: 0.8
+    mensagem: Para obstáculo isolado com extensão de até 0,40 m, a largura mínima para transposição é de 0,80 m.
+  - quando:
+      operador: '>'
+      valor: 0.4
+    verificar:
+      parametro: largura
+      operador: '>='
+      valor: 0.9
+    mensagem: Para obstáculo isolado com extensão superior a 0,40 m, a largura mínima para transposição é de 0,90 m.
+  referencia: ABNT NBR 9050:2020 — 6.11.1.2 e 4.3.2
+- id: bolsao_retorno
+  nome: Bolsão de retorno em edificação existente
+  tipo: conditional
+  parametro: uso
+  condicoes:
+  - quando:
+      operador: ==
+      valor: comum_edificacao_existente
+    verificar:
+      parametro: possui_bolsao_retorno
+      operador: ==
+      valor: true
+    mensagem: Em edificações existentes onde a adequação do corredor seja impraticável, deve haver bolsão de retorno para manobra completa de 180°.
+  - quando:
+      operador: '!='
+      valor: comum_edificacao_existente
+    resultado: conforme
+  referencia: ABNT NBR 9050:2020 — 6.11.1.1
+- id: distancia_bolsao
+  nome: Distância máxima entre bolsões
+  parametro: distancia_bolsao
+  operador: <=
+  valor: 15
+  referencia: ABNT NBR 9050:2020 — 6.11.1.1

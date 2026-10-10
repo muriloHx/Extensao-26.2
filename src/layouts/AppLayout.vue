@@ -4,7 +4,7 @@ import { ClipboardCheck, Folder } from "@lucide/vue";
 import { RouterLink, useRoute } from "vue-router";
 
 const route = useRoute();
-const area = computed(() => route.path.startsWith("/rules") ? "rules" : "projects");
+const area = computed(() => route.path.startsWith("/rules") ? "rules" : route.path.startsWith("/quick-evaluation") ? "quick" : "projects");
 </script>
 
 <template>
@@ -19,6 +19,10 @@ const area = computed(() => route.path.startsWith("/rules") ? "rules" : "project
           <Folder :size="20" aria-hidden="true" />
           <span>Projetos</span>
         </RouterLink>
+        <RouterLink class="nav-item" :class="{ 'is-active': area === 'quick' }" to="/quick-evaluation">
+          <ClipboardCheck :size="20" aria-hidden="true" />
+          <span>Avaliação rápida</span>
+        </RouterLink>
         <RouterLink class="nav-item" :class="{ 'is-active': area === 'rules' }" to="/rules">
           <ClipboardCheck :size="20" aria-hidden="true" />
           <span>Regras</span>
@@ -30,6 +34,10 @@ const area = computed(() => route.path.startsWith("/rules") ? "rules" : "project
       <RouterLink class="nav-item" :class="{ 'is-active': area === 'projects' }" to="/projects">
         <Folder :size="20" aria-hidden="true" />
         <span>Projetos</span>
+      </RouterLink>
+      <RouterLink class="nav-item" :class="{ 'is-active': area === 'quick' }" to="/quick-evaluation">
+        <ClipboardCheck :size="20" aria-hidden="true" />
+        <span>Avaliação rápida</span>
       </RouterLink>
       <RouterLink class="nav-item" :class="{ 'is-active': area === 'rules' }" to="/rules">
         <ClipboardCheck :size="20" aria-hidden="true" />

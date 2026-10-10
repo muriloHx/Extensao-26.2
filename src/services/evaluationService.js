@@ -61,6 +61,16 @@ export class EvaluationService {
     return this.evaluationRepository.put(evaluation);
   }
 
+  evaluateTransientElement({ elementId, checklist, data, evaluatedAt }) {
+    const result = this.ruleEngine.evaluate(
+      checklist.regras ?? [],
+      data,
+      checklist.parametros ?? {}
+    );
+
+    return createEvaluation({ elementId, data, result, evaluatedAt });
+  }
+
   async listEvaluations(elementId) {
     const evaluations = await this.evaluationRepository.getByElementId(elementId);
     return evaluations.sort((left, right) => right.evaluatedAt.localeCompare(left.evaluatedAt));

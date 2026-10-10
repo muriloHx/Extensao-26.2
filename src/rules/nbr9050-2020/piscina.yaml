@@ -1,0 +1,218 @@
+id: piscina
+nome: Piscina
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  altura_maxima_tanque:
+    label: Altura máxima na maior profundidade
+    tipo: number
+    unidade: m
+  piso_entorno_atende_nbr_10339:
+    label: Piso do entorno atende à ABNT NBR 10339
+    tipo: boolean
+  bordas_arredondadas:
+    label: Bordas com acabamento arredondado
+    tipo: boolean
+  degraus_arredondados:
+    label: Degraus de acesso à água com acabamento arredondado
+    tipo: boolean
+  corrimaos_arredondados:
+    label: Corrimãos com acabamento arredondado
+    tipo: boolean
+  barras_arredondadas:
+    label: Barras de apoio com acabamento arredondado
+    tipo: boolean
+  meio_acesso_adequado:
+    label: Meio de entrada e saída adequado à Tabela 8
+    tipo: boolean
+  inclinacao_rampa:
+    label: Inclinação da rampa
+    tipo: number
+    unidade: '%'
+  corrimao_rampa_ambos_lados:
+    label: Corrimão nos dois lados da rampa
+    tipo: boolean
+  altura_corrimao_rampa:
+    label: Altura do corrimão da rampa
+    tipo: number
+    unidade: m
+  altura_banco:
+    label: Altura do banco de transferência
+    tipo: number
+    unidade: m
+  extensao_banco:
+    label: Extensão do banco
+    tipo: number
+    unidade: m
+  profundidade_banco:
+    label: Profundidade do banco
+    tipo: number
+    unidade: m
+  distancia_barras_banco:
+    label: Distância entre barras do banco
+    tipo: number
+    unidade: m
+  nivel_agua_banco:
+    label: Diferença máxima entre água e assento do banco
+    tipo: number
+    unidade: m
+  largura_escada:
+    label: Largura da escada submersa
+    tipo: number
+    unidade: m
+  piso_degrau:
+    label: Piso dos degraus submersos
+    tipo: number
+    unidade: m
+  espelho_degrau:
+    label: Espelho dos degraus submersos
+    tipo: number
+    unidade: m
+  corrimaos_escada:
+    label: Corrimãos nos dois lados e em três alturas
+    tipo: boolean
+regras:
+- id: piso_entorno
+  nome: Piso do entorno
+  parametro: piso_entorno_atende_nbr_10339
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 10.12.1
+- id: bordas
+  nome: Bordas arredondadas
+  parametro: bordas_arredondadas
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 10.12.1
+- id: degraus
+  nome: Degraus arredondados
+  parametro: degraus_arredondados
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 10.12.1
+- id: corrimaos
+  nome: Corrimãos arredondados
+  parametro: corrimaos_arredondados
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 10.12.1
+- id: barras
+  nome: Barras arredondadas
+  parametro: barras_arredondadas
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 10.12.1
+- id: acesso
+  nome: Meio de acesso adequado
+  parametro: meio_acesso_adequado
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 10.12.2 e Tabela 8
+- id: rampa_inclinacao
+  nome: Inclinação máxima da rampa
+  parametro: inclinacao_rampa
+  operador: <=
+  valor: 8.33
+  referencia: ABNT NBR 9050:2020 — 10.12.2.3
+- id: rampa_corrimao
+  nome: Corrimão da rampa
+  parametro: corrimao_rampa_ambos_lados
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 10.12.2.3
+- id: rampa_altura
+  nome: Altura do corrimão da rampa
+  parametro: altura_corrimao_rampa
+  operador: ==
+  valor: 0.7
+  referencia: ABNT NBR 9050:2020 — 10.12.2.3
+- id: banco_altura_minima
+  nome: Altura mínima do banco
+  parametro: altura_banco
+  operador: '>='
+  valor: 0.4
+  referencia: ABNT NBR 9050:2020 — 10.12.2.1 a
+- id: banco_altura_maxima
+  nome: Altura máxima do banco
+  parametro: altura_banco
+  operador: <=
+  valor: 0.48
+  referencia: ABNT NBR 9050:2020 — 10.12.2.1 a
+- id: banco_extensao
+  nome: Extensão mínima do banco
+  parametro: extensao_banco
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 10.12.2.1 b
+- id: banco_profundidade
+  nome: Profundidade do banco
+  parametro: profundidade_banco
+  operador: '>='
+  valor: 0.45
+  referencia: ABNT NBR 9050:2020 — 10.12.2.1 b
+- id: banco_barras
+  nome: Distância entre barras do banco (verificar intervalo normativo de 1,00 m a 1,10 m)
+  parametro: distancia_barras_banco
+  referencia: ABNT NBR 9050:2020 — 10.12.2.1 c
+  tipo: checklist
+  condicoes:
+  - quando:
+      operador: <=
+      valor: 1.1
+    verificar:
+      parametro: distancia_barras_banco
+      operador: '>='
+      valor: 1.0
+  - quando:
+      operador: '>'
+      valor: 1.1
+    resultado: nao_conforme
+- id: banco_agua
+  nome: Diferença máxima de nível da água
+  parametro: nivel_agua_banco
+  operador: <=
+  valor: 0.1
+  referencia: ABNT NBR 9050:2020 — 10.12.2.1 e
+- id: escada_largura_minima
+  nome: Largura mínima da escada
+  parametro: largura_escada
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 10.12.2.2
+- id: escada_largura_maxima
+  nome: Largura máxima da escada
+  parametro: largura_escada
+  operador: <=
+  valor: 1.0
+  referencia: ABNT NBR 9050:2020 — 10.12.2.2
+- id: escada_piso_minimo
+  nome: Piso mínimo do degrau submerso
+  parametro: piso_degrau
+  operador: '>='
+  valor: 0.35
+  referencia: ABNT NBR 9050:2020 — 10.12.2.2
+- id: escada_piso_maximo
+  nome: Piso máximo do degrau submerso
+  parametro: piso_degrau
+  operador: <=
+  valor: 0.46
+  referencia: ABNT NBR 9050:2020 — 10.12.2.2
+- id: escada_espelho
+  nome: Espelho máximo
+  parametro: espelho_degrau
+  operador: <=
+  valor: 0.2
+  referencia: ABNT NBR 9050:2020 — 10.12.2.2
+- id: escada_corrimaos
+  nome: Corrimãos da escada
+  parametro: corrimaos_escada
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 10.12.2.2
+- id: dispensa
+  nome: Dispensa por profundidade
+  parametro: altura_maxima_tanque
+  operador: <=
+  valor: 0.5
+  referencia: ABNT NBR 9050:2020 — Nota da Tabela 8

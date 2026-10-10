@@ -1,0 +1,117 @@
+id: bacia_sanitaria
+nome: Bacia sanitária
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  abertura_frontal:
+    label: Possui abertura frontal
+    tipo: boolean
+    obrigatorio: true
+  altura_sem_assento:
+    label: Altura sem assento
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  altura_com_assento:
+    label: Altura com assento
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  transferencia_lateral:
+    label: Transferência lateral
+    tipo: boolean
+    obrigatorio: true
+  transferencia_perpendicular:
+    label: Transferência perpendicular
+    tipo: boolean
+    obrigatorio: true
+  transferencia_diagonal:
+    label: Transferência diagonal
+    tipo: boolean
+    obrigatorio: true
+  altura_valvula:
+    label: Altura da válvula
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  forca_valvula:
+    label: Força de acionamento da válvula
+    tipo: number
+    unidade: N
+    obrigatorio: true
+  comprimento_barra_fundo:
+    label: Comprimento da barra de fundo
+    tipo: number
+    unidade: m
+  altura_barra_fundo:
+    label: Altura da barra de fundo
+    tipo: number
+    unidade: m
+regras:
+- id: sem_abertura_frontal
+  nome: Sem abertura frontal
+  parametro: abertura_frontal
+  operador: ==
+  valor: false
+  referencia: ABNT NBR 9050:2020 — 7.7
+- id: altura_minima
+  nome: Altura mínima sem assento
+  parametro: altura_sem_assento
+  operador: '>='
+  valor: 0.43
+  referencia: ABNT NBR 9050:2020 — 7.7.2.1
+- id: altura_maxima
+  nome: Altura máxima sem assento
+  parametro: altura_sem_assento
+  operador: <=
+  valor: 0.45
+  referencia: ABNT NBR 9050:2020 — 7.7.2.1
+- id: altura_assento
+  nome: Altura máxima com assento
+  parametro: altura_com_assento
+  operador: <=
+  valor: 0.46
+  referencia: ABNT NBR 9050:2020 — 7.7.2.1
+- id: transferencia_lateral
+  nome: Transferência lateral
+  parametro: transferencia_lateral
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 7.7.1
+- id: transferencia_perpendicular
+  nome: Transferência perpendicular
+  parametro: transferencia_perpendicular
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 7.7.1
+- id: transferencia_diagonal
+  nome: Transferência diagonal
+  parametro: transferencia_diagonal
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 7.7.1
+- id: altura_valvula
+  nome: Altura máxima da válvula
+  parametro: altura_valvula
+  operador: <=
+  valor: 1.0
+  referencia: ABNT NBR 9050:2020 — 7.7.3.1
+- id: forca_valvula
+  nome: Força máxima da válvula
+  parametro: forca_valvula
+  operador: <
+  valor: 23
+  referencia: ABNT NBR 9050:2020 — 7.7.3.1
+- id: barra_fundo_comprimento
+  nome: Comprimento mínimo da barra de fundo
+  parametro: comprimento_barra_fundo
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 7.7.2.2.2
+- id: barra_fundo_altura
+  nome: Altura da barra de fundo
+  parametro: altura_barra_fundo
+  operador: ==
+  valor: 0.75
+  referencia: ABNT NBR 9050:2020 — 7.7.2.2.2

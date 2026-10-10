@@ -31,10 +31,8 @@ async function deleteElement(element) {
     element.id
   );
 
-  console.log("ELEMENT NAME: " + element.name);
   for (const evaluation of evaluations) {
     await services.repositories.evaluationRepository.delete(evaluation.id);
-    console.log("EVAL ID: " + evaluation.id);
   }
 
   await services.repositories.elementRepository.delete(element.id);

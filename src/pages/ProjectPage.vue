@@ -1,5 +1,5 @@
 <script setup>
-import { inject, onMounted, ref } from "vue";
+import { inject, nextTick, onMounted, ref } from "vue";
 import { ChevronLeft, FolderPlus, House, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
@@ -18,6 +18,7 @@ const environments = ref([]);
 const name = ref("");
 const editing = ref(null);
 const summary = ref(null);
+const inputCreate = ref(null);
 
 // Funções de Negócio
 async function loadData() {
@@ -31,9 +32,12 @@ async function loadData() {
   }
 }
 
-function startCreate() {
+async function startCreate() {
   editing.value = {};
   name.value = "";
+
+  await nextTick();
+  inputCreate.value?.scrollIntoView({ behavior: "smooth" });
 }
 
 function startEdit(environment) {
@@ -108,10 +112,10 @@ onMounted(loadData);
     <EvaluationSummary v-if="summary" :summary="summary" scope="projeto" />
 
     <!-- Form Modal/Card para criação/edição -->
-    <form v-if="editing" class="form-card" @submit.prevent="save">
+    <form v-if="editing" class="form-card" @submit.prevent="save" ref="inputCreate">
       <label class="field">
         <span>Nome do ambiente</span>
-        <input v-model="name" required autofocus />
+        <input v-model="name" required autofocus  />
       </label>
 
       <div class="form-actions">

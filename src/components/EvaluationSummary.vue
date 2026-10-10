@@ -25,7 +25,6 @@ const statusText = computed(() => {
   <section class="evaluation-summary" aria-labelledby="evaluation-summary-title">
     <div class="evaluation-summary__heading">
       <div>
-        <p class="eyebrow">Laudo consolidado</p>
         <h2 id="evaluation-summary-title">Situação do {{ scope }}</h2>
         <p>{{ statusText }}</p>
       </div>
