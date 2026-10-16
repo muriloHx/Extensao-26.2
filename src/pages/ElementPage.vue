@@ -6,7 +6,6 @@ import vSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
-import StatusBadge from "../components/StatusBadge.vue";
 
 const props = defineProps({
   elementId: String,
@@ -167,12 +166,13 @@ function normalizeFormData() {
   return processedData;
 }
 
-// Salva apenas o cadastro do elemento e retorna para a EnvironmentPage
+// Salva o cadastro e os dados preenchidos sem executar as regras.
 async function saveOnly() {
   if (!activeChecklist.value) {
     return window.alert("Selecione um conjunto de regras.");
   }
 
+  const data = normalizeFormData();
   const payload = {
     name: form.name,
     type: activeChecklist.value.nome,
@@ -180,14 +180,14 @@ async function saveOnly() {
   };
 
   try {
-    if (element.value) {
-      await services.projectService.updateElement(element.value.id, payload);
-    } else {
-      await services.projectService.createElement(
-        environment.value.id,
-        payload
-      );
-    }
+    const savedElement = element.value
+      ? await services.projectService.updateElement(element.value.id, payload)
+      : await services.projectService.createElement(environment.value.id, payload);
+
+    await services.evaluationService.saveElementData({
+      elementId: savedElement.id,
+      data,
+    });
 
     router.push(
       `/projects/${environment.value.projectId}/environments/${environment.value.id}`
@@ -394,7 +394,6 @@ onMounted(loadData);
           v-model="form.name"
           required
           placeholder="Ex.: Porta principal"
-          :disabled="autoName"
         />
 
       </label>
@@ -417,7 +416,6 @@ onMounted(loadData);
             <small v-if="expectedByParameter[key]?.length" class="expected-value">
               Esperado: {{ expectedByParameter[key].join(' ou ') }}
             </small>
-
           </span>
 
           <select
@@ -445,7 +443,7 @@ onMounted(loadData);
 
           <input
             v-else
-            v-model="form.data[key]"
+            v-model.number="form.data[key]"
             type="number"
             inputmode="decimal"
             step="any"
@@ -471,16 +469,6 @@ onMounted(loadData);
           {{ quick ? 'Avaliar' : 'Salvar e avaliar' }}
         </button>
 
-        <RouterLink
-          v-if="!isNew"
-          class="button button--outline"
-          :to="`/elements/${element.id}/evaluation`"
-        >
-          <StatusBadge
-            :status="evaluation ? 'conforme' : 'nao_avaliado'"
-          />
-          Ver resultado
-        </RouterLink>
       </div>
     </form>
   </template>
@@ -524,5 +512,9 @@ onMounted(loadData);
   margin-top: 0.25rem;
   color: #666;
   font-weight: normal;
+}
+.bottom-nav{
+    display: none;
+    background-color: red;
 }
 </style>

@@ -11,6 +11,7 @@ const props = defineProps({
 });
 
 const services = inject("services");
+const confirmPopup = inject("confirmPopup");
 
 // Estados Reativos
 const project = ref(null);
@@ -66,12 +67,15 @@ async function save() {
   await loadData();
 }
 
-async function remove(environment) {
-  const confirmed = window.confirm(
-    `Excluir o ambiente “${environment.name}” e seus elementos?`
-  );
-  if (!confirmed) return;
+function remove(environment, event) {
+  confirmPopup.open({
+    target: event.currentTarget,
+    message: `Excluir o ambiente “${environment.name}” e seus elementos?`,
+    onAccept: () => deleteEnvironment(environment),
+  });
+}
 
+async function deleteEnvironment(environment) {
   const elements = await services.projectService.listElements(environment.id);
 
   // Deleção em cascata: Avaliações -> Elementos -> Ambiente
@@ -156,7 +160,7 @@ onMounted(loadData);
             class="icon-button icon-button--danger"
             title="Excluir"
             aria-label="Excluir"
-            @click="remove(environment)"
+            @click="remove(environment, $event)"
           >
             <Trash2 :size="18" aria-hidden="true" />
           </button>

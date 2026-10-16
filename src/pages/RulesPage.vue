@@ -15,6 +15,7 @@ const props = defineProps({
 const services = inject("services");
 const builtInRuleSets = inject("builtInRuleSets");
 const router = useRouter();
+const confirmPopup = inject("confirmPopup");
 const downloadUrl = computed(() => `${import.meta.env.BASE_URL}rule-engine-skill/SKILL.md`)
 
 
@@ -109,8 +110,15 @@ async function importFiles(event) {
   importing.value = false;
 }
 
-async function remove(ruleSet) {
-  if (!window.confirm(`Excluir "${ruleSet.nome}"? Esta ação não pode ser desfeita.`)) return;
+function remove(ruleSet, event) {
+  confirmPopup.open({
+    target: event.currentTarget,
+    message: `Excluir "${ruleSet.nome}"? Esta ação não pode ser desfeita.`,
+    onAccept: () => deleteRuleSet(ruleSet),
+  });
+}
+
+async function deleteRuleSet(ruleSet) {
   error.value = "";
   try {
     await services.ruleSetService.delete(ruleSet.id);
@@ -302,7 +310,7 @@ regras:
             <div v-if="source === 'user'" class="rules-card__actions">
               <button class="text-button" @click="exportRule(ruleSet, 'yaml')">Exportar YAML</button>
               <button class="text-button" @click="exportRule(ruleSet, 'json')">Exportar JSON</button>
-              <button class="icon-button icon-button--danger" title="Excluir" aria-label="Excluir" @click="remove(ruleSet)"><Trash2 :size="18" aria-hidden="true" /></button>
+              <button class="icon-button icon-button--danger" title="Excluir" aria-label="Excluir" @click="remove(ruleSet, $event)"><Trash2 :size="18" aria-hidden="true" /></button>
             </div>
           </article>
         </div>

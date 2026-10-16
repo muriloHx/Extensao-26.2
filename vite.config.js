@@ -4,7 +4,7 @@ import { VitePWA } from "vite-plugin-pwa";
 import { copyFileSync } from "node:fs";
 
 export default defineConfig({
-  base: '/',
+  base: '/Extensao-26.2/',
   plugins: [
     vue(),
 
@@ -30,8 +30,8 @@ export default defineConfig({
       manifest: {
         name: "Acesso Verificador",
         short_name: "Acesso",
-        start_url: "/projects",
-        scope: "/",
+        start_url: "/Extensao-26.2/projects",
+        scope: "/Extensao-26.2/",
         display: "standalone",
         background_color: "#f6f8f6",
         theme_color: "#16784d",
@@ -53,7 +53,7 @@ export default defineConfig({
       },
 
       workbox: {
-        navigateFallback: "/index.html"
+        navigateFallback: "/Extensao-26.2/index.html"
       }
     })
   ]

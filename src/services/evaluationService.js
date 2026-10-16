@@ -61,6 +61,23 @@ export class EvaluationService {
     return this.evaluationRepository.put(evaluation);
   }
 
+  async saveElementData({ elementId, data, savedAt }) {
+    const element = await this.elementRepository.get(elementId);
+    if (!element) {
+      throw new Error("Elemento não encontrado.");
+    }
+
+    // Um resultado vazio marca os dados como salvos, mas ainda não avaliados.
+    const draft = createEvaluation({
+      elementId,
+      data,
+      result: [],
+      evaluatedAt: savedAt,
+    });
+
+    return this.evaluationRepository.put(draft);
+  }
+
   evaluateTransientElement({ elementId, checklist, data, evaluatedAt }) {
     const result = this.ruleEngine.evaluate(
       checklist.regras ?? [],

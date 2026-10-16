@@ -6,6 +6,7 @@ import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 
 const services = inject("services");
+const confirmPopup = inject("confirmPopup");
 
 const projects = ref([]);
 const name = ref("");
@@ -63,10 +64,15 @@ async function save() {
   }
 }
 
-async function remove(project) {
-  const confirmed = window.confirm(`Excluir o projeto “${project.name}” e seus dados?`);
-  if (!confirmed) return;
+function remove(project, event) {
+  confirmPopup.open({
+    target: event.currentTarget,
+    message: `Excluir o projeto “${project.name}” e seus dados?`,
+    onAccept: () => deleteProject(project),
+  });
+}
 
+async function deleteProject(project) {
   const environments = await services.projectService.listEnvironments(project.id);
 
   for (const environment of environments) {
@@ -143,7 +149,7 @@ onMounted(loadProjects);
         <button class="text-button" @click="startEdit(project)">
           Editar
         </button>
-        <button class="icon-button icon-button--danger" title="Excluir" aria-label="Excluir" @click="remove(project)">
+        <button class="icon-button icon-button--danger" title="Excluir" aria-label="Excluir" @click="remove(project, $event)">
           <Trash2 :size="18" aria-hidden="true" />
         </button>
       </div>

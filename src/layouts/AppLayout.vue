@@ -30,7 +30,7 @@ const area = computed(() => route.path.startsWith("/rules") ? "rules" : route.pa
       </nav>
     </aside>
     <main class="content" tabindex="-1"><slot /></main>
-    <nav class="bottom-nav">
+    <nav class="bottom-nav" v-if="!route.meta.hideBottomNav">
       <RouterLink class="nav-item" :class="{ 'is-active': area === 'projects' }" to="/projects">
         <Folder :size="20" aria-hidden="true" />
         <span>Projetos</span>

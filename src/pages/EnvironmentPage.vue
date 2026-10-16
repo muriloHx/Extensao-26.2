@@ -14,6 +14,7 @@ const props = defineProps({
 });
 
 const services = inject("services");
+const confirmPopup = inject("confirmPopup");
 
 // Estados reativos
 const environment = ref(null);
@@ -21,12 +22,15 @@ const project = ref(null);
 const rows = ref([]);
 const summary = ref(null);
 
-async function deleteElement(element) {
-  const confirmed = window.confirm(
-    `Excluir o elemento ${element.name} e suas avaliações?`)
+function deleteElement(element, event) {
+  confirmPopup.open({
+    target: event.currentTarget,
+    message: `Excluir o elemento ${element.name} e suas avaliações?`,
+    onAccept: () => removeElement(element),
+  });
+}
 
-  if (!confirmed) return;
-
+async function removeElement(element) {
   const evaluations = await services.evaluationService.listEvaluations(
     element.id
   );
@@ -97,7 +101,6 @@ onMounted(loadData);
     <!-- Cabeçalho -->
     <PageHeader
       :title="environment.name"
-      description="Elementos e situação da última avaliação."
     >
       <template #action>
         <RouterLink
@@ -141,7 +144,7 @@ onMounted(loadData);
             class="icon-button icon-button--danger"
             title="Excluir"
             aria-label="Excluir"
-            @click="deleteElement(row.element)"
+            @click="deleteElement(row.element, $event)"
           >
             <Trash2 :size="18" aria-hidden="true" />
           </button>
