@@ -1,11 +1,19 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
 import { VitePWA } from "vite-plugin-pwa";
+import { copyFileSync } from "node:fs";
 
 export default defineConfig({
-  base: '/Extensao-26.2/',
+  base: '/',
   plugins: [
     vue(),
+
+    {
+      name: "github-pages-spa-fallback",
+      closeBundle() {
+        copyFileSync("dist/index.html", "dist/404.html");
+      }
+    },
 
     VitePWA({
       registerType: "autoUpdate",
@@ -22,8 +30,8 @@ export default defineConfig({
       manifest: {
         name: "Acesso Verificador",
         short_name: "Acesso",
-        start_url: "/Extensao-26.2/projects",
-        scope: "/Extensao-26.2/",
+        start_url: "/projects",
+        scope: "/",
         display: "standalone",
         background_color: "#f6f8f6",
         theme_color: "#16784d",
@@ -45,7 +53,7 @@ export default defineConfig({
       },
 
       workbox: {
-        navigateFallback: "/Extensao-26.2/index.html"
+        navigateFallback: "/index.html"
       }
     })
   ]
