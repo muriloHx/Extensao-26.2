@@ -113,14 +113,24 @@ onMounted(loadProjects);
   </PageHeader>
 
   <!-- Form Modal/Card -->
-  <form v-if="editing" class="form-card" @submit.prevent="save">
-    <label class="field">
-      <span>{{ editing.id ? "Nome do projeto" : "Novo projeto" }}</span>
-      <input v-model="name" required autofocus />
+  <form v-if="editing" class="form-card collection-form" @submit.prevent="save">
+    <div class="collection-form__heading">
+      <span class="eyebrow">{{ editing.id ? "Editar" : "Configuração inicial" }}</span>
+      <h2>{{ editing.id ? "Dados do projeto" : "Novo projeto" }}</h2>
+      <p>Defina um nome e, se quiser, uma breve descrição para este local.</p>
+    </div>
 
-      <span>Descrição</span>
-      <input v-model="description" />
-    </label>
+    <div class="fields-grid">
+      <label class="field">
+        <span>Nome do projeto</span>
+        <input v-model="name" required autofocus />
+      </label>
+
+      <label class="field">
+        <span>Descrição <small>(opcional)</small></span>
+        <input v-model="description" />
+      </label>
+    </div>
 
     <p v-if="error" class="muted">{{ error }}</p>
 
@@ -133,7 +143,7 @@ onMounted(loadProjects);
   </form>
 
   <!-- Projects List -->
-  <div v-if="projects.length" class="card-list">
+  <div v-if="projects.length" class="card-list collection-list">
     <article v-for="project in projects" :key="project.id" class="card project-card">
       <RouterLink class="card__link" :to="`/projects/${project.id}`">
         <span class="card__icon"><FolderKanban :size="22" aria-hidden="true" /></span>
@@ -159,6 +169,7 @@ onMounted(loadProjects);
   <!-- Empty State -->
   <EmptyState
     v-else
+    class="collection-empty"
     title="Comece por um projeto"
     text="Organize as avaliações de acessibilidade por obra ou local."
   >

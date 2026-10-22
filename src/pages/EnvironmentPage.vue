@@ -115,10 +115,10 @@ onMounted(loadData);
       </template>
     </PageHeader>
 
-    <EvaluationSummary v-if="summary" :summary="summary" scope="ambiente" />
+    <EvaluationSummary v-if="summary && rows.length" :summary="summary" scope="ambiente" />
 
     <!-- Lista de Elementos -->
-    <div v-if="rows.length" class="card-list">
+    <div v-if="rows.length" class="card-list collection-list">
       <article
         v-for="row in rows"
         :key="row.element.id"
@@ -154,7 +154,8 @@ onMounted(loadData);
 
     <!-- Estado Vazio (Sem elementos no ambiente) -->
     <EmptyState
-      v-else
+      v-if="!rows.length"
+      class="collection-empty"
       title="Nenhum elemento ainda"
       text="Cadastre portas, rampas, sanitários e outros itens para avaliar."
     >

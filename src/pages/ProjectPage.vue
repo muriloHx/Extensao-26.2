@@ -113,13 +113,15 @@ onMounted(loadData);
       </template>
     </PageHeader>
 
-    <EvaluationSummary v-if="summary" :summary="summary" scope="projeto" />
-
     <!-- Form Modal/Card para criação/edição -->
-    <form v-if="editing" class="form-card" @submit.prevent="save" ref="inputCreate">
+    <form v-if="editing" class="form-card collection-form" @submit.prevent="save" ref="inputCreate">
+      <div class="collection-form__heading">
+        <h2>{{ editing.id ? "Nome do ambiente" : "Novo ambiente" }}</h2>
+        <p>Use um nome que ajude a identificar este espaço no projeto.</p>
+      </div>
       <label class="field">
         <span>Nome do ambiente</span>
-        <input v-model="name" required autofocus  />
+        <input v-model="name" required autofocus />
       </label>
 
       <div class="form-actions">
@@ -134,48 +136,56 @@ onMounted(loadData);
       </div>
     </form>
 
-    <!-- Lista de Ambientes -->
-    <div v-if="environments.length" class="card-grid-environment">
-      <article
-        v-for="environment in environments"
-        :key="environment.id"
-        class="card-environment"
-      >
-        <RouterLink
-          class="card__link"
-          :to="`/projects/${project.id}/environments/${environment.id}`"
-        >
-          <span class="card__icon"><House :size="22" aria-hidden="true" /></span>
-          <div>
-            <h2>{{ environment.name }}</h2>
-            <p>Ambiente</p>
-          </div>
-        </RouterLink>
+    <EvaluationSummary v-if="summary && environments.length" :summary="summary" scope="projeto" />
 
-        <div class="card__menu">
-          <button class="text-button" @click="startEdit(environment)">
-            Editar
-          </button>
-          <button
-            class="icon-button icon-button--danger"
-            title="Excluir"
-            aria-label="Excluir"
-            @click="remove(environment, $event)"
+    <!-- Lista de Ambientes -->
+    <div class="environments-summary-container">
+      <div v-if="environments.length" class="card-grid-environment collection-list">
+        <article
+          v-for="environment in environments"
+          :key="environment.id"
+          class="card-environment"
+        >
+          <RouterLink
+            class="card__link"
+            :to="`/projects/${project.id}/environments/${environment.id}`"
           >
-            <Trash2 :size="18" aria-hidden="true" />
-          </button>
-        </div>
-      </article>
+            <span class="card__icon"><House :size="22" aria-hidden="true" /></span>
+            <div>
+              <h2>{{ environment.name }}</h2>
+              <p>Ambiente</p>
+            </div>
+          </RouterLink>
+
+          <div class="card__menu">
+            <button class="text-button" @click="startEdit(environment)">
+              Editar
+            </button>
+            <button
+              class="icon-button icon-button--danger"
+              title="Excluir"
+              aria-label="Excluir"
+              @click="remove(environment, $event)"
+            >
+              <Trash2 :size="18" aria-hidden="true" />
+            </button>
+          </div>
+        </article>
+      </div>
+
+      <!-- Estado vazio (sem ambientes no projeto) -->
+      <EmptyState
+        v-if="!environments.length"
+        class="collection-empty"
+        title="Nenhum ambiente ainda"
+        text="Adicione espaços como entrada, banheiro ou circulação."
+      >
+        <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
+      </EmptyState>
+
+
     </div>
 
-    <!-- Estado Vazio (Sem ambientes no projeto) -->
-    <EmptyState
-      v-else
-      title="Nenhum ambiente ainda"
-      text="Adicione espaços como entrada, banheiro ou circulação."
-    >
-      <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
-    </EmptyState>
   </template>
 
   <!-- Cenário 2: Projeto não encontrado -->
