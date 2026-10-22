@@ -109,7 +109,7 @@ onMounted(loadData);
       \n${project.description}`"
     >
       <template #action>
-        <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
+        <button v-if="environments.length" class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
       </template>
     </PageHeader>
 

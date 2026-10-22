@@ -103,7 +103,7 @@ onMounted(loadData);
       :title="environment.name"
     >
       <template #action>
-        <RouterLink
+        <RouterLink v-if="rows.length"
           class="button"
           :to="{
             path: '/elements/new',

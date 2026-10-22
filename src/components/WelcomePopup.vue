@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from "vue";
-import { Accessibility, ArrowRight, ClipboardCheck, FolderKanban } from "@lucide/vue";
+import { ArrowRight, ClipboardCheck, FolderKanban } from "@lucide/vue";
 
 const emit = defineEmits(["close"]);
 const closeButton = ref(null);
@@ -56,8 +56,6 @@ onUnmounted(() => {
         </button>
 
         <div class="welcome-popup__hero">
-          <span class="welcome-popup__icon"><Accessibility :size="30" aria-hidden="true" /></span>
-          <span class="welcome-popup__eyebrow">Acesso Verificador</span>
           <h1 id="welcome-title">Acessibilidade começa com atenção aos detalhes.</h1>
           <p id="welcome-description">
             Este espaço ajuda você a organizar e apoiar avaliações de acessibilidade em locais e ambientes.
@@ -104,7 +102,6 @@ onUnmounted(() => {
   overflow-y: auto;
   padding: 24px;
   background: rgba(20, 26, 22, 0.66);
-  animation: welcome-fade 0.18s ease-out;
 }
 
 .welcome-popup {
@@ -113,11 +110,10 @@ onUnmounted(() => {
   grid-template-columns: 0.95fr 1.05fr;
   width: min(100%, 820px);
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
   background: var(--surface);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
-  animation: welcome-enter 0.22s ease-out;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
 }
 
 .welcome-popup__close {
@@ -129,10 +125,10 @@ onUnmounted(() => {
   width: 40px;
   height: 40px;
   place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.48);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.14);
-  color: inherit;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
   font-size: 1.7rem;
   line-height: 1;
   cursor: pointer;
@@ -148,30 +144,11 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 430px;
+  min-height: 390px;
   padding: 52px 38px;
-  background: linear-gradient(145deg, #17482f, #26704b);
-  color: #fff;
-}
-
-.welcome-popup__icon {
-  display: grid;
-  width: 58px;
-  height: 58px;
-  margin-bottom: 32px;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.welcome-popup__eyebrow {
-  margin-bottom: 12px;
-  color: #c9e4d2;
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  border-right: 1px solid var(--line);
+  background: var(--green-soft);
+  color: var(--ink);
 }
 
 .welcome-popup__hero h1 {
@@ -179,12 +156,11 @@ onUnmounted(() => {
   margin: 0 0 16px;
   font-size: clamp(1.8rem, 4vw, 2.45rem);
   line-height: 1.1;
-  letter-spacing: -0.035em;
 }
 
 .welcome-popup__hero p {
   max-width: 360px;
-  color: #e0eee4;
+  color: var(--muted);
   font-size: 1rem;
   line-height: 1.55;
 }
@@ -244,16 +220,6 @@ onUnmounted(() => {
   margin-top: 24px;
 }
 
-@keyframes welcome-fade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes welcome-enter {
-  from { opacity: 0; transform: translateY(10px) scale(0.99); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
 @media (max-width: 640px) {
   .welcome-backdrop {
     align-items: start;
@@ -263,29 +229,18 @@ onUnmounted(() => {
   .welcome-popup {
     grid-template-columns: 1fr;
     margin: auto 0;
-    border-radius: 20px;
-  }
-
-  .welcome-popup__hero {
-    min-height: 0;
-    padding: 34px 26px 28px;
-  }
-
-  .welcome-popup__icon {
-    width: 48px;
-    height: 48px;
-    margin-bottom: 20px;
+    border-radius: var(--radius-lg);
   }
 
   .welcome-popup__content {
     padding: 28px 26px;
   }
-}
 
-@media (prefers-reduced-motion: reduce) {
-  .welcome-backdrop,
-  .welcome-popup {
-    animation: none;
+  .welcome-popup__hero {
+    min-height: 0;
+    padding: 34px 26px 28px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
   }
 }
 </style>

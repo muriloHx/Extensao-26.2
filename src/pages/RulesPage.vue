@@ -153,12 +153,9 @@ onMounted(load);
     <RouterLink class="back-link" to="/rules"><ChevronLeft :size="18" aria-hidden="true" />Conjuntos de regras</RouterLink>
 
     <PageHeader
-      eyebrow="Documentação"
       title="Crie e importe regras"
       description="Monte checklists em YAML para avaliar os elementos do seu projeto."
-    >
-
-    </PageHeader>
+    />
 
     <div class="documentation">
 
@@ -290,7 +287,6 @@ regras:
 
     <template v-else-if="currentGroup">
       <PageHeader
-        :eyebrow="source === 'user' ? 'Importado' : 'Padrão'"
         :title="currentGroup.nome"
         :description="`${currentGroup.ruleSets.length} checklists que compõem este conjunto.`"
       />
@@ -299,17 +295,16 @@ regras:
 
       <section class="rules-section rules-section--first">
         <h2>Checklists</h2>
-        <div class="card-list">
-          <article v-for="ruleSet in currentGroup.ruleSets" :key="ruleSet.id" class="card rules-card">
+        <div class="card-list ruleset-list">
+          <article v-for="ruleSet in currentGroup.ruleSets" :key="ruleSet.id" class="card ruleset-card">
             <div>
-              <div class="rule-source">{{ source === 'user' ? 'Adicionada por você' : 'Padrão' }}</div>
               <h2>{{ ruleSet.nome }}</h2>
               <p>{{ ruleSet.norma?.nome ?? 'Conjunto personalizado' }}</p>
               <small>{{ ruleCount(ruleSet) }} regras · {{ fieldCount(ruleSet) }} campos</small>
             </div>
-            <div v-if="source === 'user'" class="rules-card__actions">
-              <button class="text-button" @click="exportRule(ruleSet, 'yaml')">Exportar YAML</button>
-              <button class="text-button" @click="exportRule(ruleSet, 'json')">Exportar JSON</button>
+            <div v-if="source === 'user'" class="ruleset-card__actions">
+              <button class="button button--outline" @click="exportRule(ruleSet, 'yaml')">Exportar YAML</button>
+              <button class="button button--outline" @click="exportRule(ruleSet, 'json')">Exportar JSON</button>
               <button class="icon-button icon-button--danger" title="Excluir" aria-label="Excluir" @click="remove(ruleSet, $event)"><Trash2 :size="18" aria-hidden="true" /></button>
             </div>
           </article>
@@ -323,14 +318,13 @@ regras:
   <!-- Biblioteca -->
   <template v-else>
     <PageHeader
-      eyebrow="Biblioteca"
+      class="rules-page-header"
       title="Conjuntos de regras"
       description="Cada pasta ou importação é exibida como um único conjunto."
     >
       <template #action>
-        <span class="import-actions">
-          <RouterLink class="button button--ghost" to="/rules/documentation">Como criar regras</RouterLink>
-          <label class="button button--outline import-button">
+        <div class="rules-actions">
+          <label class="button import-button">
             Importar arquivos
             <input type="file" accept=".json,.yaml,.yml" multiple :disabled="importing" @change="importFiles">
           </label>
@@ -338,7 +332,8 @@ regras:
             Importar pasta
             <input type="file" accept=".json,.yaml,.yml" webkitdirectory :disabled="importing" @change="importFiles">
           </label>
-        </span>
+          <RouterLink class="rules-help-link" to="/rules/documentation">Como criar regras</RouterLink>
+        </div>
       </template>
     </PageHeader>
 
@@ -350,46 +345,46 @@ regras:
     </template>
 
     <template v-else>
-      <section class="rules-section rules-section--first">
-        <h2>Regras padrão</h2>
-        <div class="card-list">
-          <RouterLink
-            v-for="group in standardGroups"
-            :key="group.id"
-            class="card card--interactive rules-card"
-            :to="groupPath(group)"
-          >
-            <span class="card__icon"><ClipboardCheck :size="22" aria-hidden="true" /></span>
-            <div>
-              <div class="rule-source">Padrão</div>
-              <h2>{{ group.nome }}</h2>
-              <p>{{ group.ruleSets.length }} checklists · {{ totalRuleCount(group) }} regras</p>
-            </div>
-            <ChevronRight :size="20" class="chevron" aria-hidden="true" />
-          </RouterLink>
-        </div>
-      </section>
+      <div class="rules-library">
+        <section class="rules-section rules-section--first rules-library__section">
+          <h2>Regras padrão</h2>
+          <div class="card-list rules-library__list">
+            <RouterLink
+              v-for="group in standardGroups"
+              :key="group.id"
+              class="card card--interactive rules-card"
+              :to="groupPath(group)"
+            >
+              <span class="card__icon"><ClipboardCheck :size="22" aria-hidden="true" /></span>
+              <div>
+                <h2>{{ group.nome }}</h2>
+                <p>{{ group.ruleSets.length }} checklists · {{ totalRuleCount(group) }} regras</p>
+              </div>
+              <ChevronRight :size="20" class="chevron" aria-hidden="true" />
+            </RouterLink>
+          </div>
+        </section>
 
-      <section class="rules-section">
-        <h2>Suas regras</h2>
-        <div v-if="customGroups.length" class="card-list">
-          <RouterLink
-            v-for="group in customGroups"
-            :key="group.id"
-            class="card card--interactive rules-card"
-            :to="groupPath(group)"
-          >
-            <span class="card__icon"><ClipboardCheck :size="22" aria-hidden="true" /></span>
-            <div>
-              <div class="rule-source">Adicionada por você</div>
-              <h2>{{ group.nome }}</h2>
-              <p>{{ group.ruleSets.length }} checklists</p>
-            </div>
-            <ChevronRight :size="20" class="chevron" aria-hidden="true" />
-          </RouterLink>
-        </div>
-        <EmptyState v-else title="Nenhum conjunto importado" text="Importe arquivos ou uma pasta para começar." />
-      </section>
+        <section class="rules-section rules-library__section">
+          <h2>Suas regras</h2>
+          <div v-if="customGroups.length" class="card-list rules-library__list">
+            <RouterLink
+              v-for="group in customGroups"
+              :key="group.id"
+              class="card card--interactive rules-card"
+              :to="groupPath(group)"
+            >
+              <span class="card__icon"><ClipboardCheck :size="22" aria-hidden="true" /></span>
+              <div>
+                <h2>{{ group.nome }}</h2>
+                <p>{{ group.ruleSets.length }} checklists</p>
+              </div>
+              <ChevronRight :size="20" class="chevron" aria-hidden="true" />
+            </RouterLink>
+          </div>
+          <EmptyState v-else title="Nenhum conjunto importado" text="Importe arquivos ou uma pasta para começar." />
+        </section>
+      </div>
     </template>
   </template>
 </template>

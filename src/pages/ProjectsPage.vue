@@ -108,14 +108,13 @@ onMounted(loadProjects);
     description="Acompanhe seus locais e avaliações."
   >
     <template #action>
-      <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
+      <button v-if="projects.length" class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
     </template>
   </PageHeader>
 
   <!-- Form Modal/Card -->
   <form v-if="editing" class="form-card collection-form" @submit.prevent="save">
     <div class="collection-form__heading">
-      <span class="eyebrow">{{ editing.id ? "Editar" : "Configuração inicial" }}</span>
       <h2>{{ editing.id ? "Dados do projeto" : "Novo projeto" }}</h2>
       <p>Defina um nome e, se quiser, uma breve descrição para este local.</p>
     </div>

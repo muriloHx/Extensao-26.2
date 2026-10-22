@@ -1,1 +1,14 @@
-<script setup>defineProps({ title: String, text: String });</script><template><section class="empty-state"><div class="empty-state__icon">+</div><h2>{{ title }}</h2><p>{{ text }}</p><slot /></section></template>
+<script setup>
+defineProps({ title: String, text: String });
+</script>
+
+<template>
+  <section class="empty-state">
+    <div class="empty-state__icon" aria-hidden="true">+</div>
+    <h2>{{ title }}</h2>
+    <p>{{ text }}</p>
+    <div v-if="$slots.default" class="empty-state__actions">
+      <slot />
+    </div>
+  </section>
+</template>

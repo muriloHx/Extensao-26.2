@@ -117,7 +117,6 @@ onMounted(loadData);
     </RouterLink>
 
     <PageHeader
-      eyebrow="Resultado"
       title="Avaliação"
       :description="`Realizada em ${formatDate(evaluation.evaluatedAt)}`"
     />
