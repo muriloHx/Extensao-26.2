@@ -15,7 +15,11 @@ const services = inject("services");
 
 // Estado da Tela
 const element = ref(null);
+const environment = ref(null);
 const evaluation = ref(null);
+const environmentRoute = computed(() => environment.value
+  ? `/projects/${environment.value.projectId}/environments/${environment.value.id}`
+  : "/projects");
 
 // Computed Properties
 const resultList = computed(() => evaluation.value?.result ?? []);
@@ -99,6 +103,9 @@ async function loadData() {
   );
 
   if (element.value) {
+    environment.value = await services.repositories.environmentRepository.get(
+      element.value.environmentId
+    );
     const evaluations = await services.evaluationService.listEvaluations(
       element.value.id
     );
@@ -112,7 +119,7 @@ onMounted(loadData);
 <template>
   <!-- Cenário 1: Elemento e Avaliação Carregados -->
   <template v-if="element && evaluation">
-    <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : `/elements/${element.id}`">
+    <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : environmentRoute">
       <ChevronLeft :size="18" aria-hidden="true" />{{ element.name }}
     </RouterLink>
 
@@ -170,7 +177,7 @@ onMounted(loadData);
 
   <!-- Cenário 2: Elemento encontrado, mas sem avaliação -->
   <template v-else-if="element">
-    <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : `/elements/${element.id}`">
+    <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : environmentRoute">
       <ChevronLeft :size="18" aria-hidden="true" />Elemento
     </RouterLink>
 
