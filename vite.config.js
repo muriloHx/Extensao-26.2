@@ -53,7 +53,8 @@ export default defineConfig({
       },
 
       workbox: {
-        navigateFallback: "/Extensao-26.2/index.html"
+        navigateFallback: "/Extensao-26.2/index.html",
+navigateFallbackDenylist: [/\.pdf$/],
       }
     })
   ]
