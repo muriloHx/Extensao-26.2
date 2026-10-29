@@ -6,38 +6,48 @@ norma:
 parametros:
   contraste_lrv:
     label: Diferença de LRV
+    definicao: "Diferença entre os valores de refletância luminosa da sinalização e da superfície adjacente, usada para verificar contraste visual. Valor informado em pontos."
     tipo: number
     unidade: pontos
   material_sem_reflexo:
     label: Material sem brilho ou alta reflexão
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
   tamanho_letras:
     label: Altura dos caracteres
+    definicao: "Altura vertical dos caracteres impressos ou em relevo, que determina sua legibilidade na distância prevista de leitura."
     tipo: number
     unidade: m
   distancia_leitura:
     label: Distância de leitura
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
   simbolo_altura:
     label: Altura do símbolo
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   braille:
     label: Possui Braille quando aplicável
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
   relevo:
     label: Possui alto-relevo quando aplicável
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
   sinalizacao_tatil_sonora:
     label: Possui sinalização tátil e/ou sonora quando aplicável
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
   sinalizacao_suspensa_altura:
     label: Altura da sinalização suspensa
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   objetiva:
     label: Texto objetivo
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
 regras:
 - id: contraste_informacao

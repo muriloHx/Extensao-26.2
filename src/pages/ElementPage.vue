@@ -1,5 +1,5 @@
 <script setup>
-import { ChevronLeft } from "@lucide/vue";
+import { ChevronLeft, CircleHelp } from "@lucide/vue";
 import { computed, inject, onMounted, reactive, ref, watch } from "vue";
 import { RouterLink, useRoute, useRouter } from "vue-router";
 import vSelect from 'vue-select';
@@ -26,6 +26,7 @@ const ruleSets = ref([]);
 const evaluation = ref(null);
 const selectedNorma = ref("todas");
 const autoName = ref(localStorage.getItem("elementAutoName") === "true");
+const openDefinition = ref(null);
 
 const form = reactive({
   name: "",
@@ -413,6 +414,20 @@ onMounted(loadData);
             {{ parameter.label ?? key }}
             <template v-if="parameter.obrigatorio"> *</template>
             <small v-if="parameter.unidade"> ({{ parameter.unidade }})</small>
+            <button
+              v-if="parameter.definicao"
+              class="parameter-help"
+              type="button"
+              :title="parameter.definicao"
+              :aria-label="`Definição: ${parameter.label ?? key}`"
+              :aria-expanded="openDefinition === key"
+              @click.stop="openDefinition = openDefinition === key ? null : key"
+            >
+              <CircleHelp :size="16" aria-hidden="true" />
+            </button>
+            <small v-if="parameter.definicao && openDefinition === key" class="parameter-definition">
+              {{ parameter.definicao }}
+            </small>
             <small v-if="expectedByParameter[key]?.length" class="expected-value">
               Esperado: {{ expectedByParameter[key].join(' ou ') }}
             </small>
@@ -513,8 +528,34 @@ onMounted(loadData);
   color: #666;
   font-weight: normal;
 }
+
 .bottom-nav{
     display: none;
     background-color: red;
+}
+
+.parameter-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.25rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #666;
+  cursor: help;
+  vertical-align: middle;
+}
+
+.parameter-help:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.parameter-definition {
+  display: block;
+  margin-top: 0.25rem;
+  color: #666;
+  font-weight: normal;
 }
 </style>

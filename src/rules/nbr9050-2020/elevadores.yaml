@@ -6,48 +6,59 @@ norma:
 parametros:
   atende_nbr_nm_313:
     label: Atende à ABNT NBR NM 313
+    definicao: "Confirma que o elevador cumpre os requisitos de acessibilidade da ABNT NBR NM 313."
     tipo: boolean
     obrigatorio: true
   sinalizacao_tatil_visual:
     label: Sinalização tátil e visual presente
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
     obrigatorio: true
   instrucao_uso:
     label: Instrução de uso próxima à botoeira
+    definicao: "As instruções estão junto aos botões de chamada, onde podem ser consultadas antes de operar o elevador."
     tipo: boolean
     obrigatorio: true
   indicacao_embarque_desembarque:
     label: Indicação da posição para embarque e desembarque
+    definicao: "A área de espera identifica onde a pessoa deve aguardar e onde embarcar ou desembarcar da plataforma."
     tipo: boolean
     obrigatorio: true
   indicacao_pavimentos:
     label: Indicação dos pavimentos atendidos
+    definicao: "Verifica se a identificação informa de forma perceptível o pavimento atendido ou a posição do elevador."
     tipo: boolean
     obrigatorio: true
   dispositivo_chamada_alcance:
     label: Dispositivo de chamada dentro do alcance manual
+    definicao: "Verifica se o comando ou informação pode ser alcançado pela pessoa na posição de uso prevista, inclusive sentada."
     tipo: boolean
     obrigatorio: true
   dispositivo_comunicacao_auxilio:
     label: Dispositivo de comunicação para solicitação de auxílio
+    definicao: "Verifica se a pessoa consegue solicitar ajuda e se comunicar em uma situação de necessidade."
     tipo: boolean
     obrigatorio: true
   sinalizacao_pavimento_relevo_braille:
     label: Sinalização de pavimento em relevo e Braille
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
     obrigatorio: true
   altura_sinalizacao_pavimento:
     label: Altura da sinalização de pavimento
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   altura_caracteres:
     label: Altura dos caracteres
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em mm."
     tipo: number
     unidade: mm
     obrigatorio: true
   distancia_caracteres:
     label: Distância entre caracteres
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em mm."
     tipo: number
     unidade: mm
     obrigatorio: true

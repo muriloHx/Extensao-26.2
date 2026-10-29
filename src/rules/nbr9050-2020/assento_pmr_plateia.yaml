@@ -1,0 +1,40 @@
+id: assento_pmr_plateia
+nome: Assento para pessoa com mobilidade reduzida em plateia
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  espaco_livre_frontal:
+    label: Espaço livre frontal
+    definicao: Distância desobstruída à frente do assento para aproximação e saída.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  junto_corredor:
+    label: Localizado junto ao corredor
+    definicao: Verifica se o assento está junto a um corredor e próximo a passagem transversal, conforme recomendação
+      da norma.
+    tipo: boolean
+    obrigatorio: true
+  braco_basculante_removivel:
+    label: Apoio de braço basculante ou removível no lado do corredor
+    definicao: Verifica se o apoio de braço junto ao corredor pode ser levantado ou removido para facilitar a transferência.
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: espaco_frontal
+  nome: Espaço livre frontal mínimo
+  parametro: espaco_livre_frontal
+  operador: '>='
+  valor: 0.6
+  referencia: ABNT NBR 9050:2020 — 10.3.4.2
+- id: localizacao
+  nome: Localização junto ao corredor
+  tipo: checklist
+  parametro: junto_corredor
+  referencia: ABNT NBR 9050:2020 — 10.3.2.5
+- id: apoio_braco
+  nome: Apoio de braço basculante ou removível
+  tipo: checklist
+  parametro: braco_basculante_removivel
+  referencia: ABNT NBR 9050:2020 — 10.3.2.5

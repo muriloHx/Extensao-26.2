@@ -6,6 +6,7 @@ norma:
 parametros:
   tipo_bebedouro:
     label: Tipo de bebedouro
+    definicao: "Identifica a configuração do equipamento (bica, garrafão, filtro ou outra) para avaliar os requisitos de uso aplicáveis."
     tipo: select
     opcoes:
     - bica
@@ -15,36 +16,45 @@ parametros:
     obrigatorio: true
   altura_bica:
     label: Altura da bica
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   altura_livre_inferior:
     label: Altura livre inferior
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   aproximacao_frontal:
     label: Possui aproximação frontal
+    definicao: "Verifica se existe espaço desobstruído à frente para aproximar a cadeira de rodas e alcançar o equipamento."
     tipo: boolean
   tipo_jato:
     label: Tipo de jato da bica
+    definicao: "Indica a direção do jato de água da bica, relevante para que a água possa ser alcançada e utilizada por pessoas sentadas."
     tipo: select
     opcoes:
     - inclinado
     - outro
   bica_frontal:
     label: Bica localizada no lado frontal
+    definicao: "A saída de água fica na face frontal do bebedouro, alcançável por quem se aproxima de frente."
     tipo: boolean
   permite_copo:
     label: Permite utilização com copos
+    definicao: "A bica pode ser usada para encher um copo sem exigir que a pessoa beba diretamente no jato."
     tipo: boolean
   facil_higienizacao:
     label: Fácil higienização
+    definicao: "Verifica se a característica permite localizar, usar ou manter o elemento sem criar barreira ao usuário."
     tipo: boolean
   altura_acionamento:
     label: Altura de acionamento
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   aproximacao_lateral:
     label: Permite aproximação lateral
+    definicao: "Há espaço livre ao lado do bebedouro para uma pessoa em cadeira de rodas se aproximar e usar os comandos."
     tipo: boolean
 regras:
 - id: bica_jato_inclinado

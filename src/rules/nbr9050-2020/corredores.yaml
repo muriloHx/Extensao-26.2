@@ -6,6 +6,7 @@ norma:
 parametros:
   uso:
     label: Tipo de uso
+    definicao: "Classifica o nível e o tipo de circulação do corredor, que determinam a largura livre mínima exigida."
     tipo: select
     opcoes:
     - comum
@@ -15,23 +16,28 @@ parametros:
     obrigatorio: true
   extensao:
     label: Extensão do corredor
+    definicao: "Dimensão no sentido do comprimento do elemento; em degraus, corresponde à profundidade horizontal disponível para apoiar o pé. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   largura:
     label: Largura livre
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   largura_obstaculo:
     label: Extensão do obstáculo
+    definicao: "Dimensão transversal do elemento, medida perpendicularmente ao sentido principal de uso. Valor informado em m."
     tipo: number
     unidade: m
   possui_bolsao_retorno:
     label: Possui bolsão de retorno
+    definicao: "Existe alargamento do corredor onde uma pessoa em cadeira de rodas pode mudar de sentido ou aguardar sem bloquear a passagem."
     tipo: boolean
   distancia_bolsao:
     label: Distância entre bolsões de retorno
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
 regras:

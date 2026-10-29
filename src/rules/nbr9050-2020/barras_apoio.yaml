@@ -6,31 +6,38 @@ norma:
 parametros:
   resistencia:
     label: Resistência da barra
+    definicao: "Carga que o componente deve suportar sem romper, soltar ou perder estabilidade durante o uso. Valor informado em kg."
     tipo: number
     unidade: kg
     obrigatorio: true
   diametro:
     label: Diâmetro da barra
+    definicao: "Dimensão da seção ou curvatura circular do componente, usada para verificar pega, afastamento ou espaço de manobra. Valor informado em mm."
     tipo: number
     unidade: mm
     obrigatorio: true
   afastamento_suporte:
     label: Afastamento entre suporte e face interna da barra
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em mm."
     tipo: number
     unidade: mm
     obrigatorio: true
   extremidades_fixadas:
     label: Extremidades fixadas ou com desenvolvimento contínuo até a fixação
+    definicao: "Verifica se as pontas estão fixadas ou terminadas sem saliências que possam prender roupas ou causar impacto."
     tipo: boolean
     obrigatorio: true
   material_resistente_corrosao:
     label: Material metálico resistente à corrosão
+    definicao: "Verifica se o material mantém sua integridade em ambiente úmido e não se deteriora por corrosão."
     tipo: boolean
   barra_articulada:
     label: Barra articulada
+    definicao: "Verifica se o apoio está instalado na posição prevista e pode ser utilizado com segurança durante a aproximação, transferência ou deslocamento."
     tipo: boolean
   dispositivo_antiqueda:
     label: Dispositivo contra queda ou movimento abrupto
+    definicao: "Verifica se há mecanismo que impeça a queda ou o movimento brusco do componente articulado."
     tipo: boolean
 regras:
 - id: resistencia_minima

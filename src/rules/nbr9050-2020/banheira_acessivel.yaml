@@ -1,0 +1,70 @@
+id: banheira_acessivel
+nome: Banheira acessível
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  altura_borda:
+    label: Altura da borda da banheira
+    definicao: Distância vertical entre o piso acabado e a borda superior da banheira.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  altura_comando:
+    label: Altura do comando
+    definicao: Altura do ponto de acionamento do comando da banheira em relação ao piso acabado.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  plataforma_transferencia:
+    label: Tipo de plataforma de transferência
+    definicao: 'Identifica a solução de transferência lateral: plataforma fixa nivelada ou plataforma móvel.'
+    tipo: select
+    opcoes:
+    - fixa_nivelada
+    - movel
+    obrigatorio: true
+  area_transferencia_lateral:
+    label: Área para transferência lateral
+    definicao: Verifica a existência de espaço para aproximação paralela e transferência lateral para a plataforma.
+    tipo: boolean
+    obrigatorio: true
+  barras_apoio:
+    label: Barras de apoio instaladas
+    definicao: Verifica a instalação de duas barras horizontais na parede frontal e uma barra vertical na parede
+      lateral do lado da plataforma.
+    tipo: boolean
+    obrigatorio: true
+  superficie_antiderrapante:
+    label: Plataforma e fundo antiderrapantes
+    definicao: Verifica se a plataforma de transferência e o fundo da banheira têm superfície antiderrapante.
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: altura_borda_maxima
+  nome: Altura máxima da borda
+  parametro: altura_borda
+  operador: <=
+  valor: 0.46
+  referencia: ABNT NBR 9050:2020 — 7.13.2.1
+- id: altura_comando
+  nome: Altura do comando
+  parametro: altura_comando
+  operador: ==
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 7.13.2.3
+- id: transferencia_lateral
+  nome: Área de transferência lateral
+  tipo: checklist
+  parametro: area_transferencia_lateral
+  referencia: ABNT NBR 9050:2020 — 7.13.1
+- id: barras
+  nome: Barras de apoio
+  tipo: checklist
+  parametro: barras_apoio
+  referencia: ABNT NBR 9050:2020 — 7.13.2.4
+- id: superficie
+  nome: Superfícies antiderrapantes
+  tipo: checklist
+  parametro: superficie_antiderrapante
+  referencia: ABNT NBR 9050:2020 — 7.13.2.5

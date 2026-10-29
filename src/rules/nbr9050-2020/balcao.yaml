@@ -6,6 +6,7 @@ norma:
 parametros:
   tipo_balcao:
     label: Tipo de balcão
+    definicao: "Classifica a função do balcão (atendimento, caixa, pagamento, bilheteria ou informação) para aplicar os requisitos correspondentes."
     tipo: select
     opcoes:
     - atendimento
@@ -16,40 +17,50 @@ parametros:
     obrigatorio: true
   facilmente_identificado:
     label: Facilmente identificado
+    definicao: "A sinalização e a localização permitem reconhecer o balcão com facilidade a partir da rota de circulação."
     tipo: boolean
     obrigatorio: true
   localizado_em_rota_acessivel:
     label: Localizado em rota acessível
+    definicao: "Verifica se o elemento está conectado a uma rota contínua e utilizável por pessoas com mobilidade reduzida."
     tipo: boolean
     obrigatorio: true
   aproximacao_frontal:
     label: Aproximação frontal
+    definicao: "Verifica se existe espaço desobstruído à frente para aproximar a cadeira de rodas e alcançar o equipamento."
     tipo: boolean
   circulacao_giro_180:
     label: Circulação adjacente para giro de 180 graus
+    definicao: "Verifica se há área desobstruída suficiente para a cadeira de rodas realizar a rotação indicada junto ao elemento."
     tipo: boolean
   largura_superficie:
     label: Largura da superfície
+    definicao: "Dimensão transversal do elemento, medida perpendicularmente ao sentido principal de uso. Valor informado em m."
     tipo: number
     unidade: m
   altura_superficie:
     label: Altura da superfície
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   largura_livre_inferior:
     label: Largura livre sob a superfície
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
   altura_livre_inferior:
     label: Altura livre sob a superfície
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   profundidade_livre_inferior:
     label: Profundidade livre sob a superfície
+    definicao: "Dimensão livre no sentido da frente para o fundo, necessária para aproximar os joelhos ou acomodar o usuário. Valor informado em m."
     tipo: number
     unidade: m
   passagem_lateral:
     label: Largura da passagem lateral
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
 regras:

@@ -1,0 +1,119 @@
+id: cabina_vestiario
+nome: Cabina acessível de vestiário
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  largura_interna:
+    label: Largura interna
+    definicao: Dimensão interna transversal da cabina, medida entre as faces acabadas das paredes.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  comprimento_interno:
+    label: Comprimento interno
+    definicao: Dimensão interna no sentido de profundidade da cabina, medida entre as faces acabadas das paredes.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  porta_abre_externamente:
+    label: Porta abre para fora
+    definicao: Verifica se a folha abre para o lado externo da cabina, preservando seu espaço interno.
+    tipo: boolean
+    obrigatorio: true
+  area_transferencia:
+    label: Área de transferência disponível
+    definicao: Verifica se há área livre para transferência junto à superfície para troca de roupas.
+    tipo: boolean
+    obrigatorio: true
+  barras_apoio:
+    label: Barras de apoio instaladas
+    definicao: Verifica a presença das duas barras horizontais nas paredes previstas para a cabina acessível.
+    tipo: boolean
+    obrigatorio: true
+  superficie_troca_largura:
+    label: Largura da superfície para troca de roupa
+    definicao: Largura da superfície destinada à troca de roupa na posição deitada.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  superficie_troca_comprimento:
+    label: Comprimento da superfície para troca de roupa
+    definicao: Comprimento da superfície destinada à troca de roupa na posição deitada.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  superficie_troca_altura:
+    label: Altura da superfície para troca de roupa
+    definicao: Altura da superfície em relação ao piso acabado.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  superficie_troca_resistencia:
+    label: Resistência da superfície para troca de roupa
+    definicao: Carga que a superfície deve suportar durante a troca de roupa na posição deitada.
+    tipo: number
+    unidade: kg
+    obrigatorio: true
+  espelho_cabide_instalados:
+    label: Espelho e cabide instalados
+    definicao: Verifica a presença de espelho e cabide na cabina, nas posições previstas na Figura 131.
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: largura_minima
+  nome: Largura interna mínima
+  parametro: largura_interna
+  operador: '>='
+  valor: 1.8
+  referencia: ABNT NBR 9050:2020 — 7.14.1 e Figura 131
+- id: comprimento_minimo
+  nome: Comprimento interno mínimo
+  parametro: comprimento_interno
+  operador: '>='
+  valor: 1.8
+  referencia: ABNT NBR 9050:2020 — 7.14.1 e Figura 131
+- id: porta
+  nome: Abertura da porta para fora
+  tipo: checklist
+  parametro: porta_abre_externamente
+  referencia: ABNT NBR 9050:2020 — 7.14.1.2
+- id: transferencia
+  nome: Área de transferência
+  tipo: checklist
+  parametro: area_transferencia
+  referencia: ABNT NBR 9050:2020 — 7.14.1
+- id: barras
+  nome: Barras de apoio
+  tipo: checklist
+  parametro: barras_apoio
+  referencia: ABNT NBR 9050:2020 — 7.14.1.1
+- id: superficie_largura
+  nome: Largura mínima da superfície de troca
+  parametro: superficie_troca_largura
+  operador: '>='
+  valor: 0.7
+  referencia: ABNT NBR 9050:2020 — 7.14.1 e Figura 131
+- id: superficie_comprimento
+  nome: Comprimento mínimo da superfície de troca
+  parametro: superficie_troca_comprimento
+  operador: '>='
+  valor: 1.8
+  referencia: ABNT NBR 9050:2020 — 7.14.1 e Figura 131
+- id: superficie_altura
+  nome: Altura da superfície de troca
+  parametro: superficie_troca_altura
+  operador: ==
+  valor: 0.46
+  referencia: ABNT NBR 9050:2020 — Figura 131
+- id: superficie_resistencia
+  nome: Resistência mínima da superfície de troca
+  parametro: superficie_troca_resistencia
+  operador: '>='
+  valor: 150
+  referencia: ABNT NBR 9050:2020 — 7.9
+- id: espelho_cabide
+  nome: Espelho e cabide na cabina
+  tipo: checklist
+  parametro: espelho_cabide_instalados
+  referencia: ABNT NBR 9050:2020 — 7.14.1.1 e Figura 131

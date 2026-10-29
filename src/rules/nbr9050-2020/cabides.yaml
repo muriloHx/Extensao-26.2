@@ -1,0 +1,25 @@
+id: cabides
+nome: Cabides acessíveis
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  altura_cabide:
+    label: Altura de instalação do cabide
+    definicao: Altura do cabide em relação ao piso acabado, dentro da faixa de alcance indicada pela norma.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+regras:
+- id: altura_minima
+  nome: Altura mínima
+  parametro: altura_cabide
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 7.11.3
+- id: altura_maxima
+  nome: Altura máxima
+  parametro: altura_cabide
+  operador: <=
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 7.11.3

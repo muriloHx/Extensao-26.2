@@ -6,37 +6,45 @@ norma:
 parametros:
   quantidade_degraus:
     label: Quantidade de degraus
+    definicao: "Contagem ou duração do componente/ciclo descrito, usada para verificar o requisito correspondente. Valor informado em degraus."
     tipo: number
     unidade: degraus
     obrigatorio: true
   piso:
     label: Piso do degrau
+    definicao: "Dimensão no sentido do comprimento do elemento; em degraus, corresponde à profundidade horizontal disponível para apoiar o pé. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   espelho:
     label: Espelho do degrau
+    definicao: "Altura vertical entre a superfície de apoio de um degrau e a do degrau seguinte."
     tipo: number
     unidade: m
     obrigatorio: true
   possui_corrimao:
     label: Possui corrimão
+    definicao: "Verifica se o apoio está instalado na posição prevista e pode ser utilizado com segurança durante a aproximação, transferência ou deslocamento."
     tipo: boolean
     obrigatorio: true
   possui_sinalizacao:
     label: Possui sinalização em toda a extensão
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
     obrigatorio: true
   largura_rampa_associada:
     label: Largura livre da rampa associada
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
   possui_bocel:
     label: Possui bocel ou espelho inclinado
+    definicao: "Verifica se a borda do degrau possui projeção ou inclinação que possa prender a ponta do pé ou a bengala."
     tipo: boolean
     obrigatorio: true
   projecao_bocel:
     label: Projeção da aresta
+    definicao: "Dimensão no sentido do comprimento do elemento; em degraus, corresponde à profundidade horizontal disponível para apoiar o pé. Valor informado em m."
     tipo: number
     unidade: m
 regras:

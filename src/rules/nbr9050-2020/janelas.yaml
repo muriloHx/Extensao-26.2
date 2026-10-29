@@ -6,19 +6,23 @@ norma:
 parametros:
   altura_comando:
     label: Altura do comando da janela
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   abertura_um_movimento:
     label: Operação com um único movimento
+    definicao: "Verifica se o componente pode ser operado sem destreza fina ou sequência de movimentos, usando uma única mão quando indicado."
     tipo: boolean
     obrigatorio: true
   operacao_uma_mao:
     label: Operação com uma das mãos
+    definicao: "Verifica se o componente pode ser operado sem destreza fina ou sequência de movimentos, usando uma única mão quando indicado."
     tipo: boolean
     obrigatorio: true
   alcance_comando:
     label: Comando dentro do alcance manual
+    definicao: "Verifica se o comando ou informação pode ser alcançado pela pessoa na posição de uso prevista, inclusive sentada."
     tipo: boolean
     obrigatorio: true
 regras:

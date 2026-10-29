@@ -1,0 +1,53 @@
+id: espaco_cao_guia
+nome: Espaço para cão-guia em plateia
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  comprimento:
+    label: Comprimento
+    definicao: Dimensão longitudinal do espaço reservado para o cão-guia.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  profundidade:
+    label: Profundidade
+    definicao: Dimensão do espaço no sentido da frente para o fundo.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  altura_livre:
+    label: Altura livre
+    definicao: Altura desobstruída disponível no espaço reservado ao cão-guia.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  junto_assento_preferencial:
+    label: Junto a assento preferencial
+    definicao: Verifica se o espaço reservado está junto ao assento preferencial da pessoa acompanhada pelo cão-guia.
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: comprimento
+  nome: Comprimento mínimo
+  parametro: comprimento
+  operador: '>='
+  valor: 0.7
+  referencia: ABNT NBR 9050:2020 — 10.3.5
+- id: profundidade
+  nome: Profundidade mínima
+  parametro: profundidade
+  operador: '>='
+  valor: 0.4
+  referencia: ABNT NBR 9050:2020 — 10.3.5
+- id: altura
+  nome: Altura mínima
+  parametro: altura_livre
+  operador: '>='
+  valor: 0.3
+  referencia: ABNT NBR 9050:2020 — 10.3.5
+- id: localizacao
+  nome: Espaço junto ao assento preferencial
+  tipo: checklist
+  parametro: junto_assento_preferencial
+  referencia: ABNT NBR 9050:2020 — 10.3.5

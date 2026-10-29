@@ -1,0 +1,58 @@
+id: porta_objetos
+nome: Porta-objetos acessíveis
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  altura_instalacao:
+    label: Altura de instalação
+    definicao: Altura da superfície de apoio do porta-objetos em relação ao piso acabado.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  profundidade:
+    label: Profundidade
+    definicao: Distância da borda frontal à parede ou plano de fixação; a projeção não pode exceder o limite normativo.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  nao_interfere_manutencao:
+    label: Não interfere em manobra, transferência ou barras
+    definicao: Verifica se o porta-objetos não ocupa as áreas usadas para manobrar, transferir ou utilizar barras
+      de apoio.
+    tipo: boolean
+    obrigatorio: true
+  sem_cantos_cortantes:
+    label: Sem cantos agudos ou superfícies cortantes/abrasivas
+    definicao: Verifica se as bordas e superfícies não oferecem risco de corte ou abrasão ao usuário.
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: altura_minima
+  nome: Altura mínima
+  parametro: altura_instalacao
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 7.11.4
+- id: altura_maxima
+  nome: Altura máxima
+  parametro: altura_instalacao
+  operador: <=
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 7.11.4
+- id: profundidade_maxima
+  nome: Profundidade máxima
+  parametro: profundidade
+  operador: <=
+  valor: 0.25
+  referencia: ABNT NBR 9050:2020 — 7.11.4
+- id: nao_interfere
+  nome: Não interferência nas áreas de uso
+  tipo: checklist
+  parametro: nao_interfere_manutencao
+  referencia: ABNT NBR 9050:2020 — 7.11.4
+- id: bordas_seguras
+  nome: Bordas e superfícies seguras
+  tipo: checklist
+  parametro: sem_cantos_cortantes
+  referencia: ABNT NBR 9050:2020 — 7.11.4.2

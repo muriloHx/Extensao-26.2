@@ -6,49 +6,59 @@ norma:
 parametros:
   piso:
     label: Piso do degrau
+    definicao: "Dimensão no sentido do comprimento do elemento; em degraus, corresponde à profundidade horizontal disponível para apoiar o pé. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   espelho:
     label: Espelho do degrau
+    definicao: "Altura vertical entre a superfície de apoio de um degrau e a do degrau seguinte."
     tipo: number
     unidade: m
     obrigatorio: true
   largura:
     label: Largura
+    definicao: "Dimensão transversal do elemento, medida perpendicularmente ao sentido principal de uso. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   distancia_primeiro_ultimo:
     label: Distância do primeiro e último degraus da circulação adjacente
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   inclinacao_transversal:
     label: Inclinação transversal
+    definicao: "Inclinação da superfície, calculada pela variação vertical em relação à distância horizontal e expressa como porcentagem. Valor informado em %."
     tipo: number
     unidade: '%'
     obrigatorio: true
   ambiente:
     label: Local da escada
+    definicao: "Identifica se a escada ou rampa está em área interna ou externa; essa distinção define limites diferentes para alguns critérios de inclinação."
     tipo: select
     opcoes:
     - interno
     - externo
   possui_espelho_vazado:
     label: Possui espelho vazado
+    definicao: "Verifica se há abertura no espelho do degrau; espelhos vazados podem oferecer risco de tropeço e devem ser avaliados conforme a norma."
     tipo: boolean
     obrigatorio: true
   possui_guia_balizamento:
     label: Possui guia de balizamento
+    definicao: "Existe elemento lateral contínuo que delimita a borda da escada e ajuda a evitar que a bengala ou a cadeira ultrapasse o limite."
     tipo: boolean
     obrigatorio: true
   piso_espelho_constantes:
     label: Pisos e espelhos constantes
+    definicao: "Todos os degraus do mesmo lance têm a mesma profundidade de piso e a mesma altura de espelho, evitando mudanças inesperadas no passo."
     tipo: boolean
     obrigatorio: true
   sinalizacao_degraus:
     label: Degraus sinalizados
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
     obrigatorio: true
 regras:

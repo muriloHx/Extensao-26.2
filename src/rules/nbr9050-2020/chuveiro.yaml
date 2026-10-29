@@ -6,73 +6,90 @@ norma:
 parametros:
   largura_box:
     label: Largura do boxe
+    definicao: "Dimensão transversal do elemento, medida perpendicularmente ao sentido principal de uso. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   comprimento_box:
     label: Comprimento do boxe
+    definicao: "Dimensão no sentido do comprimento do elemento; em degraus, corresponde à profundidade horizontal disponível para apoiar o pé. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   area_transferencia:
     label: Área de transferência externa
+    definicao: "Verifica se há espaço livre para posicionar a cadeira de rodas ao lado do equipamento e realizar a transferência com segurança."
     tipo: boolean
     obrigatorio: true
   vao_porta:
     label: Vão livre da porta
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
   possui_banco:
     label: Possui banco articulado ou removível
+    definicao: "Verifica se há assento de apoio adequado para uso durante a transferência e as atividades junto ao equipamento."
     tipo: boolean
     obrigatorio: true
   profundidade_banco:
     label: Profundidade do banco
+    definicao: "Dimensão livre no sentido da frente para o fundo, necessária para aproximar os joelhos ou acomodar o usuário. Valor informado em m."
     tipo: number
     unidade: m
   altura_banco:
     label: Altura do banco
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   comprimento_banco:
     label: Comprimento do banco
+    definicao: "Dimensão no sentido do comprimento do elemento; em degraus, corresponde à profundidade horizontal disponível para apoiar o pé. Valor informado em m."
     tipo: number
     unidade: m
   resistencia_banco:
     label: Resistência do banco
+    definicao: "Carga que o componente deve suportar sem romper, soltar ou perder estabilidade durante o uso. Valor informado em kg."
     tipo: number
     unidade: kg
   piso_antiderrapante:
     label: Piso antiderrapante
+    definicao: "Verifica se o piso oferece superfície contínua e segura para circulação, sem instabilidade ou risco de escorregamento."
     tipo: boolean
     obrigatorio: true
   piso_nivelado:
     label: Piso em nível com o adjacente
+    definicao: "Verifica se não há ressalto entre esta superfície e o piso adjacente que possa dificultar a passagem."
     tipo: boolean
     obrigatorio: true
   inclinacao_piso:
     label: Inclinação para escoamento
+    definicao: "Inclinação da superfície, calculada pela variação vertical em relação à distância horizontal e expressa como porcentagem. Valor informado em %."
     tipo: number
     unidade: '%'
     obrigatorio: true
   ralo_fora_transferencia:
     label: Ralo fora das áreas de manobra e transferência
+    definicao: "O ralo está fora do espaço usado para manobrar a cadeira e fazer a transferência para o banco."
     tipo: boolean
     obrigatorio: true
   possui_barras:
     label: Possui barras de apoio
+    definicao: "Verifica se o apoio está instalado na posição prevista e pode ser utilizado com segurança durante a aproximação, transferência ou deslocamento."
     tipo: boolean
     obrigatorio: true
   possui_barra_vertical:
     label: Possui barra vertical
+    definicao: "Verifica se o apoio está instalado na posição prevista e pode ser utilizado com segurança durante a aproximação, transferência ou deslocamento."
     tipo: boolean
     obrigatorio: true
   possui_ducha_manual:
     label: Possui ducha manual
+    definicao: "Verifica se a ducha manual está disponível e se seu comando permite controlar o fluxo na posição de uso."
     tipo: boolean
     obrigatorio: true
   controle_fluxo_na_ducha:
     label: Controle de fluxo na ducha manual
+    definicao: "Verifica se a ducha manual está disponível e se seu comando permite controlar o fluxo na posição de uso."
     tipo: boolean
     obrigatorio: true
 regras:

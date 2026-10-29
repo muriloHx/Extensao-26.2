@@ -1,0 +1,124 @@
+id: espaco_pcr_plateia
+nome: Espaço para pessoa em cadeira de rodas em plateia
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  largura:
+    label: Largura do espaço
+    definicao: Dimensão transversal do módulo reservado para pessoa em cadeira de rodas.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  comprimento:
+    label: Comprimento do espaço
+    definicao: Dimensão do módulo no sentido da profundidade da fileira.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  deslocamento_encosto:
+    label: Deslocamento em relação ao encosto adjacente
+    definicao: Deslocamento lateral do módulo em relação ao encosto da cadeira ao lado.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  sinalizado:
+    label: Espaço sinalizado
+    definicao: Verifica se o módulo reservado está identificado conforme os requisitos de sinalização.
+    tipo: boolean
+    obrigatorio: true
+  rota_preservada:
+    label: Passagem entre fileiras preservada
+    definicao: Verifica se a cadeira posicionada no módulo não bloqueia a passagem entre fileiras.
+    tipo: boolean
+    obrigatorio: true
+  posicao_fileira:
+    label: Posição do espaço na plateia
+    definicao: Indica se o espaço fica na primeira fileira, na última ou em fileira intermediária; a posição define
+      onde a faixa livre deve ser garantida.
+    tipo: select
+    opcoes:
+    - primeira
+    - intermediaria
+    - ultima
+    obrigatorio: true
+  faixa_livre_fileira_adjacente:
+    label: Faixa livre junto à fileira adjacente
+    definicao: Largura livre entre o módulo e a fileira frontal ou posterior, conforme a posição do espaço.
+    tipo: number
+    unidade: m
+  faixas_intermediaria_atendem:
+    label: Faixas frontal e posterior livres
+    definicao: Verifica se, em fileira intermediária, há pelo menos 0,30 m livres tanto à frente quanto atrás do
+      módulo.
+    tipo: boolean
+  visibilidade_cone_visual:
+    label: Palco ou tela dentro do cone visual
+    definicao: Verificação manual de que o espaço está posicionado para manter palco ou tela dentro do cone visual
+      de até 30° previsto na norma.
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: largura_minima
+  nome: Largura mínima
+  parametro: largura
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 10.3.4.1
+- id: comprimento_minimo
+  nome: Comprimento mínimo
+  parametro: comprimento
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 10.3.4.1
+- id: deslocamento
+  nome: Deslocamento em relação ao encosto
+  parametro: deslocamento_encosto
+  operador: '>='
+  valor: 0.3
+  referencia: ABNT NBR 9050:2020 — 10.3.4.1
+- id: sinalizacao
+  nome: Sinalização do módulo
+  tipo: checklist
+  parametro: sinalizado
+  referencia: ABNT NBR 9050:2020 — 10.3.4.1
+- id: circulacao
+  nome: Passagem entre fileiras preservada
+  tipo: checklist
+  parametro: rota_preservada
+  referencia: ABNT NBR 9050:2020 — 10.3.2.6
+- id: faixa_por_fileira
+  nome: Faixa livre conforme posição na plateia
+  tipo: conditional
+  parametro: posicao_fileira
+  condicoes:
+  - quando:
+      operador: ==
+      valor: primeira
+    verificar:
+      parametro: faixa_livre_fileira_adjacente
+      operador: '>='
+      valor: 0.3
+    mensagem: Na primeira fileira, deve haver faixa livre mínima de 0,30 m entre o módulo e a fileira posterior.
+  - quando:
+      operador: ==
+      valor: ultima
+    verificar:
+      parametro: faixa_livre_fileira_adjacente
+      operador: '>='
+      valor: 0.3
+    mensagem: Na última fileira, deve haver faixa livre mínima de 0,30 m entre o módulo e a fileira frontal.
+  - quando:
+      operador: ==
+      valor: intermediaria
+    verificar:
+      parametro: faixas_intermediaria_atendem
+      operador: ==
+      valor: true
+    mensagem: Em fileira intermediária, deve haver faixa livre mínima de 0,30 m tanto à frente quanto atrás do módulo.
+  referencia: ABNT NBR 9050:2020 — 10.3.4.1
+- id: cone_visual
+  nome: Campo visual para palco ou tela
+  tipo: checklist
+  parametro: visibilidade_cone_visual
+  referencia: ABNT NBR 9050:2020 — 10.3.2.1, 10.3.2.2 e 10.3.2.6

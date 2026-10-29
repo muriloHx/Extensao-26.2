@@ -6,12 +6,15 @@ norma:
 parametros:
   sinalizacao_tatil_visual:
     label: Possui sinalização tátil e visual no piso quando aplicável
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
   atende_nbr_16537:
     label: Atende à ABNT NBR 16537
+    definicao: "O piso tátil segue os requisitos de aplicação, geometria e contraste da ABNT NBR 16537."
     tipo: boolean
   contraste_lrv:
     label: Diferença de LRV em relação à superfície adjacente
+    definicao: "Diferença entre os valores de refletância luminosa da sinalização e da superfície adjacente, usada para verificar contraste visual. Valor informado em pontos."
     tipo: number
     unidade: pontos
 regras:

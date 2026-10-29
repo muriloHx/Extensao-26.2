@@ -6,6 +6,7 @@ norma:
 parametros:
   tipo_mesa:
     label: Tipo de mesa
+    definicao: "Distingue mesa de trabalho de mesa de refeição, cujos usos e requisitos de aproximação podem variar."
     tipo: select
     opcoes:
     - trabalho
@@ -13,42 +14,51 @@ parametros:
     obrigatorio: true
   facilmente_identificada:
     label: Facilmente identificada
+    definicao: "Verifica se a característica permite localizar, usar ou manter o elemento sem criar barreira ao usuário."
     tipo: boolean
     obrigatorio: true
   localizada_em_rota_acessivel:
     label: Localizada em rota acessível
+    definicao: "Verifica se o elemento está conectado a uma rota contínua e utilizável por pessoas com mobilidade reduzida."
     tipo: boolean
     obrigatorio: true
   aproximacao_frontal:
     label: Possui aproximação frontal
+    definicao: "Verifica se existe espaço desobstruído à frente para aproximar a cadeira de rodas e alcançar o equipamento."
     tipo: boolean
     obrigatorio: true
   circulacao_giro_180:
     label: Circulação adjacente para giro de 180 graus
+    definicao: "Verifica se há área desobstruída suficiente para a cadeira de rodas realizar a rotação indicada junto ao elemento."
     tipo: boolean
     obrigatorio: true
   largura_tampo:
     label: Largura do tampo
+    definicao: "Dimensão transversal do elemento, medida perpendicularmente ao sentido principal de uso. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   altura_tampo:
     label: Altura do tampo
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   largura_livre_sob_tampo:
     label: Largura livre sob o tampo
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   altura_livre_sob_tampo:
     label: Altura livre sob o tampo
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   profundidade_livre_sob_tampo:
     label: Profundidade livre sob o tampo
+    definicao: "Dimensão livre no sentido da frente para o fundo, necessária para aproximar os joelhos ou acomodar o usuário. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true

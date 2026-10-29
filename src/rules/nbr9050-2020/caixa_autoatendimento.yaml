@@ -6,34 +6,44 @@ norma:
 parametros:
   vao_livre_acessivel:
     label: Vão livre da passagem acessível
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
   localizado_em_rota_acessivel:
     label: Localizado em rota acessível
+    definicao: "Verifica se o elemento está conectado a uma rota contínua e utilizável por pessoas com mobilidade reduzida."
     tipo: boolean
   circulacao_giro_180:
     label: Circulação adjacente para giro de 180 graus
+    definicao: "Verifica se há área desobstruída suficiente para a cadeira de rodas realizar a rotação indicada junto ao elemento."
     tipo: boolean
   alcance_manual_visual:
     label: Atende ao alcance manual e visual
+    definicao: "Verifica se o comando ou informação pode ser alcançado pela pessoa na posição de uso prevista, inclusive sentada."
     tipo: boolean
   iluminacao_adequada:
     label: Iluminação adequada sem reflexos
+    definicao: "Verifica se a característica permite localizar, usar ou manter o elemento sem criar barreira ao usuário."
     tipo: boolean
   intercomunicador:
     label: Possui intercomunicador
+    definicao: "Verifica se a pessoa consegue solicitar ajuda e se comunicar em uma situação de necessidade."
     tipo: boolean
   suporte_bengala_muleta:
     label: Possui suporte para bengalas ou muletas
+    definicao: "Há apoio onde bengala ou muleta pode ser colocada ao alcance durante o uso do equipamento."
     tipo: boolean
   piso_nivelado:
     label: Piso nivelado e livre de obstruções
+    definicao: "Verifica se não há ressalto entre esta superfície e o piso adjacente que possa dificultar a passagem."
     tipo: boolean
   mr_aproximacao_frontal:
     label: Módulo de referência para aproximação frontal
+    definicao: "Verifica se existe espaço desobstruído à frente para aproximar a cadeira de rodas e alcançar o equipamento."
     tipo: boolean
   alcance_visual_frontal_lateral:
     label: Alcance visual frontal ou lateral
+    definicao: "Verifica se o comando ou informação pode ser alcançado pela pessoa na posição de uso prevista, inclusive sentada."
     tipo: boolean
 regras:
 - id: vao_livre

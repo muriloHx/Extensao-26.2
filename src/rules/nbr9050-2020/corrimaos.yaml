@@ -6,53 +6,64 @@ norma:
 parametros:
   altura_superior:
     label: Altura do corrimão superior
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   altura_inferior:
     label: Altura do corrimão inferior
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   prolongamento:
     label: Prolongamento nas extremidades
+    definicao: "Comprimento pelo qual o corrimão continua além do início ou do fim do lance de escada ou rampa."
     tipo: number
     unidade: m
     obrigatorio: true
   diametro:
     label: Diâmetro da seção circular
+    definicao: "Dimensão da seção ou curvatura circular do componente, usada para verificar pega, afastamento ou espaço de manobra. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   afastamento_parede:
     label: Afastamento da parede ou obstáculo
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   quantidade_lados:
     label: Quantidade de lados com corrimão
+    definicao: "Contagem ou duração do componente/ciclo descrito, usada para verificar o requisito correspondente. Valor informado em lados."
     tipo: number
     unidade: lados
     obrigatorio: true
   largura_escada_rampa:
     label: Largura da escada ou rampa
+    definicao: "Dimensão transversal do elemento, medida perpendicularmente ao sentido principal de uso. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   possui_corrimao_intermediario:
     label: Possui corrimão intermediário
+    definicao: "Verifica se o apoio está instalado na posição prevista e pode ser utilizado com segurança durante a aproximação, transferência ou deslocamento."
     tipo: boolean
     obrigatorio: true
   patamar_intermediario:
     label: Comprimento do patamar
+    definicao: "Comprimento horizontal do patamar entre lances, no sentido do percurso da escada ou rampa."
     tipo: number
     unidade: m
   espacamento_corrimao_intermediario:
     label: Espaçamento entre segmentos do corrimão intermediário
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
   extremidades_seguras:
     label: Extremidades sem protuberância
+    definicao: "Verifica se as pontas estão fixadas ou terminadas sem saliências que possam prender roupas ou causar impacto."
     tipo: boolean
     obrigatorio: true
 regras:

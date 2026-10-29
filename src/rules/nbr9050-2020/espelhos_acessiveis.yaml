@@ -1,0 +1,28 @@
+id: espelhos_acessiveis
+nome: Espelhos em sanitários e vestiários
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  atende_figura_123:
+    label: Atende à configuração da Figura 123
+    definicao: Verificação manual da altura de instalação e fixação do espelho conforme a configuração aplicável
+      na Figura 123.
+    tipo: boolean
+    obrigatorio: true
+  altura_borda_inferior:
+    label: Altura da borda inferior
+    definicao: Altura da borda inferior do espelho em relação ao piso acabado.
+    tipo: number
+    unidade: m
+  altura_borda_superior:
+    label: Altura da borda superior
+    definicao: Altura da borda superior do espelho em relação ao piso acabado.
+    tipo: number
+    unidade: m
+regras:
+- id: instalacao_espelho
+  nome: Instalação conforme Figura 123
+  tipo: checklist
+  parametro: atende_figura_123
+  referencia: ABNT NBR 9050:2020 — 7.11.1 e Figura 123

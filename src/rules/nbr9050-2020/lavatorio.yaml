@@ -6,25 +6,30 @@ norma:
 parametros:
   altura_superior:
     label: Altura da superfície superior
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   altura_livre_inferior:
     label: Altura livre inferior
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   profundidade_livre_inferior:
     label: Profundidade livre inferior
+    definicao: "Dimensão livre no sentido da frente para o fundo, necessária para aproximar os joelhos ou acomodar o usuário. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   aproximacao_frontal:
     label: Possui aproximação frontal
+    definicao: "Verifica se existe espaço desobstruído à frente para aproximar a cadeira de rodas e alcançar o equipamento."
     tipo: boolean
     obrigatorio: true
   tipo_torneira:
     label: Tipo de acionamento da torneira
+    definicao: "Identifica o mecanismo de acionamento da torneira e se ele pode ser operado sem preensão ou torção difícil."
     tipo: select
     opcoes:
     - alavanca
@@ -34,23 +39,28 @@ parametros:
     obrigatorio: true
   forca_torneira:
     label: Força de acionamento
+    definicao: "Força necessária para acionar o componente durante o uso normal. Valor informado em N."
     tipo: number
     unidade: N
     obrigatorio: true
   ciclo_fechamento:
     label: Ciclo de fechamento automático
+    definicao: "Contagem ou duração do componente/ciclo descrito, usada para verificar o requisito correspondente. Valor informado em s."
     tipo: number
     unidade: s
   afastamento_barra:
     label: Afastamento da barra da parede
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
   distancia_barra_borda:
     label: Distância da borda ao eixo da barra
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
   alcance_torneira:
     label: Alcance da torneira
+    definicao: "Distância horizontal entre a borda frontal do lavatório e o ponto de acionamento da torneira, relevante para o alcance sentado."
     tipo: number
     unidade: m
 regras:

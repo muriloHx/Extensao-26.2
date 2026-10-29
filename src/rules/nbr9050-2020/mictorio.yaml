@@ -6,15 +6,18 @@ norma:
 parametros:
   area_aproximacao_frontal:
     label: Área de aproximação frontal
+    definicao: "Verifica se existe espaço desobstruído à frente para aproximar a cadeira de rodas e alcançar o equipamento."
     tipo: boolean
     obrigatorio: true
   altura_valvula:
     label: Altura da válvula
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   tipo_acionamento:
     label: Tipo de acionamento
+    definicao: "Identifica como a descarga do mictório é acionada para avaliar se pode ser operada com alcance e esforço acessíveis."
     tipo: select
     opcoes:
     - sensor_eletronico
@@ -24,19 +27,23 @@ parametros:
     obrigatorio: true
   forca_acionamento:
     label: Força de acionamento
+    definicao: "Força necessária para acionar o componente durante o uso normal. Valor informado em N."
     tipo: number
     unidade: N
     obrigatorio: true
   possui_barras:
     label: Possui barras de apoio
+    definicao: "Verifica se o apoio está instalado na posição prevista e pode ser utilizado com segurança durante a aproximação, transferência ou deslocamento."
     tipo: boolean
     obrigatorio: true
   altura_barra:
     label: Altura de instalação da barra
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   comprimento_barra:
     label: Comprimento mínimo da barra
+    definicao: "Dimensão no sentido do comprimento do elemento; em degraus, corresponde à profundidade horizontal disponível para apoiar o pé. Valor informado em m."
     tipo: number
     unidade: m
 regras:

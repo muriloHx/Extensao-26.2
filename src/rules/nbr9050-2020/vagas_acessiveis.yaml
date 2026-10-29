@@ -6,44 +6,54 @@ norma:
 parametros:
   possui_sinalizacao:
     label: Vaga sinalizada
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
     obrigatorio: true
   possui_faixa_circulacao:
     label: Possui faixa adicional de circulação
+    definicao: "Verifica se existe faixa contínua e desobstruída para circulação de pedestres junto ao equipamento ou à vaga."
     tipo: boolean
     obrigatorio: true
   largura_faixa_circulacao:
     label: Largura da faixa adicional de circulação
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   piso_regular_estavel:
     label: Piso regular e estável
+    definicao: "Verifica se o piso oferece superfície contínua e segura para circulação, sem instabilidade ou risco de escorregamento."
     tipo: boolean
     obrigatorio: true
   distancia_acesso:
     label: Distância até o acesso à edificação ou elevador
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   evita_circulacao_entre_veiculos:
     label: Localização evita circulação entre veículos
+    definicao: "Verifica se o percurso de pedestres permanece protegido e não é interrompido pela entrada ou circulação de veículos."
     tipo: boolean
     obrigatorio: true
   vinculada_rota_acessivel:
     label: Vinculada à rota acessível
+    definicao: "Verifica se o elemento está conectado a uma rota contínua e utilizável por pessoas com mobilidade reduzida."
     tipo: boolean
     obrigatorio: true
   sinalizacao_nao_interfere:
     label: Sinalização não interfere na circulação
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
     obrigatorio: true
   faixa_pedestre_estacionamento:
     label: Faixa de circulação de pedestres no estacionamento
+    definicao: "Verifica se existe faixa contínua e desobstruída para circulação de pedestres junto ao equipamento ou à vaga."
     tipo: boolean
     obrigatorio: true
   largura_faixa_pedestre:
     label: Largura da faixa de circulação de pedestres
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true

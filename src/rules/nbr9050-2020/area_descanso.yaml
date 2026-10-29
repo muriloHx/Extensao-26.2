@@ -1,0 +1,71 @@
+id: area_descanso
+nome: Área de descanso
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  inclinacao_piso:
+    label: Inclinação do piso no percurso
+    definicao: Inclinação longitudinal do percurso, calculada pela variação vertical em relação à projeção horizontal.
+    tipo: number
+    unidade: '%'
+    obrigatorio: true
+  distancia_entre_areas:
+    label: Distância entre áreas de descanso
+    definicao: Comprimento do percurso entre áreas consecutivas de descanso.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  fora_faixa_circulacao:
+    label: Fora da faixa de circulação
+    definicao: Verifica se a área de descanso não reduz a largura útil do percurso de pedestres.
+    tipo: boolean
+    obrigatorio: true
+  permite_manobra_cadeira:
+    label: Permite manobra de cadeira de rodas
+    definicao: Verifica se a área livre comporta a manobra de uma cadeira de rodas.
+    tipo: boolean
+    obrigatorio: true
+  banco_com_encosto_bracos:
+    label: Banco com encosto e braços
+    definicao: Verifica se o assento recomendado para a área possui encosto e braços.
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: distancia_recomendada
+  nome: Distância recomendada entre áreas de descanso
+  tipo: conditional
+  parametro: inclinacao_piso
+  condicoes:
+  - quando:
+      operador: <=
+      valor: 3
+    verificar:
+      parametro: distancia_entre_areas
+      operador: <=
+      valor: 50
+    mensagem: Para inclinação de até 3 %, recomenda-se uma área de descanso a cada 50 m.
+  - quando:
+      operador: <=
+      valor: 5
+    verificar:
+      parametro: distancia_entre_areas
+      operador: <=
+      valor: 30
+    mensagem: Para inclinação acima de 3 % e até 5 %, recomenda-se uma área de descanso a cada 30 m.
+  referencia: ABNT NBR 9050:2020 — 6.5
+- id: fora_circulacao
+  nome: Área fora da faixa de circulação
+  tipo: checklist
+  parametro: fora_faixa_circulacao
+  referencia: ABNT NBR 9050:2020 — 6.5
+- id: manobra_cadeira
+  nome: Espaço para manobra de cadeira de rodas
+  tipo: checklist
+  parametro: permite_manobra_cadeira
+  referencia: ABNT NBR 9050:2020 — 6.5
+- id: banco_recomendado
+  nome: Banco com encosto e braços
+  tipo: checklist
+  parametro: banco_com_encosto_bracos
+  referencia: ABNT NBR 9050:2020 — 6.5

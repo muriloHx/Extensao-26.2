@@ -6,48 +6,59 @@ norma:
 parametros:
   entrada_independente:
     label: Possui entrada independente
+    definicao: "A pessoa pode entrar no sanitário acessível diretamente, sem precisar atravessar outro sanitário de uso coletivo."
     tipo: boolean
     obrigatorio: true
   sinalizacao:
     label: Possui sinalização
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
     obrigatorio: true
   alarme_emergencia:
     label: Possui alarme de emergência
+    definicao: "Verifica se a pessoa consegue solicitar ajuda e se comunicar em uma situação de necessidade."
     tipo: boolean
     obrigatorio: true
   area_manobra_360:
     label: Possui área de manobra de 360 graus
+    definicao: "Verifica se há área desobstruída suficiente para a cadeira de rodas realizar a rotação indicada junto ao elemento."
     tipo: boolean
     obrigatorio: true
   diametro_manobra:
     label: Diâmetro da área de manobra
+    definicao: "Dimensão da seção ou curvatura circular do componente, usada para verificar pega, afastamento ou espaço de manobra. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   vao_porta:
     label: Vão livre da porta
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   porta_abre_externamente:
     label: Porta abre para o lado externo
+    definicao: "A folha da porta abre para fora do sanitário, preservando o espaço interno para manobra e eventual auxílio."
     tipo: boolean
     obrigatorio: true
   comprimento_puxador:
     label: Comprimento do puxador
+    definicao: "Dimensão no sentido do comprimento do elemento; em degraus, corresponde à profundidade horizontal disponível para apoiar o pé. Valor informado em m."
     tipo: number
     unidade: m
   afastamento_puxador:
     label: Afastamento do puxador
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em mm."
     tipo: number
     unidade: mm
   diametro_puxador:
     label: Diâmetro do puxador
+    definicao: "Dimensão da seção ou curvatura circular do componente, usada para verificar pega, afastamento ou espaço de manobra. Valor informado em mm."
     tipo: number
     unidade: mm
   distancia_maxima:
     label: Distância até o sanitário
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
 regras:

@@ -6,6 +6,7 @@ norma:
 parametros:
   tipo_ambiente:
     label: Tipo de ambiente
+    definicao: "Identifica se o piso avaliado é interno ou externo, distinção usada pela norma para estabelecer a inclinação transversal permitida."
     tipo: select
     opcoes:
     - interno
@@ -13,55 +14,68 @@ parametros:
     obrigatorio: true
   inclinacao_transversal:
     label: Inclinação transversal
+    definicao: "Inclinação da superfície, calculada pela variação vertical em relação à distância horizontal e expressa como porcentagem. Valor informado em %."
     tipo: number
     unidade: '%'
     obrigatorio: true
   inclinacao_longitudinal:
     label: Inclinação longitudinal
+    definicao: "Inclinação da superfície, calculada pela variação vertical em relação à distância horizontal e expressa como porcentagem. Valor informado em %."
     tipo: number
     unidade: '%'
     obrigatorio: true
   revestimento_regular:
     label: Superfície regular
+    definicao: "Verifica se o piso oferece superfície contínua e segura para circulação, sem instabilidade ou risco de escorregamento."
     tipo: boolean
     obrigatorio: true
   revestimento_firme:
     label: Superfície firme
+    definicao: "Verifica se o piso oferece superfície contínua e segura para circulação, sem instabilidade ou risco de escorregamento."
     tipo: boolean
     obrigatorio: true
   revestimento_estavel:
     label: Superfície estável
+    definicao: "Verifica se o piso oferece superfície contínua e segura para circulação, sem instabilidade ou risco de escorregamento."
     tipo: boolean
     obrigatorio: true
   revestimento_antiderrapante:
     label: Superfície antiderrapante
+    definicao: "Verifica se o acabamento reduz o risco de escorregamento durante a circulação, inclusive quando molhado."
     tipo: boolean
     obrigatorio: true
   desnível:
     label: Desnível
+    definicao: "Diferença vertical de nível entre as duas superfícies conectadas pelo trecho avaliado. Valor informado em mm."
     tipo: number
     unidade: mm
     obrigatorio: true
   possui_tratamento_desnível:
     label: Possui tratamento do desnível
+    definicao: "O desnível tem chanfro, rampa ou outro tratamento que permita transpor a mudança de nível sem um degrau abrupto."
     tipo: boolean
   inclinacao_tratamento:
     label: Inclinação do tratamento do desnível
+    definicao: "Inclinação da superfície, calculada pela variação vertical em relação à distância horizontal e expressa como porcentagem. Valor informado em %."
     tipo: number
     unidade: '%'
   é_reforma:
     label: É reforma
+    definicao: "Identifica se a intervenção é uma reforma, condição que pode alterar os limites admitidos pela norma para adequações existentes."
     tipo: boolean
     obrigatorio: true
   fresta_grelha:
     label: Largura da fresta da grelha/junta
+    definicao: "Largura da abertura entre peças do piso; frestas largas podem prender rodas, bengalas ou pontas de calçados. Valor informado em mm."
     tipo: number
     unidade: mm
   tampa_nivelada:
     label: Tampa nivelada com o piso adjacente
+    definicao: "Verifica se não há ressalto entre esta superfície e o piso adjacente que possa dificultar a passagem."
     tipo: boolean
   fresta_tampa:
     label: Largura da fresta da tampa
+    definicao: "Largura da abertura entre peças do piso; frestas largas podem prender rodas, bengalas ou pontas de calçados. Valor informado em mm."
     tipo: number
     unidade: mm
 regras:

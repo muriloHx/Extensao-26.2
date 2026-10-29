@@ -1,0 +1,18 @@
+id: guarda_corpos
+nome: Guarda-corpos
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  atende_normas_referenciadas:
+    label: Atende às normas aplicáveis
+    definicao: Verificação manual de atendimento às ABNT NBR 9077 e ABNT NBR 14718, indicadas pela NBR 9050 para
+      guarda-corpos.
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: normas_referenciadas
+  nome: Atendimento às normas de guarda-corpos
+  tipo: checklist
+  parametro: atende_normas_referenciadas
+  referencia: ABNT NBR 9050:2020 — 6.9.2

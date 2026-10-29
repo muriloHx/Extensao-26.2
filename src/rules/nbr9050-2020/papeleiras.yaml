@@ -1,0 +1,60 @@
+id: papeleiras
+nome: Papeleiras
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  tipo_instalacao:
+    label: Tipo de instalação
+    definicao: Distingue papeleira embutida de papeleira de sobrepor, cujas posições são tratadas de forma diferente
+      na norma.
+    tipo: select
+    opcoes:
+    - embutida
+    - sobrepor_rolo
+    - sobrepor_interfolhada
+    obrigatorio: true
+  altura_instalacao:
+    label: Altura de instalação
+    definicao: Altura do ponto de acesso ao papel em relação ao piso acabado.
+    tipo: number
+    unidade: m
+  acesso_livre_facil:
+    label: Acesso livre e de fácil alcance
+    definicao: Verifica se é possível alcançar e retirar o papel sem obstáculo, a partir da posição de uso da bacia.
+    tipo: boolean
+    obrigatorio: true
+  localizacao_conforme_figura:
+    label: Localização conforme figura aplicável
+    definicao: Verificação manual da posição da papeleira em relação à bacia e às barras, conforme o tipo de instalação.
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: altura_sobrepor
+  nome: Altura mínima da papeleira de sobrepor
+  tipo: conditional
+  parametro: tipo_instalacao
+  condicoes:
+  - quando:
+      operador: ==
+      valor: embutida
+    resultado: conforme
+  - quando:
+      operador: '!='
+      valor: embutida
+    verificar:
+      parametro: altura_instalacao
+      operador: '>='
+      valor: 1.0
+    mensagem: Papeleiras de sobrepor não podem ser instaladas abaixo de 1,00 m do piso acabado.
+  referencia: ABNT NBR 9050:2020 — 7.11.2
+- id: acesso_papel
+  nome: Acesso livre e de fácil alcance
+  tipo: checklist
+  parametro: acesso_livre_facil
+  referencia: ABNT NBR 9050:2020 — 7.11.2
+- id: posicao_papeleira
+  nome: Posição conforme tipo de papeleira
+  tipo: checklist
+  parametro: localizacao_conforme_figura
+  referencia: ABNT NBR 9050:2020 — 7.11.2 e Figuras 124 a 126

@@ -6,30 +6,38 @@ norma:
 parametros:
   sinalizacao_vertical:
     label: Sinalização vertical adequada
+    definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."
     tipo: boolean
   espaco_circulacao:
     label: Largura do espaço adicional de circulação
+    definicao: "Dimensão do elemento indicada pelo campo, medida no sentido correspondente ao uso ou à instalação: largura do espaço adicional de circulação. Valor informado em m."
     tipo: number
     unidade: m
   vinculada_rota_acessivel:
     label: Vaga vinculada à rota acessível
+    definicao: "Verifica se o elemento está conectado a uma rota contínua e utilizável por pessoas com mobilidade reduzida."
     tipo: boolean
   evita_circulacao_veiculos:
     label: Evita circulação entre veículos
+    definicao: "Verifica se o percurso de pedestres permanece protegido e não é interrompido pela entrada ou circulação de veículos."
     tipo: boolean
   piso_regular_estavel:
     label: Piso regular e estável
+    definicao: "Verifica se o piso oferece superfície contínua e segura para circulação, sem instabilidade ou risco de escorregamento."
     tipo: boolean
   distancia_acesso:
     label: Distância até acesso à edificação ou elevadores
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
   faixa_pedestre:
     label: Faixa de circulação de pedestres
+    definicao: "Largura útil da faixa destinada a pedestres no estacionamento, medida sem contar obstáculos que reduzam a passagem."
     tipo: number
     unidade: m
   vaga_reservada:
     label: Existe vaga reservada quando aplicável
+    definicao: "Existe vaga acessível reservada quando a quantidade exigida pela legislação se aplica ao estacionamento."
     tipo: boolean
 regras:
 - id: sinalizacao

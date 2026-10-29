@@ -6,46 +6,56 @@ norma:
 parametros:
   abertura_frontal:
     label: Possui abertura frontal
+    definicao: "Verifica se existe recorte frontal na bacia; a configuração acessível prevista pela norma não deve ter essa abertura."
     tipo: boolean
     obrigatorio: true
   altura_sem_assento:
     label: Altura sem assento
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   altura_com_assento:
     label: Altura com assento
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   transferencia_lateral:
     label: Transferência lateral
+    definicao: "Verifica se há espaço livre para posicionar a cadeira de rodas ao lado do equipamento e realizar a transferência com segurança."
     tipo: boolean
     obrigatorio: true
   transferencia_perpendicular:
     label: Transferência perpendicular
+    definicao: "Verifica se há espaço livre para posicionar a cadeira de rodas ao lado do equipamento e realizar a transferência com segurança."
     tipo: boolean
     obrigatorio: true
   transferencia_diagonal:
     label: Transferência diagonal
+    definicao: "Verifica se há espaço livre para posicionar a cadeira de rodas ao lado do equipamento e realizar a transferência com segurança."
     tipo: boolean
     obrigatorio: true
   altura_valvula:
     label: Altura da válvula
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   forca_valvula:
     label: Força de acionamento da válvula
+    definicao: "Força necessária para acionar o componente durante o uso normal. Valor informado em N."
     tipo: number
     unidade: N
     obrigatorio: true
   comprimento_barra_fundo:
     label: Comprimento da barra de fundo
+    definicao: "Dimensão no sentido do comprimento do elemento; em degraus, corresponde à profundidade horizontal disponível para apoiar o pé. Valor informado em m."
     tipo: number
     unidade: m
   altura_barra_fundo:
     label: Altura da barra de fundo
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
 regras:

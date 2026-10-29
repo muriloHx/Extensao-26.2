@@ -1,0 +1,77 @@
+id: armario_vestiario
+nome: Armário acessível de vestiário
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  altura_uso_minima:
+    label: Altura mínima da faixa de uso
+    definicao: Limite inferior da faixa vertical de uso dos compartimentos do armário.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  altura_uso_maxima:
+    label: Altura máxima da faixa de uso
+    definicao: Limite superior da faixa vertical de uso dos compartimentos do armário.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  altura_puxadores_fechaduras_minima:
+    label: Altura mínima de puxadores e fechaduras
+    definicao: Limite inferior da faixa vertical de instalação de puxadores e fechaduras.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  altura_puxadores_fechaduras_maxima:
+    label: Altura máxima de puxadores e fechaduras
+    definicao: Limite superior da faixa vertical de instalação de puxadores e fechaduras.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  alcance_prateleiras_gavetas:
+    label: Prateleiras e gavetas dentro do alcance
+    definicao: Verifica se prateleiras, gavetas e cabides estão nas faixas de alcance manual e visual.
+    tipo: boolean
+    obrigatorio: true
+  largura_circulacao_com_porta_aberta:
+    label: Largura livre de circulação com a porta aberta
+    definicao: Largura desobstruída do percurso junto ao armário considerando a projeção da porta aberta.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+regras:
+- id: faixa_uso_min
+  nome: Limite inferior da faixa de uso
+  parametro: altura_uso_minima
+  operador: '>='
+  valor: 0.4
+  referencia: ABNT NBR 9050:2020 — 7.14.3
+- id: faixa_uso_max
+  nome: Limite superior da faixa de uso
+  parametro: altura_uso_maxima
+  operador: <=
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 7.14.3
+- id: comandos_min
+  nome: Altura mínima de puxadores e fechaduras
+  parametro: altura_puxadores_fechaduras_minima
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 7.14.3
+- id: comandos_max
+  nome: Altura máxima de puxadores e fechaduras
+  parametro: altura_puxadores_fechaduras_maxima
+  operador: <=
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 7.14.3
+- id: circulacao
+  nome: Largura livre de circulação com porta aberta
+  parametro: largura_circulacao_com_porta_aberta
+  operador: '>='
+  valor: 0.9
+  referencia: ABNT NBR 9050:2020 — 7.14.3
+- id: alcance
+  nome: Alcance de prateleiras, gavetas e cabides
+  tipo: checklist
+  parametro: alcance_prateleiras_gavetas
+  referencia: ABNT NBR 9050:2020 — 7.14.3

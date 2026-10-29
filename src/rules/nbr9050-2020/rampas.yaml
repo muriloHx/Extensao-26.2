@@ -6,55 +6,66 @@ norma:
 parametros:
   inclinacao:
     label: Inclinação
+    definicao: "Inclinação da superfície, calculada pela variação vertical em relação à distância horizontal e expressa como porcentagem. Valor informado em %."
     tipo: number
     unidade: '%'
     obrigatorio: true
   desnivel_segmento:
     label: Desnível de cada segmento
+    definicao: "Diferença vertical de nível entre as duas superfícies conectadas pelo trecho avaliado. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   numero_segmentos:
     label: Número de segmentos
+    definicao: "Contagem ou duração do componente/ciclo descrito, usada para verificar o requisito correspondente. Valor informado em segmentos."
     tipo: number
     unidade: segmentos
     obrigatorio: true
   largura:
     label: Largura livre
+    definicao: "Dimensão transversal útil, medida entre os limites físicos e descontando elementos que reduzam a passagem. Valor informado em m."
     tipo: number
     unidade: m
     obrigatorio: true
   inclinacao_transversal:
     label: Inclinação transversal
+    definicao: "Inclinação da superfície, calculada pela variação vertical em relação à distância horizontal e expressa como porcentagem. Valor informado em %."
     tipo: number
     unidade: '%'
     obrigatorio: true
   ambiente:
     label: Local da rampa
+    definicao: "Identifica se a escada ou rampa está em área interna ou externa; essa distinção define limites diferentes para alguns critérios de inclinação."
     tipo: select
     opcoes:
     - interno
     - externo
   patamar_inicial_final:
     label: Comprimento do patamar inicial/final
+    definicao: "Comprimento horizontal livre do patamar no início ou no término da rampa, necessário para aproximação e manobra."
     tipo: number
     unidade: m
     obrigatorio: true
   patamar_intermediario:
     label: Comprimento do patamar intermediário
+    definicao: "Comprimento horizontal livre do patamar entre segmentos consecutivos da rampa, necessário para descanso e manobra."
     tipo: number
     unidade: m
     obrigatorio: true
   raio_curva:
     label: Raio interno da curva
+    definicao: "Dimensão da seção ou curvatura circular do componente, usada para verificar pega, afastamento ou espaço de manobra. Valor informado em m."
     tipo: number
     unidade: m
   rampa_curva:
     label: Rampa em curva
+    definicao: "Indica que o percurso da rampa muda de direção em curva; nessa configuração também se verifica o raio interno."
     tipo: boolean
     obrigatorio: true
   guia_balizamento:
     label: Possui guia de balizamento
+    definicao: "Há guia lateral contínua que delimita a rampa e reduz o risco de a cadeira ou a bengala sair da superfície de circulação."
     tipo: boolean
     obrigatorio: true
 regras:

@@ -1,0 +1,73 @@
+id: banco_vestiario
+nome: Banco de vestiário
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  profundidade:
+    label: Profundidade
+    definicao: Dimensão do banco no sentido da frente para o fundo.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  largura:
+    label: Largura
+    definicao: Dimensão do banco ao longo da parede ou do seu eixo longitudinal.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  altura:
+    label: Altura do assento
+    definicao: Distância vertical entre o piso acabado e a superfície superior do assento.
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  possui_encosto:
+    label: Possui encosto
+    definicao: Verifica se o banco tem encosto para apoio do tronco.
+    tipo: boolean
+    obrigatorio: true
+  area_menor_livre:
+    label: Espaço inferior livre
+    definicao: Verifica se há espaço inferior desobstruído sob o banco para aproximação/manobra.
+    tipo: boolean
+    obrigatorio: true
+  areas_transferencia_manutencao:
+    label: Garante circulação, manobra e transferência
+    definicao: Verifica se o posicionamento do banco preserva áreas de circulação, manobra e transferência.
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: profundidade_minima
+  nome: Profundidade mínima
+  parametro: profundidade
+  operador: '>='
+  valor: 0.45
+  referencia: ABNT NBR 9050:2020 — 7.14.2
+- id: largura_minima
+  nome: Largura mínima
+  parametro: largura
+  operador: '>='
+  valor: 0.7
+  referencia: ABNT NBR 9050:2020 — 7.14.2
+- id: altura
+  nome: Altura do assento
+  parametro: altura
+  operador: ==
+  valor: 0.46
+  referencia: ABNT NBR 9050:2020 — 7.14.2
+- id: encosto
+  nome: Banco com encosto
+  tipo: checklist
+  parametro: possui_encosto
+  referencia: ABNT NBR 9050:2020 — 7.14.2
+- id: espaco_inferior
+  nome: Espaço inferior livre
+  tipo: checklist
+  parametro: area_menor_livre
+  referencia: ABNT NBR 9050:2020 — 7.14.2 e Figura 132
+- id: areas_uso
+  nome: Áreas de circulação, manobra e transferência
+  tipo: checklist
+  parametro: areas_transferencia_manutencao
+  referencia: ABNT NBR 9050:2020 — 7.14.2

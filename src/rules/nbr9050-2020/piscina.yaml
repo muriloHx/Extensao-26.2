@@ -6,71 +6,90 @@ norma:
 parametros:
   altura_maxima_tanque:
     label: Altura máxima na maior profundidade
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   piso_entorno_atende_nbr_10339:
     label: Piso do entorno atende à ABNT NBR 10339
+    definicao: "O piso ao redor da piscina cumpre os requisitos de segurança e desempenho definidos pela ABNT NBR 10339."
     tipo: boolean
   bordas_arredondadas:
     label: Bordas com acabamento arredondado
+    definicao: "Verifica se as bordas e superfícies de contato não têm arestas vivas que possam causar ferimentos."
     tipo: boolean
   degraus_arredondados:
     label: Degraus de acesso à água com acabamento arredondado
+    definicao: "Verifica se as bordas e superfícies de contato não têm arestas vivas que possam causar ferimentos."
     tipo: boolean
   corrimaos_arredondados:
     label: Corrimãos com acabamento arredondado
+    definicao: "Verifica se o apoio está instalado na posição prevista e pode ser utilizado com segurança durante a aproximação, transferência ou deslocamento."
     tipo: boolean
   barras_arredondadas:
     label: Barras de apoio com acabamento arredondado
+    definicao: "Verifica se o apoio está instalado na posição prevista e pode ser utilizado com segurança durante a aproximação, transferência ou deslocamento."
     tipo: boolean
   meio_acesso_adequado:
     label: Meio de entrada e saída adequado à Tabela 8
+    definicao: "Identifica se a piscina dispõe de um meio de entrada e saída acessível dentre as soluções previstas na Tabela 8 da norma."
     tipo: boolean
   inclinacao_rampa:
     label: Inclinação da rampa
+    definicao: "Inclinação da superfície, calculada pela variação vertical em relação à distância horizontal e expressa como porcentagem. Valor informado em %."
     tipo: number
     unidade: '%'
   corrimao_rampa_ambos_lados:
     label: Corrimão nos dois lados da rampa
+    definicao: "Verifica se o apoio está instalado na posição prevista e pode ser utilizado com segurança durante a aproximação, transferência ou deslocamento."
     tipo: boolean
   altura_corrimao_rampa:
     label: Altura do corrimão da rampa
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   altura_banco:
     label: Altura do banco de transferência
+    definicao: "Distância vertical entre o piso acabado e o ponto do componente indicado no campo (borda, superfície, comando ou eixo). Valor informado em m."
     tipo: number
     unidade: m
   extensao_banco:
     label: Extensão do banco
+    definicao: "Dimensão no sentido do comprimento do elemento; em degraus, corresponde à profundidade horizontal disponível para apoiar o pé. Valor informado em m."
     tipo: number
     unidade: m
   profundidade_banco:
     label: Profundidade do banco
+    definicao: "Dimensão livre no sentido da frente para o fundo, necessária para aproximar os joelhos ou acomodar o usuário. Valor informado em m."
     tipo: number
     unidade: m
   distancia_barras_banco:
     label: Distância entre barras do banco
+    definicao: "Vão entre os dois pontos de referência indicados, medido na direção mais curta entre eles. Valor informado em m."
     tipo: number
     unidade: m
   nivel_agua_banco:
     label: Diferença máxima entre água e assento do banco
+    definicao: "Diferença vertical entre o nível da água e a superfície do assento de transferência."
     tipo: number
     unidade: m
   largura_escada:
     label: Largura da escada submersa
+    definicao: "Dimensão transversal do elemento, medida perpendicularmente ao sentido principal de uso. Valor informado em m."
     tipo: number
     unidade: m
   piso_degrau:
     label: Piso dos degraus submersos
+    definicao: "Profundidade horizontal de cada degrau submerso, isto é, a superfície disponível para apoiar o pé."
     tipo: number
     unidade: m
   espelho_degrau:
     label: Espelho dos degraus submersos
+    definicao: "Altura vertical entre as superfícies de apoio de dois degraus submersos consecutivos."
     tipo: number
     unidade: m
   corrimaos_escada:
     label: Corrimãos nos dois lados e em três alturas
+    definicao: "Verifica se o apoio está instalado na posição prevista e pode ser utilizado com segurança durante a aproximação, transferência ou deslocamento."
     tipo: boolean
 regras:
 - id: piso_entorno
