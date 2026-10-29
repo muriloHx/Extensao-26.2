@@ -13,6 +13,12 @@ const routes = [
     path: "/",
     redirect: "/projects",
   },
+  {
+    path: "/banner",
+    beforeEnter: () => {
+      window.location.assign(`${import.meta.env.BASE_URL}banner-siic-2026.pdf`);
+    },
+  },
 
   // Projetos
   {
