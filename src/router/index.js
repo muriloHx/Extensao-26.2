@@ -16,7 +16,7 @@ const routes = [
   {
     path: "/banner",
     beforeEnter: () => {
-      window.location.assign(`${import.meta.env.BASE_URL}banner-siic-2026.pdf`);
+      window.location.assign(`${import.meta.env.BASE_URL}banner.pdf`);
     },
   },
 
