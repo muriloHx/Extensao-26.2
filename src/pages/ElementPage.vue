@@ -6,6 +6,7 @@ import vSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
+import { compare } from "../core/operators.js";
 
 const props = defineProps({
   elementId: String,
@@ -44,14 +45,18 @@ const activeChecklist = computed(() =>
 const expectedByParameter = computed(() => {
   const expected = {};
   for (const rule of activeChecklist.value?.regras ?? []) {
-    const checks = [];
-    if (rule.operador && rule.valor !== undefined) checks.push({ ...rule, parametro: rule.parametro });
-    for (const condition of rule.condicoes ?? []) {
-      if (condition.quando) {
-        checks.push({ ...condition.quando, parametro: rule.parametro });
-      }
-      if (condition.verificar) checks.push(condition.verificar);
-    }
+    const checks = rule.tipo === "conditional"
+      ? (() => {
+          const actual = form.data[rule.parametro];
+          if (actual === undefined || actual === null || actual === "") return [];
+          const condition = (rule.condicoes ?? []).find((branch) =>
+            branch.quando && compare(actual, branch.quando.operador, branch.quando.valor)
+          );
+          return condition?.verificar ? [condition.verificar] : [];
+        })()
+      : rule.operador && rule.valor !== undefined
+        ? [{ ...rule, parametro: rule.parametro }]
+        : [];
     for (const check of checks) {
       if (!check.parametro || check.valor === undefined) continue;
       expected[check.parametro] ??= [];
