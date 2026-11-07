@@ -7,6 +7,7 @@ import 'vue-select/dist/vue-select.css';
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import { compare } from "../core/operators.js";
+import { formatExpected } from "../core/formatExpected.js";
 
 const props = defineProps({
   elementId: String,
@@ -66,20 +67,6 @@ const expectedByParameter = computed(() => {
   }
   return expected;
 });
-
-function formatExpected(operator, value, unit = "") {
-  const formattedValue = typeof value === "boolean" ? (value ? "Sim" : "Não") : value;
-  const valueWithUnit = `${formattedValue}${unit ?? ""}`;
-  switch (operator) {
-    case ">=": return `no mínimo, ${valueWithUnit}`;
-    case "<=": return `no máximo, ${valueWithUnit}`;
-    case ">": return `maior que ${valueWithUnit}`;
-    case "<": return `menor que ${valueWithUnit}`;
-    case "==":
-    case "eq": return `igual a ${valueWithUnit}`;
-    default: return valueWithUnit;
-  }
-}
 
 // Lista dinâmica de normas únicas disponíveis nos ruleSets
 const normasDisponiveis = computed(() => {

@@ -5,6 +5,8 @@ import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import StatusBadge from "../components/StatusBadge.vue";
+import { compare } from "../core/operators.js";
+import { formatExpected } from "../core/formatExpected.js";
 
 const props = defineProps({
   elementId: String,
@@ -12,17 +14,56 @@ const props = defineProps({
 });
 
 const services = inject("services");
+const builtInRuleSets = inject("builtInRuleSets");
 
 // Estado da Tela
 const element = ref(null);
 const environment = ref(null);
 const evaluation = ref(null);
+const ruleSets = ref([]);
 const environmentRoute = computed(() => environment.value
   ? `/projects/${environment.value.projectId}/environments/${environment.value.id}`
   : "/projects");
 
 // Computed Properties
 const resultList = computed(() => evaluation.value?.result ?? []);
+const activeRuleSet = computed(() => ruleSets.value.find((item) => item.id === element.value?.rule));
+
+function getRuleDetails(item) {
+  const rule = activeRuleSet.value?.regras?.find((candidate) => candidate.id === item.id);
+  const data = evaluation.value?.data ?? {};
+  const parameters = activeRuleSet.value?.parametros ?? {};
+  let parameterKey = item.parametro ?? rule?.parametro;
+  let operator = item.operador ?? rule?.operador;
+  let expected = item.valorEsperado ?? rule?.valor;
+  let conditionalDescription = "";
+
+  if (rule?.tipo === "conditional") {
+    const conditionValue = data[rule.parametro];
+    const branch = (rule.condicoes ?? []).find((candidate) =>
+      candidate.quando && compare(conditionValue, candidate.quando.operador, candidate.quando.valor)
+    );
+    if (branch?.verificar) {
+      parameterKey = branch.verificar.parametro;
+      operator = branch.verificar.operador;
+      expected = branch.verificar.valor;
+      const conditionParameter = parameters[rule.parametro];
+      conditionalDescription = `${conditionParameter?.label ?? rule.parametro}: ${formatExpected(branch.quando.operador, branch.quando.valor, conditionParameter?.unidade)}`;
+    }
+  }
+
+  const parameter = parameters[parameterKey] ?? {};
+  const actual = item.valorInformado !== undefined ? item.valorInformado : data[parameterKey];
+  const hasExpected = expected !== undefined && operator !== undefined;
+
+  return {
+    parameterLabel: parameter.label ?? parameterKey,
+    actual: typeof actual === "boolean" ? (actual ? "Sim" : "Não") : actual,
+    unit: typeof actual === "boolean" ? "" : (item.unidade ?? parameter.unidade ?? ""),
+    expected: hasExpected ? formatExpected(operator, expected, item.unidade ?? parameter.unidade) : "",
+    conditionalDescription,
+  };
+}
 
 const failedCount = computed(
   () =>
@@ -68,29 +109,13 @@ function formatDate(dateString) {
   }).format(new Date(dateString));
 }
 
-function formatExpected(operator, value, unit = "") {
-  const formattedValue =
-    typeof value === "boolean" ? (value ? "Sim" : "Não") : value;
-  const valueWithUnit = `${formattedValue}${unit ?? ""}`;
-
-  switch (operator) {
-    case ">=":
-      return `no mínimo, ${valueWithUnit}`;
-    case "<=":
-      return `no máximo, ${valueWithUnit}`;
-    case ">":
-      return `maior que ${valueWithUnit}`;
-    case "<":
-      return `menor que ${valueWithUnit}`;
-    case "==":
-    case "eq":
-      return `igual a ${valueWithUnit}`;
-    default:
-      return valueWithUnit;
-  }
-}
-
 async function loadData() {
+  const loadedRuleSets = await services.ruleSetService.list();
+  ruleSets.value = [
+    ...(builtInRuleSets ?? []).map((entry) => entry.ruleSet),
+    ...loadedRuleSets,
+  ];
+
   if (props.quick) {
     const current = services.quickEvaluationService.getCurrent();
     element.value = current?.element ?? null;
@@ -128,17 +153,16 @@ onMounted(loadData);
       :description="`Realizada em ${formatDate(evaluation.evaluatedAt)}`"
     />
 
-    <!-- Resumo do Diagnóstico -->
     <section class="result-summary" :class="`result-summary--${overallStatus}`">
       <StatusBadge :status="overallStatus" />
       <h2>{{ summaryTitle }}</h2>
-      <p>
-        {{ passedCount }} regra(s) atendida(s), {{ failedCount }} não
-        conforme(s) e {{ pendingCount }} para verificar.
-      </p>
+      <div class="result-summary__counts" aria-label="Resumo das regras">
+        <span><strong>{{ passedCount }}</strong> conformes</span>
+        <span><strong>{{ failedCount }}</strong> não conformes</span>
+        <span><strong>{{ pendingCount }}</strong> pendentes ou para verificar</span>
+      </div>
     </section>
 
-    <!-- Lista Detalhada de Regras -->
     <section class="results">
       <h2>Regras avaliadas</h2>
 
@@ -148,24 +172,30 @@ onMounted(loadData);
         class="result-row"
         :class="`result-row--${item.status}`"
       >
-        <div>
+        <div class="result-row__content">
           <StatusBadge :status="item.status" />
           <h3>{{ item.nome ?? item.id }}</h3>
 
           <p v-if="item.mensagem">{{ item.mensagem }}</p>
 
-          <p v-if="item.valorInformado !== undefined" class="result-values">
-            Informado: <strong>{{ item.valorInformado }}</strong>
-            <template v-if="item.unidade"> {{ item.unidade }}</template>
-            <template v-if="item.valorEsperado !== undefined">
-              · Esperado:
-              {{
-                formatExpected(item.operador, item.valorEsperado, item.unidade)
-              }}
-            </template>
-          </p>
+          <div v-for="details in [getRuleDetails(item)]" :key="item.id" class="result-row__details">
+            <div v-if="details.actual !== undefined || details.expected" class="result-values">
+              <div v-if="details.conditionalDescription" class="result-values__context">
+                <span>Condição desta regra</span>
+                <strong>{{ details.conditionalDescription }}</strong>
+              </div>
+              <div v-if="details.actual !== undefined" class="result-values__item">
+                <span>Valor informado · {{ details.parameterLabel }}</span>
+                <strong>{{ details.actual }}<template v-if="details.unit"> {{ details.unit }}</template></strong>
+              </div>
+              <div v-if="details.expected" class="result-values__item result-values__item--expected">
+                <span>Critério esperado</span>
+                <strong>{{ details.expected }}</strong>
+              </div>
+            </div>
+          </div>
 
-          <small v-if="item.referencia">{{ item.referencia }}</small>
+          <small v-if="item.referencia" class="result-row__reference">Referência: {{ item.referencia }}</small>
         </div>
       </article>
     </section>

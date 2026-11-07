@@ -211,7 +211,7 @@ regras:
 
         <details class="documentation__details">
           <summary>Verificação manual (<code>tipo: checklist</code>)</summary>
-          <p>Para algo que exige julgamento humano (não dá pra medir automaticamente). Não compara nada — só registra o que a pessoa marcou, como <code>manual</code>:</p>
+          <p>Para algo que exige julgamento humano. Em parâmetros booleanos, “sim” resulta em <code>conforme</code> e “não” em <code>nao_conforme</code>. Outros tipos de resposta ficam como verificação manual (<code>manual</code>):</p>
           <pre class="documentation-code"><code>- id: rota_livre
   nome: Rota livre de obstáculos
   tipo: checklist

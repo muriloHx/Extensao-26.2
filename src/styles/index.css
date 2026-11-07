@@ -748,7 +748,7 @@ code {
 
 /* 5.3 Resultados e Resumos */
 .result-summary {
-  padding: 22px;
+  padding: 24px;
   margin-bottom: 23px;
   border: 1px solid #f0db95;
   border-radius: var(--radius-lg);
@@ -775,12 +775,36 @@ code {
   color: var(--muted);
 }
 
+.result-summary__counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.result-summary__counts span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.result-summary__counts strong {
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+
 .results > h2 {
   margin-bottom: 12px;
 }
 
 .result-row {
-  padding: 15px 16px;
+  padding: 18px 20px;
   border-bottom: 1px solid var(--line);
   border-left: 4px solid #d49c18;
   background: #ffffff;
@@ -810,13 +834,63 @@ code {
   font-size: 0.88rem;
 }
 
+.result-row__content h3 {
+  margin-top: 10px;
+}
+
+.result-row__details {
+  margin-top: 14px;
+}
+
 .result-row small {
   color: var(--muted);
   font-size: 0.75rem;
 }
 
 .result-values {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  gap: 10px;
   color: var(--ink) !important;
+}
+
+.result-values__item,
+.result-values__context {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: #fafbf9;
+}
+
+.result-values__item--expected {
+  border-color: #c9d9cd;
+  background: #f2f8f3;
+}
+
+.result-values__item span,
+.result-values__context span {
+  color: var(--muted);
+  font-size: 0.73rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.result-values__item strong,
+.result-values__context strong {
+  color: var(--ink);
+  font-size: 0.91rem;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.result-row__reference {
+  display: block;
+  margin-top: 13px;
 }
 
 /* 5.4 Seção de Regras Normativas */

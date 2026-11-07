@@ -40,6 +40,22 @@ export class RuleEngine {
     }
 
     if (rule.tipo === "checklist") {
+      // Checklists with boolean answers represent an explicit yes/no judgment.
+      // Keep non-boolean checklist values as manual review items.
+      if (parameter.tipo === "boolean") {
+        return {
+          id: rule.id,
+          nome: rule.nome,
+          status: actual ? "conforme" : "nao_conforme",
+          valorInformado: actual,
+          valorEsperado: true,
+          operador: "==",
+          parametro: rule.parametro,
+          unidade: parameter.unidade,
+          referencia: rule.referencia
+        };
+      }
+
       return {
         id: rule.id,
         nome: rule.nome,
@@ -61,6 +77,8 @@ export class RuleEngine {
       status: ok ? "conforme" : "nao_conforme",
       valorInformado: actual,
       valorEsperado: rule.valor,
+      operador: rule.operador,
+      parametro: rule.parametro,
       unidade: parameter.unidade,
       referencia: rule.referencia
     };
@@ -92,6 +110,14 @@ export class RuleEngine {
             status: ok ? "conforme" : "nao_conforme",
             valorInformado: target,
             valorEsperado: branch.verificar.valor,
+            operador: branch.verificar.operador,
+            parametro: branch.verificar.parametro,
+            unidade: parameters[branch.verificar.parametro]?.unidade,
+            parametroCondicional: rule.parametro,
+            valorCondicional: actual,
+            operadorCondicional: branch.quando.operador,
+            limiteCondicional: branch.quando.valor,
+            mensagem: branch.mensagem,
             referencia: rule.referencia
           };
         }
