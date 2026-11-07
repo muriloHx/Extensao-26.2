@@ -493,7 +493,7 @@ onMounted(loadData);
 .ruleset-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: 1rem;
+  gap: 16px;
 }
 
 @media (max-width: 640px) {
@@ -506,48 +506,47 @@ onMounted(loadData);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 
 .ruleset-norma {
-  color: #666;
-  font-size: 0.85em;
+  color: var(--text-3);
+  font-size: 0.875rem;
 }
 
 .expected-value {
   display: block;
-  margin-top: 0.25rem;
-  color: #666;
-  font-weight: normal;
-}
-
-.bottom-nav{
-    display: none;
-    background-color: red;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 0.875rem;
+  font-weight: 400;
 }
 
 .parameter-help {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 0.25rem;
+  width: 44px;
+  height: 44px;
+  margin-left: 4px;
   padding: 0;
   border: 0;
+  border-radius: var(--radius-control);
   background: transparent;
-  color: #666;
+  color: var(--text-2);
   cursor: help;
   vertical-align: middle;
 }
 
-.parameter-help:focus-visible {
-  outline: 2px solid currentColor;
-  outline-offset: 2px;
+.parameter-help:hover {
+  background: var(--fill);
 }
 
 .parameter-definition {
   display: block;
-  margin-top: 0.25rem;
-  color: #666;
-  font-weight: normal;
+  margin-top: 4px;
+  color: var(--text-3);
+  font-size: 0.875rem;
+  font-weight: 400;
 }
 </style>

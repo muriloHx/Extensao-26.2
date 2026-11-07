@@ -101,7 +101,7 @@ onUnmounted(() => {
   place-items: center;
   overflow-y: auto;
   padding: 24px;
-  background: rgba(20, 26, 22, 0.66);
+  background: color-mix(in srgb, var(--text) 60%, transparent);
 }
 
 .welcome-popup {
@@ -110,34 +110,27 @@ onUnmounted(() => {
   grid-template-columns: 0.95fr 1.05fr;
   width: min(100%, 820px);
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-card);
   background: var(--surface);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+  box-shadow: var(--shadow-md), var(--edge);
 }
 
 .welcome-popup__close {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 8px;
+  right: 8px;
   z-index: 1;
   display: grid;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   place-items: center;
   border: 0;
-  border-radius: 0;
+  border-radius: var(--radius-control);
   background: transparent;
-  color: var(--ink);
-  font-size: 1.7rem;
+  color: var(--text);
+  font-size: 1.75rem;
   line-height: 1;
   cursor: pointer;
-}
-
-.welcome-popup__close:focus-visible,
-.welcome-popup__action:focus-visible {
-  outline: 3px solid #e8b968;
-  outline-offset: 3px;
 }
 
 .welcome-popup__hero {
@@ -145,41 +138,44 @@ onUnmounted(() => {
   flex-direction: column;
   justify-content: center;
   min-height: 390px;
-  padding: 52px 38px;
+  padding: 48px 32px;
   border-right: 1px solid var(--line);
-  background: var(--green-soft);
-  color: var(--ink);
+  background: var(--fill);
+  color: var(--text);
 }
 
 .welcome-popup__hero h1 {
   max-width: 390px;
   margin: 0 0 16px;
-  font-size: clamp(1.8rem, 4vw, 2.45rem);
-  line-height: 1.1;
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  line-height: 1.2;
+  letter-spacing: normal;
+  text-wrap: balance;
 }
 
 .welcome-popup__hero p {
   max-width: 360px;
-  color: var(--muted);
+  color: var(--text-2);
   font-size: 1rem;
-  line-height: 1.55;
+  line-height: 1.6;
+  text-wrap: pretty;
 }
 
 .welcome-popup__content {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 48px 36px 34px;
+  padding: 48px 32px 32px;
 }
 
 .welcome-popup__content > h2 {
-  margin: 0 0 22px;
-  font-size: 1.15rem;
+  margin: 0 0 24px;
+  font-size: 1.125rem;
 }
 
 .welcome-popup__steps {
   display: grid;
-  gap: 20px;
+  gap: 24px;
 }
 
 .welcome-popup__steps article {
@@ -191,28 +187,29 @@ onUnmounted(() => {
 
 .welcome-popup__steps article > svg {
   box-sizing: content-box;
-  padding: 9px;
-  border-radius: 12px;
-  background: var(--green-soft);
-  color: var(--green);
+  padding: 8px;
+  border-radius: var(--radius-control);
+  background: var(--fill);
+  color: var(--brand);
 }
 
 .welcome-popup__steps h3 {
-  margin: 1px 0 5px;
-  font-size: 0.96rem;
+  margin: 1px 0 4px;
+  font-size: 1.125rem;
 }
 
 .welcome-popup__steps p {
-  font-size: 0.88rem;
-  line-height: 1.5;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .welcome-popup__note {
   margin-top: 24px;
-  padding-top: 17px;
+  padding-top: 16px;
   border-top: 1px solid var(--line);
-  font-size: 0.8rem;
-  line-height: 1.5;
+  color: var(--text-2);
+  font-size: 0.875rem;
+  line-height: 1.6;
 }
 
 .welcome-popup__action {
@@ -223,22 +220,21 @@ onUnmounted(() => {
 @media (max-width: 640px) {
   .welcome-backdrop {
     align-items: start;
-    padding: 14px;
+    padding: 16px;
   }
 
   .welcome-popup {
     grid-template-columns: 1fr;
     margin: auto 0;
-    border-radius: var(--radius-lg);
   }
 
   .welcome-popup__content {
-    padding: 28px 26px;
+    padding: 32px 24px;
   }
 
   .welcome-popup__hero {
     min-height: 0;
-    padding: 34px 26px 28px;
+    padding: 32px 24px 24px;
     border-right: 0;
     border-bottom: 1px solid var(--line);
   }

@@ -123,18 +123,17 @@ onBeforeUnmount(() => {
   position: fixed;
   z-index: 1000;
   width: min(320px, calc(100vw - 24px));
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
+  padding: 24px;
+  border-radius: var(--radius-card);
   background: var(--surface);
-  color: var(--ink);
-  box-shadow: 0 8px 28px rgb(28 35 31 / 18%);
+  color: var(--text);
+  box-shadow: var(--shadow-md), var(--edge);
 }
 
 .confirm-popup__message {
-  margin: 0 0 14px;
-  font-size: 0.9rem;
-  line-height: 1.45;
+  margin: 0 0 16px;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 
 .confirm-popup__actions {
@@ -144,29 +143,29 @@ onBeforeUnmount(() => {
 }
 
 .confirm-popup__button {
-  min-height: 36px;
-  padding: 7px 12px;
+  min-height: 44px;
+  padding: 12px 16px;
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-control);
   font: inherit;
-  font-size: 0.84rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-}
-
-.confirm-popup__button:focus-visible {
-  outline: 3px solid #75a987;
-  outline-offset: 2px;
+  transition: background-color var(--dur-fast) var(--ease);
 }
 
 .confirm-popup__button--cancel {
-  border-color: var(--line-strong);
-  background: var(--surface);
-  color: var(--ink);
+  border-color: var(--border);
+  background: transparent;
+  color: var(--text);
+}
+
+.confirm-popup__button--cancel:hover {
+  background: var(--fill);
 }
 
 .confirm-popup__button--accept {
-  background: var(--danger);
-  color: #fff;
+  background: var(--error);
+  color: var(--on-brand);
 }
 </style>
