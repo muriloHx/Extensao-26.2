@@ -1,5 +1,5 @@
 <script setup>
-import { ChevronLeft } from "@lucide/vue";
+import { ChevronLeft, Pencil } from "@lucide/vue";
 import { computed, inject, onMounted, ref } from "vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
@@ -146,13 +146,23 @@ onMounted(loadData);
   <!-- Cenário 1: Elemento e Avaliação Carregados -->
   <template v-if="element && evaluation">
     <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : environmentRoute">
-      <ChevronLeft :size="18" aria-hidden="true" />{{ element.name }}
+      <ChevronLeft :size="18" aria-hidden="true" />{{ quick ? element.name : (environment?.name ?? element.name) }}
     </RouterLink>
 
     <PageHeader
-      title="Avaliação"
-      :description="`Realizada em ${formatDate(evaluation.evaluatedAt)}`"
-    />
+      :title="element.name"
+      :description="`Avaliação realizada em ${formatDate(evaluation.evaluatedAt)}`"
+    >
+      <template #action>
+        <RouterLink
+          v-if="!quick"
+          class="button button--outline"
+          :to="`/elements/${element.id}`"
+        >
+          <Pencil :size="18" aria-hidden="true" />Editar elemento
+        </RouterLink>
+      </template>
+    </PageHeader>
 
     <section class="result-summary" :class="`result-summary--${overallStatus}`">
       <StatusBadge :status="overallStatus" />
@@ -161,6 +171,12 @@ onMounted(loadData);
         <span><strong>{{ passedCount }}</strong> conformes</span>
         <span><strong>{{ failedCount }}</strong> não conformes</span>
         <span><strong>{{ pendingCount }}</strong> pendentes ou para verificar</span>
+      </div>
+      <div v-if="pendingCount" class="result-summary__pending">
+        <span>Há regras pendentes ou para verificar.</span>
+        <RouterLink v-if="!quick" class="text-button" :to="`/elements/${element.id}`">
+          Editar elemento
+        </RouterLink>
       </div>
     </section>
 

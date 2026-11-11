@@ -108,6 +108,22 @@
   font-size: 1rem;
 }
 
+.result-summary__pending {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  color: var(--text-2);
+  font-size: 0.875rem;
+}
+
+.result-summary__pending .text-button {
+  font-size: 0.875rem;
+}
+
 .results > h2 {
   margin-bottom: 12px;
 }

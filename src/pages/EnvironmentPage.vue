@@ -22,6 +22,13 @@ const project = ref(null);
 const rows = ref([]);
 const summary = ref(null);
 
+// Pendente abre a edição do elemento; concluído abre o resultado da avaliação.
+function elementLink(row) {
+  return row.status === "nao_avaliado"
+    ? `/elements/${row.element.id}`
+    : `/elements/${row.element.id}/evaluation`;
+}
+
 function deleteElement(element, event) {
   confirmPopup.open({
     target: event.currentTarget,
@@ -127,7 +134,7 @@ onMounted(loadData);
         <!-- Link navegável do card -->
         <RouterLink
           class="card__link"
-          :to="`/elements/${row.element.id}`"
+          :to="elementLink(row)"
         >
           <span class="card__icon"><Box :size="22" aria-hidden="true" /></span>
           <div>
