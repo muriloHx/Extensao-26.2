@@ -8,7 +8,7 @@ base: Mintlify (adaptado)
 # Acesso Verificador — Design System
 
 Base visual inspirada no Mintlify: fundo off-white quente, sombras suaves, sem gradientes.
-Adaptado para app (Vue + Vite + `index.css` puro, sem Tailwind) e para contraste WCAG AA.
+Adaptado para app (Vue + Vite + `index.css` puro, sem Tailwind) e para leitura sob luz do sol: o app é usado em vistoria de campo, com o celular na mão e o brilho no máximo.
 
 > Os hex de azul e laranja abaixo são aproximações. Troque pelos hex reais da logo e
 > confira o contraste antes de usar.
@@ -19,41 +19,44 @@ Use sempre as variáveis CSS abaixo. Não invente cores, raios, sombras, fontes 
 
 ## Cores
 
-Somente tema claro por enquanto. Contrastes calculados sobre `--bg` (#fefdfb).
+Somente tema claro: em ambiente externo, fundo claro com texto quase preto é o que a tela consegue entregar de maior contraste — um tema escuro viraria um espelho escuro sob o sol.
+
+Os contrastes abaixo são calculados sobre `--bg` (#fefdfb) e são **piso**, não meta. Luz ambiente alta e reflexo na tela comprimem a faixa dinâmica: o que mede 1,1:1 no papel desaparece na rua. Por isso as camadas têm separação mínima de 1,1:1, os contornos partem de 4,5:1 e o texto parte de 7:1 — e não dos mínimos da WCAG AA.
 
 ```css
 :root {
-  /* Superfícies */
+  /* Superfícies — a diferença entre elas precisa sobreviver ao reflexo */
   --bg:          #fefdfb;  /* fundo da página */
-  --surface:     #faf8f5;  /* cards, painéis */
-  --fill:        #ebe9e6;  /* áreas rebaixadas, chips */
+  --surface:     #f1eee8;  /* cards, painéis — 1,14:1 sobre --bg */
+  --fill:        #e5e0d8;  /* áreas rebaixadas, chips — 1,29:1 sobre --bg */
 
-  /* Texto */
+  /* Texto — AAA (7:1+) porque o sol derruba o contraste percebido */
   --text:        #121715;  /* 17,8:1 — texto principal */
-  --text-2:      #3d4844;  /* 9,4:1  — texto secundário */
-  --text-3:      #56625e;  /* 6,3:1  — legendas, ajuda (mínimo permitido) */
+  --text-2:      #303a36;  /* 11,6:1 — texto secundário */
+  --text-3:      #4e5854;  /* 7,3:1  — legendas, ajuda (mínimo permitido) */
 
-  /* Bordas */
-  --line:        #e4e1dc;  /* divisórias decorativas (não use em campos) */
-  --border:      #7a8480;  /* 3,8:1 — inputs, botões, checkbox (WCAG 1.4.11) */
+  /* Bordas — precisam ser vistas ao sol, não só decorar no desktop */
+  --line:        #ccc6bb;  /* divisórias, 1,5:1 sobre --surface */
+  --border:      #626d67;  /* 5,3:1 — inputs, botões, checkbox (WCAG 1.4.11) */
 
   /* Marca */
-  --brand:       #1d5fa8;  /* 6,4:1 — links, botão primário, foco */
-  --brand-hover: #174b86;  /* 8,7:1 */
-  --on-brand:    #ffffff;  /* texto sobre --brand (6,5:1) */
-  --accent:      #e8731a;  /* laranja: SOMENTE decoração (3:1), nunca texto */
+  --brand:       #1a5490;  /* 7,6:1 — links, botão primário, foco */
+  --brand-hover: #123c68;  /* 11,0:1 */
+  --on-brand:    #ffffff;  /* texto sobre --brand (7,7:1) */
+  --accent:      #d0640b;  /* laranja: SOMENTE decoração (3,8:1), nunca texto */
 
-  /* Estado */
-  --error:       #b42318;  /* 6,5:1 */
-  --success:     #0f6b46;  /* 6,4:1 */
+  /* Estado — verificados também sobre --fill, onde aparecem em badges */
+  --error:       #9d1f13;  /* 7,8:1 — 6,1:1 sobre --fill */
+  --success:     #0b5a3b;  /* 8,1:1 — 6,3:1 sobre --fill */
 }
 ```
 
 Regras:
-- Texto pequeno nunca usa cor com contraste abaixo de 4,5:1.
-- Componentes de interface (borda de input, ícone, foco) precisam de 3:1 ou mais.
-- O laranja aparece só como faixa fina de 4px (ex.: topo do card da tela de instalação).
-- Não comunicar estado só por cor: sempre acompanhar de ícone ou texto.
+- Texto pequeno: no mínimo 7:1 sobre `--bg`/`--surface`; sobre `--fill`, no mínimo 5,5:1 (piso dos badges de estado). Os 4,5:1 da WCAG AA não se sustentam sob sol direto.
+- Camadas (`--surface`, `--fill`) precisam de 1,1:1 ou mais entre si e nunca podem ser a única diferença entre dois blocos: no sol a sombra não separa nada.
+- Componentes de interface (borda de input, ícone, foco) precisam de 4,5:1 ou mais; o mínimo de 3:1 da WCAG 1.4.11 é insuficiente em campo.
+- O laranja aparece só como faixa fina de 4px (ex.: topo do card da tela de instalação) e nunca em área grande, que estoura sob luz forte.
+- Não comunicar estado só por cor: sempre acompanhar de ícone ou texto — o sol reduz a discriminação entre vermelho e verde.
 
 ## Tipografia
 
@@ -101,6 +104,8 @@ Duas sombras, baixas e difusas. Nada de sombra escura ou colorida.
 
 Elemento que tem sombra e também borda: desenhe a borda com `box-shadow: inset 0 0 0 1px` ou `outline` semitransparente, não com `border` opaco (a borda e a sombra se fundem em uma só aresta suave).
 
+Sob sol a sombra desaparece antes da cor: a hierarquia de superfícies vem de `--surface`, `--fill` e `--line`, e a sombra só refina.
+
 ## Movimento
 
 - Transições de 150–250ms com `cubic-bezier(0.22, 1, 0.36, 1)`.
@@ -130,6 +135,7 @@ Elemento que tem sombra e também borda: desenhe a borda com `box-shadow: inset 
 
 - **Faça** usar as variáveis, não hex solto, e manter os alvos de toque em 44px ou mais.
 - **Faça** testar cada tela nova no próprio checker de contraste do app.
+- **Faça** conferir a tela no sol direto, com o brilho no máximo: se a camada sumir, o problema é cor, não sombra.
 - **Faça** manter uma hierarquia visual simples: um botão primário por tela.
 - **Não** use gradientes decorativos, cards pastel coloridos, mesmo raio e sombra em tudo, ou rótulos em caixa alta com letter-spacing.
 - **Não** remova outline de foco.

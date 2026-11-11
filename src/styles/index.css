@@ -4,29 +4,29 @@
    ========================================================================== */
 
 :root {
-  /* Superfícies */
+  /* Superfícies — a diferença entre elas precisa sobreviver ao reflexo do sol */
   --bg: #fefdfb;          /* fundo da página */
-  --surface: #faf8f5;     /* cards, painéis */
-  --fill: #ebe9e6;        /* áreas rebaixadas, chips */
+  --surface: #f1eee8;     /* cards, painéis — 1,14:1 sobre --bg */
+  --fill: #e5e0d8;        /* áreas rebaixadas, chips — 1,29:1 sobre --bg */
 
-  /* Texto */
+  /* Texto — AAA (7:1+): luz do sol comprime o contraste percebido */
   --text: #121715;        /* 17,8:1 */
-  --text-2: #3d4844;      /* 9,4:1 */
-  --text-3: #56625e;      /* 6,3:1 — mínimo permitido */
+  --text-2: #303a36;      /* 11,6:1 */
+  --text-3: #4e5854;      /* 7,3:1 — mínimo permitido */
 
   /* Bordas */
-  --line: #e4e1dc;        /* divisórias decorativas */
-  --border: #7a8480;      /* 3,8:1 — inputs, botões, checkbox */
+  --line: #ccc6bb;        /* divisórias, 1,5:1 sobre --surface */
+  --border: #626d67;      /* 5,3:1 — inputs, botões, checkbox */
 
   /* Marca */
-  --brand: #1d5fa8;       /* 6,4:1 */
-  --brand-hover: #174b86; /* 8,7:1 */
-  --on-brand: #ffffff;    /* 6,5:1 sobre --brand */
-  --accent: #e8731a;      /* só decoração (3:1), nunca texto */
+  --brand: #1a5490;       /* 7,6:1 */
+  --brand-hover: #123c68; /* 11,0:1 */
+  --on-brand: #ffffff;    /* 7,7:1 sobre --brand */
+  --accent: #d0640b;      /* só decoração (3,8:1), nunca texto */
 
-  /* Estado */
-  --error: #b42318;       /* 6,5:1 */
-  --success: #0f6b46;     /* 6,4:1 */
+  /* Estado — também verificados sobre --fill (6,1:1 e 6,3:1) */
+  --error: #9d1f13;       /* 7,8:1 */
+  --success: #0b5a3b;     /* 8,1:1 */
 
   /* Tipografia */
   --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;

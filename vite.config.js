@@ -33,8 +33,8 @@ export default defineConfig({
         start_url: "/Extensao-26.2/projects",
         scope: "/Extensao-26.2/",
         display: "standalone",
-        background_color: "#f6f8f6",
-        theme_color: "#16784d",
+        background_color: "#fefdfb",
+        theme_color: "#1a5490",
 
         icons: [
           {
