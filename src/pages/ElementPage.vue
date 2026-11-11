@@ -8,6 +8,7 @@ import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import { compare } from "../core/operators.js";
 import { formatExpected } from "../core/formatExpected.js";
+import { parseDecimalInput, sanitizeDecimalInput } from "../core/numberInput.js";
 
 const props = defineProps({
   elementId: String,
@@ -48,7 +49,10 @@ const expectedByParameter = computed(() => {
   for (const rule of activeChecklist.value?.regras ?? []) {
     const checks = rule.tipo === "conditional"
       ? (() => {
-          const actual = form.data[rule.parametro];
+          const parameter = activeChecklist.value?.parametros?.[rule.parametro];
+          const rawValue = form.data[rule.parametro];
+          // O campo numérico guarda texto enquanto o usuário digita: compara como número.
+          const actual = parameter?.tipo === "number" ? parseDecimalInput(rawValue) : rawValue;
           if (actual === undefined || actual === null || actual === "") return [];
           const condition = (rule.condicoes ?? []).find((branch) =>
             branch.quando && compare(actual, branch.quando.operador, branch.quando.valor)
@@ -148,7 +152,8 @@ function normalizeFormData() {
     }
 
     if (parameter.tipo === "number") {
-      processedData[key] = Number(rawValue);
+      const parsed = parseDecimalInput(rawValue);
+      if (parsed !== null) processedData[key] = parsed;
     } else if (parameter.tipo === "boolean") {
       processedData[key] = rawValue === true || rawValue === "true";
     } else {
@@ -157,6 +162,31 @@ function normalizeFormData() {
   }
 
   return processedData;
+}
+
+// Filtra a digitação e a colagem no campo numérico: letras, sinais e
+// separadores extras não chegam a aparecer. O cursor fica onde o usuário estava.
+function onNumberInput(key, event) {
+  const input = event.target;
+  const raw = input.value;
+  const sanitized = sanitizeDecimalInput(raw);
+
+  form.data[key] = sanitized;
+
+  if (raw === sanitized) return;
+
+  const caret = input.selectionStart ?? raw.length;
+  const digitsBeforeCaret = raw.slice(0, caret).replace(/\D/g, "").length;
+
+  input.value = sanitized;
+
+  let position = 0;
+  let digits = 0;
+  while (position < sanitized.length && digits < digitsBeforeCaret) {
+    if (/\d/.test(sanitized[position])) digits++;
+    position++;
+  }
+  input.setSelectionRange(position, position);
 }
 
 // Salva o cadastro e as respostas e volta para o ambiente.
@@ -452,10 +482,13 @@ onMounted(loadData);
 
           <input
             v-else
-            v-model.number="form.data[key]"
-            type="number"
+            :value="form.data[key] ?? ''"
+            type="text"
             inputmode="decimal"
-            step="any"
+            autocomplete="off"
+            autocapitalize="off"
+            spellcheck="false"
+            @input="onNumberInput(key, $event)"
           />
 
         </label>
