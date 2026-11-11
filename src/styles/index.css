@@ -184,6 +184,36 @@ code {
   gap: 16px;
 }
 
+.page-header__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+/* Botão de ajuda: pequeno, encostado no topo do título */
+.page-header__help {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-top: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--text-3);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.page-header__help:hover {
+  background: var(--fill);
+  color: var(--text);
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;

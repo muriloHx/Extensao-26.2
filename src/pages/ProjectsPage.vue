@@ -4,6 +4,7 @@ import { ChevronRight, FolderKanban, FolderPlus, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
+import WelcomePopup from "../components/WelcomePopup.vue";
 
 const services = inject("services");
 const confirmPopup = inject("confirmPopup");
@@ -13,6 +14,11 @@ const name = ref("");
 const description = ref("")
 const editing = ref(null);
 const error = ref("");
+const showWelcome = ref(false);
+
+function openWelcome() {
+  showWelcome.value = true;
+}
 
 async function loadProjects() {
   projects.value = await services.projectService.listProjects();
@@ -106,6 +112,8 @@ onMounted(loadProjects);
   <PageHeader
     title="Projetos"
     description="Acompanhe seus locais e avaliações."
+    helpButton
+    @help="openWelcome"
   >
     <template #action>
       <button v-if="projects.length" class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
@@ -174,4 +182,6 @@ onMounted(loadProjects);
   >
     <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
   </EmptyState>
+
+  <WelcomePopup v-if="showWelcome" @close="showWelcome = false" />
 </template>
