@@ -159,8 +159,9 @@ function normalizeFormData() {
   return processedData;
 }
 
-// Salva o cadastro e os dados preenchidos sem executar as regras.
-async function saveOnly() {
+// Salva o cadastro e as respostas e volta para o ambiente.
+// Com respostas, o motor roda e o elemento deixa de ficar pendente.
+async function saveAndReturn() {
   if (!activeChecklist.value) {
     return window.alert("Selecione um conjunto de regras.");
   }
@@ -177,8 +178,9 @@ async function saveOnly() {
       ? await services.projectService.updateElement(element.value.id, payload)
       : await services.projectService.createElement(environment.value.id, payload);
 
-    await services.evaluationService.saveElementData({
+    await services.evaluationService.saveElementAnswers({
       elementId: savedElement.id,
+      checklist: activeChecklist.value,
       data,
     });
 
@@ -467,7 +469,7 @@ onMounted(loadData);
           Cancelar
         </RouterLink>
 
-        <button v-if="!quick" class="button button--outline" type="button" @click="saveOnly">
+        <button v-if="!quick" class="button button--outline" type="button" @click="saveAndReturn">
           Salvar e voltar
         </button>
 

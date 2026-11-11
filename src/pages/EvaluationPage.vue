@@ -84,6 +84,7 @@ const passedCount = computed(
 );
 
 const overallStatus = computed(() => {
+  if (!resultList.value.length) return "nao_avaliado";
   if (failedCount.value > 0) return "nao_conforme";
   if (pendingCount.value > 0) return "nao_avaliado";
   return "conforme";

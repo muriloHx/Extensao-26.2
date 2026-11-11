@@ -78,6 +78,16 @@ export class EvaluationService {
     return this.evaluationRepository.put(draft);
   }
 
+  // "Salvar e voltar": com alguma resposta preenchida, roda o motor para o
+  // elemento deixar de ser pendente; sem nenhuma resposta, guarda rascunho.
+  async saveElementAnswers({ elementId, checklist, data, savedAt }) {
+    const hasAnswers = Object.keys(data ?? {}).length > 0;
+
+    return hasAnswers
+      ? this.evaluateElement({ elementId, checklist, data, evaluatedAt: savedAt })
+      : this.saveElementData({ elementId, data, savedAt });
+  }
+
   evaluateTransientElement({ elementId, checklist, data, evaluatedAt }) {
     const result = this.ruleEngine.evaluate(
       checklist.regras ?? [],

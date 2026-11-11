@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { EvaluationService } from "../services/evaluationService.js";
+import { EvaluationService, getEvaluationStatus } from "../services/evaluationService.js";
 
 function createService() {
   const evaluations = new Map([
@@ -53,4 +53,53 @@ test("getProjectSummary soma elementos de todos os ambientes do projeto", async 
   assert.equal(summary.pendente, 1);
   assert.equal(summary.score, 33);
   assert.equal(summary.overallStatus, "nao_conforme");
+});
+
+function createAnswersService() {
+  const stored = [];
+  const service = new EvaluationService({
+    elementRepository: {
+      async get(elementId) { return { id: elementId }; }
+    },
+    evaluationRepository: {
+      async put(evaluation) { stored.push(evaluation); return evaluation; },
+      async getByElementId(elementId) { return stored.filter((item) => item.elementId === elementId); }
+    }
+  });
+
+  return { service, stored };
+}
+
+const larguraChecklist = {
+  parametros: { largura: { tipo: "number", unidade: "cm" } },
+  regras: [{ id: "r1", nome: "Largura mínima", parametro: "largura", operador: ">=", valor: 80 }]
+};
+
+test("saveElementAnswers roda o motor quando há respostas preenchidas", async () => {
+  const { service, stored } = createAnswersService();
+
+  await service.saveElementAnswers({
+    elementId: "elemento-1",
+    checklist: larguraChecklist,
+    data: { largura: 90 }
+  });
+
+  assert.equal(stored.length, 1);
+  assert.equal(stored[0].data.largura, 90);
+  assert.deepEqual(stored[0].result.map((item) => item.status), ["conforme"]);
+  assert.equal(getEvaluationStatus(stored), "conforme");
+});
+
+test("saveElementAnswers sem respostas guarda rascunho pendente", async () => {
+  const { service, stored } = createAnswersService();
+
+  await service.saveElementAnswers({
+    elementId: "elemento-1",
+    checklist: larguraChecklist,
+    data: {}
+  });
+
+  assert.equal(stored.length, 1);
+  assert.deepEqual(stored[0].result, []);
+  assert.equal(getEvaluationStatus(stored), "nao_avaliado");
 });
