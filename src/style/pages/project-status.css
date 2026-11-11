@@ -1,0 +1,75 @@
+/* Tela de status detalhado do projeto. */
+
+.project-status {
+  display: grid;
+  gap: 16px;
+}
+
+.project-status__environment {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+}
+
+.project-status__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.project-status__heading h2 {
+  margin: 0 0 4px;
+}
+
+.project-status__heading p {
+  color: var(--text-2);
+  font-size: 0.875rem;
+}
+
+.project-status__counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.project-status__elements {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.project-status__element {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: var(--radius-control);
+  background: var(--fill);
+  transition: box-shadow var(--dur-fast) var(--ease);
+}
+
+.project-status__element:hover {
+  box-shadow: var(--edge-strong);
+}
+
+.project-status__element-name {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  .project-status__environment {
+    padding: 16px;
+  }
+
+  .project-status__heading {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

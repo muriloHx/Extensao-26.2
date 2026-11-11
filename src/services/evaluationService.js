@@ -123,6 +123,41 @@ export class EvaluationService {
     return this.#summarizeElements(elementsByEnvironment.flat());
   }
 
+  // Detalhamento por ambiente: totais do projeto e o status de cada elemento.
+  async getProjectStatus(projectId) {
+    if (!this.environmentRepository) {
+      throw new Error("Repositório de ambientes não configurado.");
+    }
+
+    const environments = await this.environmentRepository.getByProjectId(projectId);
+    const environmentStatus = await Promise.all(
+      environments.map(async (environment) => {
+        const elements = await this.elementRepository.getByEnvironmentId(environment.id);
+        const elementStatus = await Promise.all(
+          elements.map(async (element) => ({
+            element,
+            status: getEvaluationStatus(await this.listEvaluations(element.id)),
+          }))
+        );
+
+        return {
+          environment,
+          elements: elementStatus,
+          summary: this.#summarizeStatuses(elementStatus.map((row) => row.status)),
+        };
+      })
+    );
+
+    const allStatuses = environmentStatus.flatMap((row) =>
+      row.elements.map((item) => item.status)
+    );
+
+    return {
+      summary: this.#summarizeStatuses(allStatuses),
+      environments: environmentStatus,
+    };
+  }
+
   async #summarizeElements(elements) {
     const statuses = await Promise.all(
       elements.map(async (element) =>
@@ -130,8 +165,12 @@ export class EvaluationService {
       )
     );
 
+    return this.#summarizeStatuses(statuses);
+  }
+
+  #summarizeStatuses(statuses) {
     const summary = {
-      totalElements: elements.length,
+      totalElements: statuses.length,
       conforme: 0,
       nao_conforme: 0,
       nao_avaliado: 0,

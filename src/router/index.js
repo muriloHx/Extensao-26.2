@@ -4,6 +4,7 @@ import ElementPage from "../pages/ElementPage.vue";
 import EnvironmentPage from "../pages/EnvironmentPage.vue";
 import EvaluationPage from "../pages/EvaluationPage.vue";
 import ProjectPage from "../pages/ProjectPage.vue";
+import ProjectStatusPage from "../pages/ProjectStatusPage.vue";
 import ProjectsPage from "../pages/ProjectsPage.vue";
 import RulesPage from "../pages/RulesPage.vue";
 
@@ -24,6 +25,12 @@ const routes = [
     path: "/projects/:projectId",
     name: "project-detail",
     component: ProjectPage,
+    props: true,
+  },
+  {
+    path: "/projects/:projectId/status",
+    name: "project-status",
+    component: ProjectStatusPage,
     props: true,
   },
   {

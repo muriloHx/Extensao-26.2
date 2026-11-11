@@ -7,6 +7,13 @@
   gap: 16px;
 }
 
+/* Ações do cabeçalho do projeto (status detalhado + novo ambiente) */
+.project-header__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 /* Card quadrado com tamanho fixo */
 .card-environment {
   width: 100%;

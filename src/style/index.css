@@ -23,6 +23,7 @@
 /* 3. Telas */
 @import "./pages/install.css";
 @import "./pages/project.css";
+@import "./pages/project-status.css";
 @import "./pages/element.css";
 @import "./pages/rules.css";
 @import "./pages/documentation.css";

@@ -1,6 +1,6 @@
 <script setup>
 import { inject, nextTick, onMounted, ref } from "vue";
-import { ChevronLeft, FolderPlus, House, Trash2 } from "@lucide/vue";
+import { ChevronLeft, ClipboardCheck, FolderPlus, House, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
@@ -109,7 +109,16 @@ onMounted(loadData);
       \n${project.description}`"
     >
       <template #action>
-        <button v-if="environments.length" class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
+        <div class="project-header__actions">
+          <RouterLink
+            v-if="environments.length"
+            class="button button--outline"
+            :to="`/projects/${projectId}/status`"
+          >
+            <ClipboardCheck :size="18" aria-hidden="true" />Status detalhado
+          </RouterLink>
+          <button v-if="environments.length" class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
+        </div>
       </template>
     </PageHeader>
 
