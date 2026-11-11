@@ -1,51 +1,39 @@
 <script setup>
 import { nextTick, onBeforeUnmount, ref } from "vue";
 
-const popup = ref(null);
 const cancelButton = ref(null);
+const acceptButton = ref(null);
 const visible = ref(false);
 const message = ref("");
-const position = ref({ top: "0px", left: "0px" });
 let target = null;
 let acceptAction = null;
-
-function positionPopup() {
-  if (!target || !popup.value) return;
-
-  const targetRect = target.getBoundingClientRect();
-  const popupRect = popup.value.getBoundingClientRect();
-  const gap = 8;
-  const margin = 12;
-  const below = targetRect.bottom + gap + popupRect.height <= window.innerHeight - margin;
-  const top = below
-    ? targetRect.bottom + gap
-    : Math.max(margin, targetRect.top - popupRect.height - gap);
-  const left = Math.min(
-    Math.max(margin, targetRect.left),
-    Math.max(margin, window.innerWidth - popupRect.width - margin),
-  );
-
-  position.value = { top: `${top}px`, left: `${left}px` };
-}
-
-function onPointerDown(event) {
-  if (!popup.value?.contains(event.target) && !target?.contains(event.target)) {
-    close({ restoreFocus: false });
-  }
-}
+let previousBodyOverflow = "";
 
 function onKeyDown(event) {
   if (event.key === "Escape") {
     event.preventDefault();
     close();
+    return;
+  }
+
+  if (event.key !== "Tab") return;
+
+  const first = cancelButton.value;
+  const last = acceptButton.value;
+  if (!first || !last) return;
+
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
   }
 }
 
 function removeListeners() {
-  document.removeEventListener("pointerdown", onPointerDown, true);
   document.removeEventListener("keydown", onKeyDown);
-  window.removeEventListener("resize", positionPopup);
-  window.removeEventListener("scroll", positionPopup, true);
+  document.body.style.overflow = previousBodyOverflow;
 }
 
 function close({ restoreFocus = true } = {}) {
@@ -70,12 +58,11 @@ async function open(options) {
   target?.setAttribute("aria-expanded", "true");
   target?.setAttribute("aria-controls", "confirm-popup");
 
-  await nextTick();
-  positionPopup();
-  document.addEventListener("pointerdown", onPointerDown, true);
+  previousBodyOverflow = document.body.style.overflow;
+  document.body.style.overflow = "hidden";
   document.addEventListener("keydown", onKeyDown);
-  window.addEventListener("resize", positionPopup);
-  window.addEventListener("scroll", positionPopup, true);
+
+  await nextTick();
   cancelButton.value?.focus();
 }
 
@@ -87,7 +74,8 @@ async function accept() {
 
 defineExpose({ open });
 onBeforeUnmount(() => {
-  removeListeners();
+  document.removeEventListener("keydown", onKeyDown);
+  document.body.style.overflow = previousBodyOverflow;
   target?.removeAttribute("aria-expanded");
   target?.removeAttribute("aria-controls");
 });
@@ -95,34 +83,42 @@ onBeforeUnmount(() => {
 
 <template>
   <Teleport to="body">
-    <section
-      v-if="visible"
-      id="confirm-popup"
-      ref="popup"
-      class="confirm-popup"
-      role="alertdialog"
-      aria-modal="false"
-      aria-labelledby="confirm-popup-message"
-      :style="position"
-    >
-      <p id="confirm-popup-message" class="confirm-popup__message">{{ message }}</p>
-      <div class="confirm-popup__actions">
-        <button ref="cancelButton" class="confirm-popup__button confirm-popup__button--cancel" type="button" @click="close()">
-          Cancelar
-        </button>
-        <button class="confirm-popup__button confirm-popup__button--accept" type="button" @click="accept">
-          Excluir
-        </button>
-      </div>
-    </section>
+    <div v-if="visible" class="confirm-backdrop" @click.self="close()">
+      <section
+        id="confirm-popup"
+        class="confirm-popup"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="confirm-popup-message"
+      >
+        <p id="confirm-popup-message" class="confirm-popup__message">{{ message }}</p>
+        <div class="confirm-popup__actions">
+          <button ref="cancelButton" class="confirm-popup__button confirm-popup__button--cancel" type="button" @click="close()">
+            Cancelar
+          </button>
+          <button ref="acceptButton" class="confirm-popup__button confirm-popup__button--accept" type="button" @click="accept">
+            Excluir
+          </button>
+        </div>
+      </section>
+    </div>
   </Teleport>
 </template>
 
 <style scoped>
-.confirm-popup {
+.confirm-backdrop {
   position: fixed;
+  inset: 0;
   z-index: 1000;
-  width: min(320px, calc(100vw - 24px));
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  padding: 24px;
+  background: color-mix(in srgb, var(--text) 60%, transparent);
+}
+
+.confirm-popup {
+  width: min(100%, 400px);
   padding: 24px;
   border-radius: var(--radius-card);
   background: var(--surface);
@@ -131,9 +127,10 @@ onBeforeUnmount(() => {
 }
 
 .confirm-popup__message {
-  margin: 0 0 16px;
+  margin: 0 0 24px;
   font-size: 1rem;
   line-height: 1.6;
+  text-wrap: pretty;
 }
 
 .confirm-popup__actions {
@@ -167,5 +164,25 @@ onBeforeUnmount(() => {
 .confirm-popup__button--accept {
   background: var(--error);
   color: var(--on-brand);
+}
+
+@media (max-width: 480px) {
+  .confirm-backdrop {
+    padding: 16px;
+  }
+
+  .confirm-popup {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .confirm-popup__actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .confirm-popup__button {
+    width: 100%;
+  }
 }
 </style>
