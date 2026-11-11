@@ -1,0 +1,53 @@
+/* ==========================================================================
+   1. TOKENS (DESIGN.md)
+   Toda cor, sombra, raio, fonte, peso e movimento vem daqui. Não use valores soltos.
+   ========================================================================== */
+
+:root {
+  /* Superfícies — a diferença entre elas precisa sobreviver ao reflexo do sol */
+  --bg: #fefdfb;          /* fundo da página */
+  --surface: #f1eee8;     /* cards, painéis — 1,14:1 sobre --bg */
+  --fill: #e5e0d8;        /* áreas rebaixadas, chips — 1,29:1 sobre --bg */
+
+  /* Texto — AAA (7:1+): luz do sol comprime o contraste percebido */
+  --text: #121715;        /* 17,8:1 */
+  --text-2: #303a36;      /* 11,6:1 */
+  --text-3: #4e5854;      /* 7,3:1 — mínimo permitido */
+
+  /* Bordas */
+  --line: #ccc6bb;        /* divisórias, 1,5:1 sobre --surface */
+  --border: #626d67;      /* 5,3:1 — inputs, botões, checkbox */
+
+  /* Marca */
+  --brand: #1a5490;       /* 7,6:1 */
+  --brand-hover: #123c68; /* 11,0:1 */
+  --on-brand: #ffffff;    /* 7,7:1 sobre --brand */
+  --accent: #d0640b;      /* só decoração (3,8:1), nunca texto */
+
+  /* Estado — também verificados sobre --fill (6,1:1 e 6,3:1) */
+  --error: #9d1f13;       /* 7,8:1 */
+  --success: #0b5a3b;     /* 8,1:1 */
+
+  /* Tipografia */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* Elevação */
+  --shadow-sm: 0 1px 2px rgb(18 23 21 / 0.06), 0 1px 3px rgb(18 23 21 / 0.08);
+  --shadow-md: 0 4px 12px rgb(18 23 21 / 0.08), 0 2px 4px rgb(18 23 21 / 0.06);
+
+  /* Aresta de 1px para superfícies que já têm sombra (a borda funde na sombra) */
+  --edge: inset 0 0 0 1px var(--line);
+  --edge-strong: inset 0 0 0 1px var(--border);
+
+  /* Raios — por componente, não uniformes (DESIGN.md › Formas) */
+  --radius-badge: 2px;    /* foco, badges inline */
+  --radius-control: 4px;  /* botões, inputs */
+  --radius-card: 6px;     /* cards, imagens */
+  --radius-pill: 9999px;  /* pílulas, bolinhas, spinner */
+
+  /* Movimento */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 150ms;
+  --dur-base: 200ms;
+}

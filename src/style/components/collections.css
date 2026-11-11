@@ -1,0 +1,87 @@
+/* Coleções: formulário em edição, lista e estado vazio compacto. */
+
+.collection-list {
+  margin-bottom: 24px;
+}
+
+.collection-form {
+  gap: 16px;
+  margin: -4px 0 24px;
+  padding: 24px;
+}
+
+/* O formulário em edição fica acima da lista: sombra e aresta mais firmes */
+.form-card.collection-form {
+  box-shadow: var(--shadow-md), var(--edge-strong);
+}
+
+.collection-form__heading h2 {
+  margin: 0 0 4px;
+  font-size: 1.125rem;
+}
+
+.collection-form__heading p {
+  color: var(--text-2);
+  font-size: 1rem;
+}
+
+.collection-form .form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.collection-empty {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 16px;
+  row-gap: 4px;
+  padding: 24px;
+  border-style: solid;
+  background: var(--surface);
+  text-align: left;
+}
+
+.collection-empty .empty-state__icon {
+  grid-column: 1;
+  grid-row: 1 / 3;
+  margin: 0;
+}
+
+.collection-empty h2 {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+}
+
+.collection-empty p {
+  grid-column: 2;
+  grid-row: 2;
+  margin: 0;
+}
+
+.collection-empty > :last-child {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  justify-self: end;
+}
+
+@media (max-width: 540px) {
+  .collection-empty {
+    grid-template-columns: 40px minmax(0, 1fr);
+    padding: 24px;
+  }
+
+  .collection-empty > :last-child {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: start;
+    margin-top: 8px;
+  }
+
+  .collection-form .form-actions {
+    flex-direction: column-reverse;
+  }
+}

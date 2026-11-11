@@ -1,0 +1,56 @@
+/* Tela de instalação (PWA / landing). */
+
+/* 5.1 Tela de Instalação (PWA / Landing) */
+.install-screen {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 24px;
+  background: var(--bg);
+}
+
+.install-screen__card {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 32px 24px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-md), var(--edge);
+  text-align: center;
+  overflow: hidden;
+}
+
+.install-screen__card h1 {
+  font-size: clamp(1.75rem, 7vw, 2.25rem);
+}
+
+.install-screen__card > p:not(.install-screen__status) {
+  margin-bottom: 24px;
+  color: var(--text-2);
+  font-size: 1rem;
+}
+
+.install-screen__card .button {
+  width: 100%;
+}
+
+.install-screen__icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 24px;
+  border-radius: var(--radius-card);
+  background: var(--brand);
+  color: var(--on-brand);
+  font-size: 1.75rem;
+  font-weight: 600;
+}
+
+.install-screen__status {
+  min-height: 1.6em;
+  margin: 16px 0 0;
+  color: var(--text-2);
+  font-size: 0.875rem;
+}

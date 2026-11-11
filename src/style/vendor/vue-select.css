@@ -1,0 +1,48 @@
+/* ==========================================================================
+   8. VUE-SELECT (biblioteca já existente) — reaproveita os tokens
+   ========================================================================== */
+
+.v-select {
+  --vs-border-color: var(--border);
+  --vs-border-width: 1px;
+  --vs-border-radius: var(--radius-control);
+  --vs-controls-color: var(--text-2);
+  --vs-search-input-color: var(--text);
+  --vs-search-input-placeholder-color: var(--text-3);
+  --vs-selected-bg: var(--fill);
+  --vs-selected-color: var(--text);
+  --vs-selected-border-color: var(--border);
+  --vs-dropdown-bg: var(--surface);
+  --vs-dropdown-color: var(--text);
+  --vs-dropdown-box-shadow: var(--shadow-md);
+  --vs-dropdown-option-padding: 12px 16px;
+  --vs-dropdown-option--active-bg: var(--fill);
+  --vs-dropdown-option--active-color: var(--text);
+  --vs-state-disabled-bg: var(--fill);
+  --vs-state-disabled-color: var(--text-3);
+}
+
+.v-select .vs__dropdown-toggle {
+  min-height: 44px;
+  align-items: center;
+  padding: 8px 0;
+  background: var(--bg);
+}
+
+.v-select:focus-within .vs__dropdown-toggle {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+.v-select .vs__dropdown-option {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.v-select .vs__deselect,
+.v-select .vs__clear {
+  min-width: 24px;
+  min-height: 24px;
+  color: var(--text-2);
+}

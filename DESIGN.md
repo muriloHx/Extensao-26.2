@@ -8,7 +8,7 @@ base: Mintlify (adaptado)
 # Acesso Verificador — Design System
 
 Base visual inspirada no Mintlify: fundo off-white quente, sombras suaves, sem gradientes.
-Adaptado para app (Vue + Vite + `index.css` puro, sem Tailwind) e para leitura sob luz do sol: o app é usado em vistoria de campo, com o celular na mão e o brilho no máximo.
+Adaptado para app (Vue + Vite + CSS puro em `src/style/`, sem Tailwind) e para leitura sob luz do sol: o app é usado em vistoria de campo, com o celular na mão e o brilho no máximo.
 
 > Os hex de azul e laranja abaixo são aproximações. Troque pelos hex reais da logo e
 > confira o contraste antes de usar.

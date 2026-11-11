@@ -1,0 +1,34 @@
+/* Badges de status. */
+
+/* 4.2 Badges de Status — o texto sempre carrega o estado */
+.status {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  padding: 4px 8px;
+  border-radius: var(--radius-badge);
+  background: var(--fill);
+  color: var(--text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.status--conforme {
+  color: var(--success);
+}
+
+.status--nao_conforme {
+  color: var(--error);
+}
+
+.status--nao_avaliado,
+.status--invalido,
+.status--erro {
+  color: var(--text-2);
+}
+
+.status--atencao,
+.status--manual {
+  color: var(--text-2);
+}

@@ -14,7 +14,7 @@ Aplicação web em Vue 3 e Vite para organizar avaliações de acessibilidade. A
 - `src/repositories/`: persistência local.
 - `src/rules/nbr9050-2020/`: conjuntos de regras padrão em YAML.
 - `src/tests/`: testes automatizados com `node:test`.
-- `src/styles/index.css`: estilos globais compartilhados.
+- `src/style/`: estilos globais compartilhados, por camada (`tokens.css`, `base.css`, `layout.css`, `components/`, `pages/`, `responsive.css`, `vendor/`), reunidos por `src/style/index.css`.
 
 ## Práticas de implementação
 

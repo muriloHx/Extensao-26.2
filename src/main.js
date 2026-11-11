@@ -4,7 +4,7 @@ import { createApplicationServices } from "./services/applicationServices.js";
 import { loadBuiltInRuleSets } from "./services/ruleLoader.js";
 import App from "./App.vue";
 import router from "./router";
-import "./styles/index.css";
+import "./style/index.css";
 
 async function bootstrap() {
   const [services, builtInRuleSets] = await Promise.all([createApplicationServices(), loadBuiltInRuleSets()]);

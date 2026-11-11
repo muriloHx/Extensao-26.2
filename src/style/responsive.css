@@ -1,0 +1,124 @@
+/* Breakpoints que ajustam a casca e vários componentes compartilhados de uma vez.
+   Ajustes de um componente ou tela específica ficam no arquivo dele. */
+
+/* ==========================================================================
+   AJUSTES PARA CELULAR (Telas menores que 600px)
+   ========================================================================== */
+
+@media (max-width: 600px) {
+  .content {
+    padding: 24px 16px 88px;
+  }
+
+  .page-header {
+    margin-bottom: 24px;
+  }
+
+  .page-header__row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .page-header__row > :last-child {
+    width: 100%;
+  }
+
+  .page-header__row > :last-child > .button,
+  .page-header__row > .button {
+    width: 100%;
+  }
+
+  .empty-state {
+    gap: 8px;
+    padding: 32px 16px;
+  }
+
+  .empty-state:not(.collection-empty) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .empty-state h2 {
+    margin-bottom: 0;
+    font-size: 1.125rem;
+  }
+
+  .empty-state__actions {
+    width: 100%;
+  }
+
+  .empty-state__actions .button {
+    width: 100%;
+    max-width: 340px;
+    margin-top: 8px;
+  }
+
+  .text-button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 4px;
+  }
+
+  .card__menu {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 16px;
+    padding-right: 16px;
+    padding-bottom: 16px;
+  }
+
+  .form-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .form-actions > * {
+    width: 100%;
+  }
+
+  .form-actions .button:last-child {
+    margin-left: 0;
+  }
+
+  .collection-form {
+    padding: 16px;
+  }
+
+  .collection-form .form-actions {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .collection-form .form-actions > * {
+    width: 100%;
+  }
+
+  .collection-empty {
+    grid-template-columns: 40px minmax(0, 1fr);
+    column-gap: 12px;
+    padding: 16px;
+  }
+
+  .collection-empty .empty-state__icon {
+    width: 40px;
+    height: 40px;
+    margin: 0;
+  }
+
+  .collection-empty > .empty-state__actions {
+    grid-column: 1 / -1;
+    grid-row: 3;
+    justify-self: stretch;
+    width: 100%;
+    max-width: none;
+    margin-top: 8px;
+  }
+
+  .collection-empty .empty-state__actions .button {
+    max-width: none;
+    margin: 0;
+  }
+}

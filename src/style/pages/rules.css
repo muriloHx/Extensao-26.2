@@ -1,0 +1,226 @@
+/* Telas de conjuntos de regras. */
+
+/* 5.4 Seção de Regras Normativas */
+.rules-section {
+  margin-top: 0;
+}
+
+.rules-section--first {
+  margin-top: 0;
+}
+
+.rules-section > h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.rules-library {
+  display: grid;
+  gap: 32px;
+  margin-top: 8px;
+}
+
+.rules-library__section > h2 {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.rules-library__list {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.rules-card {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 16px;
+  min-height: 104px;
+  padding: 16px;
+  transition: box-shadow var(--dur-base) var(--ease);
+}
+
+.rules-card:hover {
+  box-shadow: var(--shadow-md), var(--edge-strong);
+}
+
+.rules-card h2,
+.ruleset-card h2 {
+  margin: 0 0 4px;
+  font-size: 1.125rem;
+  line-height: 1.2;
+}
+
+.rules-card small {
+  color: var(--text-3);
+  font-size: 0.875rem;
+}
+
+.rules-card p,
+.ruleset-card p {
+  font-size: 0.875rem;
+}
+
+.ruleset-list {
+  gap: 12px;
+}
+
+.ruleset-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+}
+
+.ruleset-card small {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--text-3);
+  font-size: 0.875rem;
+}
+
+.ruleset-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.ruleset-card__actions .button {
+  min-height: 44px;
+  padding: 8px 12px;
+  font-size: 0.875rem;
+}
+
+.rules-page-header .page-header__row {
+  align-items: flex-end;
+  gap: 24px;
+}
+
+.rules-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.rules-help-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px;
+  color: var(--brand);
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+}
+
+.rules-help-link:hover {
+  color: var(--brand-hover);
+}
+
+/* Input de arquivo visualmente oculto, mas focável: o anel aparece no label */
+.import-button {
+  position: relative;
+  cursor: pointer;
+}
+
+.import-button input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  border: 0;
+  white-space: nowrap;
+}
+
+.import-button:focus-within {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+  .rules-page-header .page-header__row {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .rules-actions {
+    justify-content: flex-start;
+  }
+
+  .ruleset-card {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .ruleset-card__actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .rules-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .rules-help-link {
+    grid-column: 1 / -1;
+    padding: 8px 0;
+  }
+
+  .rules-actions .import-button {
+    width: 100%;
+    padding-right: 8px;
+    padding-left: 8px;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .rules-page-header .rules-actions {
+    width: 100%;
+  }
+
+  .rules-actions .import-button {
+    min-height: 44px;
+  }
+
+  .ruleset-card__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) 44px;
+    width: 100%;
+  }
+
+  .ruleset-card__actions .button,
+  .ruleset-card__actions .icon-button {
+    width: 100%;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 380px) {
+  .rules-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .rules-actions .rules-help-link {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .ruleset-card__actions {
+    grid-template-columns: 1fr;
+  }
+}

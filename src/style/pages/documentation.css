@@ -1,0 +1,162 @@
+/* Tela de documentação de regras. */
+
+/* 5.5 Documentação */
+.documentation {
+  display: grid;
+  gap: 32px;
+}
+
+.documentation__intro {
+  display: flex;
+  gap: 16px;
+  padding: 24px;
+  border-radius: var(--radius-card);
+  background: var(--fill);
+}
+
+.documentation__intro h2 {
+  margin-bottom: 4px;
+  font-size: 1.125rem;
+}
+
+.documentation__intro p,
+.documentation__section > p,
+.documentation-card p,
+.documentation-rule p {
+  margin-bottom: 0;
+  color: var(--text-2);
+  font-size: 1rem;
+}
+
+.documentation__icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-control);
+  background: var(--brand);
+  color: var(--on-brand);
+  font-weight: 600;
+}
+
+.documentation__section {
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+
+.documentation__section--last {
+  border-bottom: 0;
+}
+
+.documentation__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.documentation__heading > span {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--fill);
+  color: var(--brand);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.documentation__heading h2,
+.documentation__section--last h2 {
+  margin: 2px 0 4px;
+  font-size: 1.125rem;
+}
+
+.documentation__heading p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 1rem;
+}
+
+.documentation-code {
+  overflow: auto;
+  margin: 16px 0;
+  padding: 16px;
+  border-radius: var(--radius-card);
+  background: var(--text);
+  color: var(--bg);
+  font: 0.875rem/1.6 var(--font-mono);
+}
+
+.documentation-code code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.documentation__note {
+  margin-top: 16px !important;
+  padding-left: 16px;
+  border-left: 4px solid var(--border);
+}
+
+/* `<details>` da documentação: alvo de toque e foco visível */
+.documentation__details {
+  margin-top: 16px;
+}
+
+.documentation__details summary {
+  min-height: 44px;
+  padding: 8px 0;
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.documentation-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.documentation-card {
+  padding: 16px;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm), var(--edge);
+}
+
+.documentation-card h3,
+.documentation-rule h3 {
+  margin: 0 0 4px;
+  font-size: 1.125rem;
+}
+
+.documentation-rule {
+  margin-top: 16px;
+}
+
+.documentation-rule .documentation-code {
+  margin-bottom: 0;
+}
+
+.documentation-steps,
+.documentation-list {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 16px;
+  padding-left: 24px;
+  color: var(--text-2);
+  font-size: 1rem;
+}
+
+.documentation-steps strong {
+  color: var(--text);
+}
+
+.documentation__section .button {
+  margin-top: 4px;
+}
