@@ -111,11 +111,11 @@ async function importFiles(event) {
 }
 
 function remove(ruleSet, event) {
-  confirmPopup.open({
-    target: event.currentTarget,
-    message: `Excluir "${ruleSet.nome}"? Esta ação não pode ser desfeita.`,
-    onAccept: () => deleteRuleSet(ruleSet),
-  });
+  confirmPopup.confirm(
+    event,
+    `Excluir "${ruleSet.nome}"? Esta ação não pode ser desfeita.`,
+    () => deleteRuleSet(ruleSet)
+  );
 }
 
 async function deleteRuleSet(ruleSet) {
@@ -150,7 +150,7 @@ onMounted(load);
 <template>
   <!-- Documentação -->
   <template v-if="documentation">
-    <RouterLink class="back-link" to="/rules"><ChevronLeft :size="18" aria-hidden="true" />Conjuntos de regras</RouterLink>
+    <RouterLink class="back-link" to="/rules"><ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">Conjuntos de regras</span></RouterLink>
 
     <PageHeader
       title="Crie e importe regras"
@@ -279,7 +279,7 @@ regras:
 
   <!-- Detalhe de um conjunto -->
   <template v-else-if="groupId">
-    <RouterLink class="back-link" to="/rules"><ChevronLeft :size="18" aria-hidden="true" />Conjuntos de regras</RouterLink>
+    <RouterLink class="back-link" to="/rules"><ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">Conjuntos de regras</span></RouterLink>
 
     <template v-if="loading">
       <p class="muted" role="status">Carregando…</p>

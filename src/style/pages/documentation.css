@@ -6,12 +6,22 @@
   gap: 32px;
 }
 
+.documentation > * {
+  min-width: 0;
+}
+
 .documentation__intro {
   display: flex;
   gap: 16px;
+  min-width: 0;
   padding: 24px;
   border-radius: var(--radius-card);
   background: var(--fill);
+}
+
+.documentation__intro > div {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .documentation__intro h2 {

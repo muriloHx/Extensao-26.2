@@ -69,6 +69,7 @@ p,
   margin-bottom: 0;
   color: var(--text-2);
   font-size: 1rem;
+  overflow-wrap: anywhere;
   text-wrap: pretty;
 }
 

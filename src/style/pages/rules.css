@@ -52,6 +52,20 @@
   line-height: 1.2;
 }
 
+.rules-card > div,
+.ruleset-card > div {
+  min-width: 0;
+}
+
+.rules-card h2,
+.rules-card p,
+.rules-card small,
+.ruleset-card h2,
+.ruleset-card p,
+.ruleset-card small {
+  overflow-wrap: anywhere;
+}
+
 .rules-card small {
   color: var(--text-3);
   font-size: 0.875rem;

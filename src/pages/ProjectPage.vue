@@ -1,7 +1,7 @@
 <script setup>
 import { inject, nextTick, onMounted, ref } from "vue";
 import { ChevronLeft, ClipboardCheck, FolderPlus, House, Trash2 } from "@lucide/vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import EvaluationSummary from "../components/EvaluationSummary.vue";
@@ -12,6 +12,7 @@ const props = defineProps({
 
 const services = inject("services");
 const confirmPopup = inject("confirmPopup");
+const router = useRouter();
 
 // Estados Reativos
 const project = ref(null);
@@ -67,32 +68,30 @@ async function save() {
   await loadData();
 }
 
-function remove(environment, event) {
-  confirmPopup.open({
-    target: event.currentTarget,
-    message: `Excluir o ambiente “${environment.name}” e seus elementos?`,
-    onAccept: () => deleteEnvironment(environment),
-  });
+function removeEnvironment(environment, event) {
+  confirmPopup.confirm(
+    event,
+    `Excluir o ambiente “${environment.name}” e seus elementos?`,
+    () => deleteEnvironment(environment)
+  );
 }
 
 async function deleteEnvironment(environment) {
-  const elements = await services.projectService.listElements(environment.id);
-
-  // Deleção em cascata: Avaliações -> Elementos -> Ambiente
-  for (const element of elements) {
-    const evaluations = await services.evaluationService.listEvaluations(
-      element.id
-    );
-
-    for (const evaluation of evaluations) {
-      await services.repositories.evaluationRepository.delete(evaluation.id);
-    }
-
-    await services.repositories.elementRepository.delete(element.id);
-  }
-
-  await services.repositories.environmentRepository.delete(environment.id);
+  await services.projectService.deleteEnvironment(environment.id);
   await loadData();
+}
+
+function removeProject(event) {
+  confirmPopup.confirm(
+    event,
+    `Excluir o projeto “${project.value.name}” e seus dados?`,
+    deleteProject
+  );
+}
+
+async function deleteProject() {
+  await services.projectService.deleteProject(project.value.id);
+  router.push("/projects");
 }
 
 onMounted(loadData);
@@ -101,7 +100,7 @@ onMounted(loadData);
 <template>
   <!-- Cenário 1: Projeto encontrado -->
   <template v-if="project">
-    <RouterLink class="back-link" to="/projects"><ChevronLeft :size="18" aria-hidden="true" />Projetos</RouterLink>
+    <RouterLink class="back-link" to="/projects"><ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">Projetos</span></RouterLink>
 
     <PageHeader
       :title="project.name"
@@ -118,6 +117,15 @@ onMounted(loadData);
             <ClipboardCheck :size="18" aria-hidden="true" />Status detalhado
           </RouterLink>
           <button v-if="environments.length" class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
+          <button>A</button>
+          <button
+            class="icon-button icon-button--danger"
+            title="Excluir"
+            aria-label="Excluir projeto"
+            @click="removeProject"
+          >
+            <Trash2 :size="18" aria-hidden="true" />
+          </button>
         </div>
       </template>
     </PageHeader>
@@ -174,7 +182,7 @@ onMounted(loadData);
               class="icon-button icon-button--danger"
               title="Excluir"
               aria-label="Excluir"
-              @click="remove(environment, $event)"
+              @click="removeEnvironment(environment, $event)"
             >
               <Trash2 :size="18" aria-hidden="true" />
             </button>

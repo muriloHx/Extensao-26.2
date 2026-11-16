@@ -11,6 +11,8 @@ const showWelcome = ref(false);
 const route = useRoute();
 provide("confirmPopup", {
   open: (options) => confirmPopup.value?.open(options),
+  confirm: (event, message, onAccept) =>
+    confirmPopup.value?.confirm(event, message, onAccept),
 });
 
 onMounted(async () => {

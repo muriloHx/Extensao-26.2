@@ -103,9 +103,7 @@ async function loadData() {
   ];
 
   if (!isNew.value) {
-    element.value = await services.repositories.elementRepository.get(
-      props.elementId
-    );
+    element.value = await services.projectService.getElement(props.elementId);
   }
 
   const environmentId =
@@ -117,7 +115,7 @@ async function loadData() {
 
   if (!props.quick) {
     environment.value =
-      await services.repositories.environmentRepository.get(environmentId);
+      await services.projectService.getEnvironment(environmentId);
     environmentElements.value = await services.projectService.listElements(
       environmentId
     );
@@ -360,7 +358,7 @@ onMounted(loadData);
       class="back-link"
       :to="`/projects/${environment.projectId}/environments/${environment.id}`"
     >
-      <ChevronLeft :size="18" aria-hidden="true" />{{ environment.name }}
+      <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ environment.name }}</span>
     </RouterLink>
 
     <PageHeader

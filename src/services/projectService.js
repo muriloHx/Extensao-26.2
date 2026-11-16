@@ -4,10 +4,16 @@ import { toIsoDate } from "../domain/model.js";
 import { createProject } from "../domain/project.js";
 
 export class ProjectService {
-  constructor({ projectRepository, environmentRepository, elementRepository }) {
+  constructor({
+    projectRepository,
+    environmentRepository,
+    elementRepository,
+    evaluationRepository
+  }) {
     this.projectRepository = projectRepository;
     this.environmentRepository = environmentRepository;
     this.elementRepository = elementRepository;
+    this.evaluationRepository = evaluationRepository;
   }
 
   async createProject(input) {
@@ -48,6 +54,10 @@ export class ProjectService {
     return this.environmentRepository.getByProjectId(projectId);
   }
 
+  getEnvironment(id) {
+    return this.environmentRepository.get(id);
+  }
+
   async renameEnvironment(id, name) {
     const current = await this.#require(this.environmentRepository.get(id), "Ambiente");
     return this.environmentRepository.put(createEnvironment({
@@ -67,6 +77,10 @@ export class ProjectService {
     return this.elementRepository.getByEnvironmentId(environmentId);
   }
 
+  getElement(id) {
+    return this.elementRepository.get(id);
+  }
+
   async updateElement(id, changes) {
     const current = await this.#require(this.elementRepository.get(id), "Elemento");
     return this.elementRepository.put(createElement({
@@ -77,6 +91,38 @@ export class ProjectService {
       createdAt: current.createdAt,
       updatedAt: toIsoDate(new Date())
     }));
+  }
+
+  // Exclusões em cascata: o vínculo vive nos campos projectId, environmentId
+  // e elementId, então cada nível remove seus descendentes antes de sair.
+  async deleteElement(id) {
+    const evaluations = await this.evaluationRepository.getByElementId(id);
+
+    await Promise.all(
+      evaluations.map((evaluation) =>
+        this.evaluationRepository.delete(evaluation.id)
+      )
+    );
+
+    await this.elementRepository.delete(id);
+  }
+
+  async deleteEnvironment(id) {
+    const elements = await this.elementRepository.getByEnvironmentId(id);
+
+    await Promise.all(elements.map((element) => this.deleteElement(element.id)));
+
+    await this.environmentRepository.delete(id);
+  }
+
+  async deleteProject(id) {
+    const environments = await this.environmentRepository.getByProjectId(id);
+
+    await Promise.all(
+      environments.map((environment) => this.deleteEnvironment(environment.id))
+    );
+
+    await this.projectRepository.delete(id);
   }
 
   async #require(promise, label) {

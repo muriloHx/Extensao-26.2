@@ -52,7 +52,7 @@ onMounted(loadData);
   <!-- Projeto e status carregados -->
   <template v-else-if="project && status">
     <RouterLink class="back-link" :to="`/projects/${projectId}`">
-      <ChevronLeft :size="18" aria-hidden="true" />{{ project.name }}
+      <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ project.name }}</span>
     </RouterLink>
 
     <PageHeader

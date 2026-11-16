@@ -71,33 +71,15 @@ async function save() {
 }
 
 function remove(project, event) {
-  confirmPopup.open({
-    target: event.currentTarget,
-    message: `Excluir o projeto “${project.name}” e seus dados?`,
-    onAccept: () => deleteProject(project),
-  });
+  confirmPopup.confirm(
+    event,
+    `Excluir o projeto “${project.name}” e seus dados?`,
+    () => deleteProject(project)
+  );
 }
 
 async function deleteProject(project) {
-  const environments = await services.projectService.listEnvironments(project.id);
-
-  for (const environment of environments) {
-    const elements = await services.projectService.listElements(environment.id);
-
-    for (const element of elements) {
-      const evaluations = await services.evaluationService.listEvaluations(element.id);
-
-      for (const evaluation of evaluations) {
-        await services.repositories.evaluationRepository.delete(evaluation.id);
-      }
-
-      await services.repositories.elementRepository.delete(element.id);
-    }
-
-    await services.repositories.environmentRepository.delete(environment.id);
-  }
-
-  await services.repositories.projectRepository.delete(project.id);
+  await services.projectService.deleteProject(project.id);
   await loadProjects();
 }
 

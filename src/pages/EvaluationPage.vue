@@ -1,7 +1,7 @@
 <script setup>
-import { ChevronLeft, Pencil } from "@lucide/vue";
+import { ChevronLeft, Pencil, Trash2 } from "@lucide/vue";
 import { computed, inject, onMounted, ref } from "vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import StatusBadge from "../components/StatusBadge.vue";
@@ -15,6 +15,8 @@ const props = defineProps({
 
 const services = inject("services");
 const builtInRuleSets = inject("builtInRuleSets");
+const confirmPopup = inject("confirmPopup");
+const router = useRouter();
 
 // Estado da Tela
 const element = ref(null);
@@ -124,12 +126,10 @@ async function loadData() {
     return;
   }
 
-  element.value = await services.repositories.elementRepository.get(
-    props.elementId
-  );
+  element.value = await services.projectService.getElement(props.elementId);
 
   if (element.value) {
-    environment.value = await services.repositories.environmentRepository.get(
+    environment.value = await services.projectService.getEnvironment(
       element.value.environmentId
     );
     const evaluations = await services.evaluationService.listEvaluations(
@@ -139,6 +139,19 @@ async function loadData() {
   }
 }
 
+function removeElement(event) {
+  confirmPopup.confirm(
+    event,
+    `Excluir o elemento ${element.value.name} e suas avaliações?`,
+    deleteElement
+  );
+}
+
+async function deleteElement() {
+  await services.projectService.deleteElement(element.value.id);
+  router.push(environmentRoute.value);
+}
+
 onMounted(loadData);
 </script>
 
@@ -146,7 +159,7 @@ onMounted(loadData);
   <!-- Cenário 1: Elemento e Avaliação Carregados -->
   <template v-if="element && evaluation">
     <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : environmentRoute">
-      <ChevronLeft :size="18" aria-hidden="true" />{{ quick ? element.name : (environment?.name ?? element.name) }}
+      <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ quick ? element.name : (environment?.name ?? element.name) }}</span>
     </RouterLink>
 
     <PageHeader
@@ -154,13 +167,22 @@ onMounted(loadData);
       :description="`Avaliação realizada em ${formatDate(evaluation.evaluatedAt)}`"
     >
       <template #action>
-        <RouterLink
-          v-if="!quick"
-          class="button button--outline"
-          :to="`/elements/${element.id}`"
-        >
-          <Pencil :size="18" aria-hidden="true" />Editar elemento
-        </RouterLink>
+        <div v-if="!quick" class="project-header__actions">
+          <RouterLink
+            class="button button--outline"
+            :to="`/elements/${element.id}`"
+          >
+            <Pencil :size="18" aria-hidden="true" />Editar elemento
+          </RouterLink>
+          <button
+            class="icon-button icon-button--danger"
+            title="Excluir"
+            aria-label="Excluir elemento"
+            @click="removeElement"
+          >
+            <Trash2 :size="18" aria-hidden="true" />
+          </button>
+        </div>
       </template>
     </PageHeader>
 
@@ -225,7 +247,7 @@ onMounted(loadData);
   <!-- Cenário 2: Elemento encontrado, mas sem avaliação -->
   <template v-else-if="element">
     <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : environmentRoute">
-      <ChevronLeft :size="18" aria-hidden="true" />Elemento
+      <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">Elemento</span>
     </RouterLink>
 
     <EmptyState

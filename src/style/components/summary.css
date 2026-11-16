@@ -16,7 +16,14 @@
   margin-bottom: 16px;
 }
 
-.evaluation-summary__heading h2 { margin-bottom: 4px; }
+.evaluation-summary__heading > :first-child {
+  min-width: 0;
+}
+
+.evaluation-summary__heading h2 {
+  margin-bottom: 4px;
+  overflow-wrap: anywhere;
+}
 
 .evaluation-summary__score {
   flex: 0 0 auto;
@@ -77,12 +84,14 @@
 .result-summary h2 {
   margin: 12px 0 4px;
   font-size: 1.375rem;
+  overflow-wrap: anywhere;
 }
 
 .result-summary p {
   margin-bottom: 0;
   color: var(--text-2);
   font-size: 1rem;
+  overflow-wrap: anywhere;
 }
 
 .result-summary__counts {
@@ -157,10 +166,16 @@
   margin-bottom: 4px;
   color: var(--text-2);
   font-size: 1rem;
+  overflow-wrap: anywhere;
+}
+
+.result-row__content {
+  min-width: 0;
 }
 
 .result-row__content h3 {
   margin-top: 12px;
+  overflow-wrap: anywhere;
 }
 
 .result-row__details {
@@ -200,6 +215,7 @@
   color: var(--text-3);
   font-size: 0.875rem;
   font-weight: 500;
+  overflow-wrap: anywhere;
 }
 
 .result-values__item strong,
@@ -213,4 +229,5 @@
 .result-row__reference {
   display: block;
   margin-top: 12px;
+  overflow-wrap: anywhere;
 }

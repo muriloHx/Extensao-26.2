@@ -3,6 +3,8 @@
    ========================================================================== */
 
 .v-select {
+  width: 100%;
+  min-width: 0;
   --vs-border-color: var(--border);
   --vs-border-width: 1px;
   --vs-border-radius: var(--radius-control);
@@ -29,6 +31,23 @@
   background: var(--bg);
 }
 
+.v-select .vs__selected-options {
+  min-width: 0;
+}
+
+/* O checklist selecionado pode ter um nome longo: quebra em vez de alargar
+   o campo (e a página) ou esconder o botão de limpar. */
+.v-select .vs__selected {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.v-select .vs__search {
+  min-width: 0;
+}
+
 .v-select:focus-within .vs__dropdown-toggle {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
@@ -38,6 +57,8 @@
   display: flex;
   align-items: center;
   min-height: 44px;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 .v-select .vs__deselect,

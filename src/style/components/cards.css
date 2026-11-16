@@ -36,6 +36,18 @@
   min-width: 0;
 }
 
+/* Conteúdo dinâmico dos cards (nomes, descrições e metadados): quebra
+   palavras longas e limita a duas linhas para o card não crescer sem fim. */
+.card h2,
+.card p,
+.card small {
+  display: -webkit-box;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
 .card__icon {
   display: grid;
   place-items: center;

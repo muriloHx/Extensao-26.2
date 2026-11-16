@@ -18,8 +18,13 @@
   gap: 16px;
 }
 
+.project-status__heading > :first-child {
+  min-width: 0;
+}
+
 .project-status__heading h2 {
   margin: 0 0 4px;
+  overflow-wrap: anywhere;
 }
 
 .project-status__heading p {

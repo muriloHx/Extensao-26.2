@@ -2,7 +2,7 @@
 
 .ruleset-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
   gap: 16px;
 }
 
@@ -14,9 +14,17 @@
 
 .ruleset-option {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 4px 8px;
+  min-width: 0;
+}
+
+.ruleset-title,
+.ruleset-norma {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .ruleset-norma {
@@ -30,6 +38,7 @@
   color: var(--text-3);
   font-size: 0.875rem;
   font-weight: 400;
+  overflow-wrap: anywhere;
 }
 
 .parameter-help {
@@ -58,4 +67,5 @@
   color: var(--text-3);
   font-size: 0.875rem;
   font-weight: 400;
+  overflow-wrap: anywhere;
 }

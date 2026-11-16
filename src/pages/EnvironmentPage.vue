@@ -1,7 +1,7 @@
 <script setup>
 import { inject, onMounted, ref } from "vue";
 import { Box, ChevronLeft, ChevronRight, Plus, Trash2 } from "@lucide/vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import StatusBadge from "../components/StatusBadge.vue";
@@ -15,6 +15,7 @@ const props = defineProps({
 
 const services = inject("services");
 const confirmPopup = inject("confirmPopup");
+const router = useRouter();
 
 // Estados reativos
 const environment = ref(null);
@@ -29,32 +30,36 @@ function elementLink(row) {
     : `/elements/${row.element.id}/evaluation`;
 }
 
-function deleteElement(element, event) {
-  confirmPopup.open({
-    target: event.currentTarget,
-    message: `Excluir o elemento ${element.name} e suas avaliações?`,
-    onAccept: () => removeElement(element),
-  });
+function removeElement(element, event) {
+  confirmPopup.confirm(
+    event,
+    `Excluir o elemento ${element.name} e suas avaliações?`,
+    () => deleteElement(element)
+  );
 }
 
-async function removeElement(element) {
-  const evaluations = await services.evaluationService.listEvaluations(
-    element.id
-  );
-
-  for (const evaluation of evaluations) {
-    await services.repositories.evaluationRepository.delete(evaluation.id);
-  }
-
-  await services.repositories.elementRepository.delete(element.id);
-
+async function deleteElement(element) {
+  await services.projectService.deleteElement(element.id);
   await loadData();
+}
+
+function removeEnvironment(event) {
+  confirmPopup.confirm(
+    event,
+    `Excluir o ambiente “${environment.value.name}” e seus elementos?`,
+    deleteEnvironment
+  );
+}
+
+async function deleteEnvironment() {
+  await services.projectService.deleteEnvironment(environment.value.id);
+  router.push(`/projects/${environment.value.projectId}`);
 }
 
 
 async function loadData() {
   // 1. Carrega dados do Ambiente
-  environment.value = await services.repositories.environmentRepository.get(
+  environment.value = await services.projectService.getEnvironment(
     props.environmentId
   );
 
@@ -102,7 +107,7 @@ onMounted(loadData);
       class="back-link"
       :to="`/projects/${environment.projectId}`"
     >
-      <ChevronLeft :size="18" aria-hidden="true" />{{ project?.name ?? "Projeto" }}
+      <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ project?.name ?? "Projeto" }}</span>
     </RouterLink>
 
     <!-- Cabeçalho -->
@@ -110,15 +115,25 @@ onMounted(loadData);
       :title="environment.name"
     >
       <template #action>
-        <RouterLink v-if="rows.length"
-          class="button"
-          :to="{
-            path: '/elements/new',
-            query: { environmentId: environment.id },
-          }"
-        >
-          <Plus :size="18" aria-hidden="true" />Adicionar elemento
-        </RouterLink>
+        <div class="project-header__actions">
+          <RouterLink v-if="rows.length"
+            class="button"
+            :to="{
+              path: '/elements/new',
+              query: { environmentId: environment.id },
+            }"
+          >
+            <Plus :size="18" aria-hidden="true" />Adicionar elemento
+          </RouterLink>
+          <button
+            class="icon-button icon-button--danger"
+            title="Excluir"
+            aria-label="Excluir ambiente"
+            @click="removeEnvironment"
+          >
+            <Trash2 :size="18" aria-hidden="true" />
+          </button>
+        </div>
       </template>
     </PageHeader>
 
@@ -151,7 +166,7 @@ onMounted(loadData);
             class="icon-button icon-button--danger"
             title="Excluir"
             aria-label="Excluir"
-            @click="deleteElement(row.element, $event)"
+            @click="removeElement(row.element, $event)"
           >
             <Trash2 :size="18" aria-hidden="true" />
           </button>

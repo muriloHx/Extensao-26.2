@@ -66,13 +66,18 @@ async function open(options) {
   cancelButton.value?.focus();
 }
 
+// Atalho para o padrão "clicou em excluir": o próprio evento informa o alvo.
+function confirm(event, message, onAccept) {
+  return open({ target: event.currentTarget, message, onAccept });
+}
+
 async function accept() {
   const action = acceptAction;
   close({ restoreFocus: false });
   await action?.();
 }
 
-defineExpose({ open });
+defineExpose({ open, confirm });
 onBeforeUnmount(() => {
   document.removeEventListener("keydown", onKeyDown);
   document.body.style.overflow = previousBodyOverflow;
