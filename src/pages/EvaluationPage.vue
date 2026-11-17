@@ -239,9 +239,11 @@ onMounted(loadData);
       </article>
     </section>
 
-    <RouterLink v-if="quick" class="button" to="/quick-evaluation">
-      Nova avaliação rápida
-    </RouterLink>
+    <div v-if="quick" class="results-action">
+      <RouterLink class="button" to="/quick-evaluation">
+        Nova avaliação rápida
+      </RouterLink>
+    </div>
   </template>
 
   <!-- Cenário 2: Elemento encontrado, mas sem avaliação -->
