@@ -1,37 +1,64 @@
 <script setup>
-import { onMounted, onUnmounted, ref } from "vue";
+import { nextTick, onMounted, onUnmounted, ref } from "vue";
 import { ArrowRight, ClipboardCheck, FolderKanban } from "@lucide/vue";
 
 const emit = defineEmits(["close"]);
 const closeButton = ref(null);
 const actionButton = ref(null);
 let previousBodyOverflow = "";
+let previouslyFocused = null;
+
+function trapTab(event) {
+  const focusables = [closeButton.value, actionButton.value].filter(Boolean);
+  if (!focusables.length) return;
+
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  const active = document.activeElement;
+
+  // Se o foco escapou do diálogo, traz de volta antes de continuar o Tab.
+  if (!focusables.includes(active)) {
+    event.preventDefault();
+    (event.shiftKey ? last : first).focus();
+    return;
+  }
+
+  if (event.shiftKey && active === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && active === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
 
 function handleKeydown(event) {
   if (event.key === "Escape") {
+    event.preventDefault();
     emit("close");
     return;
   }
 
-  if (event.key === "Tab" && event.shiftKey && document.activeElement === closeButton.value) {
-    event.preventDefault();
-    actionButton.value?.focus();
-  } else if (event.key === "Tab" && !event.shiftKey && document.activeElement === actionButton.value) {
-    event.preventDefault();
-    closeButton.value?.focus();
-  }
+  if (event.key === "Tab") trapTab(event);
 }
 
-onMounted(() => {
+onMounted(async () => {
+  previouslyFocused = document.activeElement;
   document.addEventListener("keydown", handleKeydown);
   previousBodyOverflow = document.body.style.overflow;
   document.body.style.overflow = "hidden";
+
+  // Foca depois do primeiro render para o botão já existir no DOM.
+  await nextTick();
   closeButton.value?.focus();
 });
 
 onUnmounted(() => {
   document.removeEventListener("keydown", handleKeydown);
   document.body.style.overflow = previousBodyOverflow;
+
+  // Devolve o foco a quem abriu o diálogo (o botão de ajuda, por exemplo).
+  if (previouslyFocused?.isConnected) previouslyFocused.focus?.();
 });
 </script>
 

@@ -18,14 +18,24 @@ function onKeyDown(event) {
 
   if (event.key !== "Tab") return;
 
-  const first = cancelButton.value;
-  const last = acceptButton.value;
-  if (!first || !last) return;
+  const focusables = [cancelButton.value, acceptButton.value].filter(Boolean);
+  if (!focusables.length) return;
 
-  if (event.shiftKey && document.activeElement === first) {
+  const first = focusables[0];
+  const last = focusables[focusables.length - 1];
+  const active = document.activeElement;
+
+  // Se o foco escapou do diálogo, traz de volta antes de continuar o Tab.
+  if (!focusables.includes(active)) {
+    event.preventDefault();
+    (event.shiftKey ? last : first).focus();
+    return;
+  }
+
+  if (event.shiftKey && active === first) {
     event.preventDefault();
     last.focus();
-  } else if (!event.shiftKey && document.activeElement === last) {
+  } else if (!event.shiftKey && active === last) {
     event.preventDefault();
     first.focus();
   }
@@ -73,8 +83,16 @@ function confirm(event, message, onAccept) {
 
 async function accept() {
   const action = acceptAction;
+  const previousTarget = target;
   close({ restoreFocus: false });
   await action?.();
+
+  // A ação pode ter removido o botão que abriu o diálogo: nesse caso o foco
+  // volta para o conteúdo da página em vez de se perder no body.
+  nextTick(() => {
+    if (previousTarget?.isConnected) previousTarget.focus?.();
+    else document.getElementById("conteudo")?.focus();
+  });
 }
 
 defineExpose({ open, confirm });

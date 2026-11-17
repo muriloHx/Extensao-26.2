@@ -20,6 +20,7 @@
 }
 
 .field > span,
+.field > label,
 .field small {
   min-width: 0;
   overflow-wrap: anywhere;
@@ -65,7 +66,8 @@
   justify-content: space-between;
 }
 
-.field-name-input > span {
+.field-name-input > span,
+.field-name-input > label {
   min-width: 0;
   overflow-wrap: anywhere;
 }
@@ -90,7 +92,7 @@
   cursor: pointer;
 }
 
-#field-name-input__checkbox p {
+#field-name-input__checkbox label {
   display: inline-flex;
   align-items: center;
   min-height: 44px;

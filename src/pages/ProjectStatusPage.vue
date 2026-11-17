@@ -58,13 +58,7 @@ onMounted(loadData);
     <PageHeader
       title="Status do projeto"
       :description="`${project.name} · ${plural(status.environments.length, 'ambiente', 'ambientes')}`"
-    >
-      <template #action>
-        <RouterLink class="button button--outline" :to="`/projects/${projectId}`">
-          Abrir projeto
-        </RouterLink>
-      </template>
-    </PageHeader>
+    />
 
     <p v-if="error" class="alert alert--error" role="alert">{{ error }}</p>
 

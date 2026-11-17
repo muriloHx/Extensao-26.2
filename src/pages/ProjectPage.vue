@@ -1,6 +1,6 @@
 <script setup>
 import { inject, nextTick, onMounted, ref } from "vue";
-import { ChevronLeft, ClipboardCheck, FolderPlus, House, Trash2 } from "@lucide/vue";
+import { ClipboardCheck, FolderPlus, House, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
@@ -20,6 +20,17 @@ const name = ref("");
 const editing = ref(null);
 const summary = ref(null);
 const inputCreate = ref(null);
+const nameInput = ref(null);
+const formTrigger = ref(null);
+
+// Devolve o foco ao botão que abriu o formulário, quando ele ainda existe.
+function restoreTriggerFocus() {
+  const trigger = formTrigger.value;
+  formTrigger.value = null;
+  nextTick(() => {
+    if (trigger?.isConnected) trigger.focus();
+  });
+}
 
 // Funções de Negócio
 async function loadData() {
@@ -33,22 +44,32 @@ async function loadData() {
   }
 }
 
-async function startCreate() {
+async function startCreate(event) {
+  formTrigger.value = event?.currentTarget ?? null;
   editing.value = {};
   name.value = "";
 
   await nextTick();
   inputCreate.value?.scrollIntoView({ behavior: "smooth" });
+  // O scroll suave acima cuida da posição: o foco não deve pular de novo.
+  nameInput.value?.focus({ preventScroll: true });
+  nameInput.value?.select();
 }
 
-function startEdit(environment) {
+async function startEdit(environment, event) {
+  formTrigger.value = event?.currentTarget ?? null;
   editing.value = environment;
   name.value = environment.name;
+
+  await nextTick();
+  nameInput.value?.focus();
+  nameInput.value?.select();
 }
 
 function cancelEdit() {
   editing.value = null;
   name.value = "";
+  restoreTriggerFocus();
 }
 
 async function save() {
@@ -101,8 +122,6 @@ onMounted(loadData);
 <template>
   <!-- Cenário 1: Projeto encontrado -->
   <template v-if="project">
-    <RouterLink class="back-link" to="/projects"><ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">Projetos</span></RouterLink>
-
     <PageHeader
       :title="project.name"
       :description="`${environments.length} ambiente${environments.length === 1 ? '' : 's'} cadastrado${environments.length === 1 ? '' : 's'}.
@@ -117,20 +136,20 @@ onMounted(loadData);
           >
             <ClipboardCheck :size="18" aria-hidden="true" />Status detalhado
           </RouterLink>
-          <button v-if="environments.length" class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
+          <button v-if="environments.length" class="button" @click="startCreate($event)"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
         </div>
       </template>
     </PageHeader>
 
     <!-- Form Modal/Card para criação/edição -->
-    <form v-if="editing" class="form-card collection-form" @submit.prevent="save" ref="inputCreate">
+    <form v-if="editing" class="form-card collection-form" @submit.prevent="save" @keydown.esc="cancelEdit" ref="inputCreate">
       <div class="collection-form__heading">
         <h2>{{ editing.id ? "Nome do ambiente" : "Novo ambiente" }}</h2>
         <p>Use um nome que ajude a identificar este espaço no projeto.</p>
       </div>
       <label class="field">
         <span>Nome do ambiente</span>
-        <input v-model="name" required autofocus />
+        <input ref="nameInput" v-model="name" required />
       </label>
 
       <div class="form-actions">
@@ -167,7 +186,7 @@ onMounted(loadData);
           </RouterLink>
 
           <div class="card__menu">
-            <button class="text-button" @click="startEdit(environment)">
+            <button class="text-button" @click="startEdit(environment, $event)">
               Editar
             </button>
             <button
@@ -182,14 +201,14 @@ onMounted(loadData);
         </article>
       </div>
 
-      <!-- Estado vazio (sem ambientes no projeto) -->
+      <!-- Estado vazio: some enquanto o formulário de criação está aberto -->
       <EmptyState
-        v-if="!environments.length"
+        v-if="!environments.length && !editing"
         class="collection-empty"
         title="Nenhum ambiente ainda"
         text="Adicione espaços como entrada, banheiro ou circulação."
       >
-        <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
+        <button class="button" @click="startCreate($event)"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
       </EmptyState>
 
 

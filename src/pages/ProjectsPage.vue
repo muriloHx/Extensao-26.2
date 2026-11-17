@@ -1,5 +1,5 @@
 <script setup>
-import { inject, onMounted, ref } from "vue";
+import { inject, nextTick, onMounted, ref } from "vue";
 import { ChevronRight, FolderKanban, FolderPlus, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
@@ -15,6 +15,25 @@ const description = ref("")
 const editing = ref(null);
 const error = ref("");
 const showWelcome = ref(false);
+const nameInput = ref(null);
+const formTrigger = ref(null);
+
+// Abre o formulário já com o foco no primeiro campo, pronto para digitar.
+function focusNameInput() {
+  return nextTick(() => {
+    nameInput.value?.focus();
+    nameInput.value?.select();
+  });
+}
+
+// Devolve o foco ao botão que abriu o formulário, quando ele ainda existe.
+function restoreTriggerFocus() {
+  const trigger = formTrigger.value;
+  formTrigger.value = null;
+  nextTick(() => {
+    if (trigger?.isConnected) trigger.focus();
+  });
+}
 
 function openWelcome() {
   showWelcome.value = true;
@@ -24,18 +43,24 @@ async function loadProjects() {
   projects.value = await services.projectService.listProjects();
 }
 
-function startCreate() {
+async function startCreate(event) {
+  formTrigger.value = event?.currentTarget ?? null;
   editing.value = {};
   name.value = "";
   description.value = "";
   error.value = "";
+
+  await focusNameInput();
 }
 
-function startEdit(project) {
+async function startEdit(project, event) {
+  formTrigger.value = event?.currentTarget ?? null;
   editing.value = project;
   name.value = project.name;
   error.value = "";
   description.value = project.description || "";
+
+  await focusNameInput();
 }
 
 function cancelEdit() {
@@ -43,6 +68,7 @@ function cancelEdit() {
   name.value = "";
   description.value = "";
   error.value = "";
+  restoreTriggerFocus();
 }
 
 async function save() {
@@ -65,6 +91,7 @@ async function save() {
     description.value = "";
     editing.value = null;
     await loadProjects();
+    restoreTriggerFocus();
   } catch (e) {
     error.value = e.message;
   }
@@ -98,12 +125,12 @@ onMounted(loadProjects);
     @help="openWelcome"
   >
     <template #action>
-      <button v-if="projects.length" class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
+      <button v-if="projects.length" class="button" @click="startCreate($event)"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
     </template>
   </PageHeader>
 
   <!-- Form Modal/Card -->
-  <form v-if="editing" class="form-card collection-form" @submit.prevent="save">
+  <form v-if="editing" class="form-card collection-form" @submit.prevent="save" @keydown.esc="cancelEdit">
     <div class="collection-form__heading">
       <h2>{{ editing.id ? "Dados do projeto" : "Novo projeto" }}</h2>
       <p>Defina um nome e, se quiser, uma breve descrição para este local.</p>
@@ -112,7 +139,7 @@ onMounted(loadProjects);
     <div class="fields-grid">
       <label class="field">
         <span>Nome do projeto</span>
-        <input v-model="name" required autofocus />
+        <input ref="nameInput" v-model="name" required />
       </label>
 
       <label class="field">
@@ -145,7 +172,7 @@ onMounted(loadProjects);
       </RouterLink>
 
       <div class="card__menu">
-        <button class="text-button" @click="startEdit(project)">
+        <button class="text-button" @click="startEdit(project, $event)">
           Editar
         </button>
         <button class="icon-button icon-button--danger" title="Excluir" aria-label="Excluir" @click="remove(project, $event)">
@@ -155,14 +182,14 @@ onMounted(loadProjects);
     </article>
   </div>
 
-  <!-- Empty State -->
+  <!-- Empty State: só aparece quando não há projetos e nenhum formulário aberto -->
   <EmptyState
-    v-else
+    v-else-if="!editing"
     class="collection-empty"
     title="Comece por um projeto"
     text="Organize as avaliações de acessibilidade por obra ou local."
   >
-    <button class="button" @click="startCreate"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
+    <button class="button" @click="startCreate($event)"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
   </EmptyState>
 
   <WelcomePopup v-if="showWelcome" @close="showWelcome = false" />

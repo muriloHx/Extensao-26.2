@@ -158,8 +158,8 @@ onMounted(loadData);
 <template>
   <!-- Cenário 1: Elemento e Avaliação Carregados -->
   <template v-if="element && evaluation">
-    <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : environmentRoute">
-      <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ quick ? element.name : (environment?.name ?? element.name) }}</span>
+    <RouterLink v-if="!quick" class="back-link" :to="environmentRoute">
+      <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ environment?.name ?? element.name }}</span>
     </RouterLink>
 
     <PageHeader
@@ -246,7 +246,7 @@ onMounted(loadData);
 
   <!-- Cenário 2: Elemento encontrado, mas sem avaliação -->
   <template v-else-if="element">
-    <RouterLink class="back-link" :to="quick ? '/quick-evaluation' : environmentRoute">
+    <RouterLink v-if="!quick" class="back-link" :to="environmentRoute">
       <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">Elemento</span>
     </RouterLink>
 

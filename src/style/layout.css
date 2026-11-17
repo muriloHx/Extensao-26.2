@@ -8,6 +8,31 @@
   min-height: 100vh;
 }
 
+/* Link de salto: fica fora da tela até receber foco pelo teclado. */
+.skip-link {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 20;
+  padding: 12px 16px;
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--shadow-md), var(--edge-strong);
+  color: var(--brand);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transform: translateY(-200%);
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  transform: translateY(0);
+}
+
 .content {
   width: 100%;
   max-width: 1088px;
@@ -16,6 +41,14 @@
   margin: auto;
   padding: 24px 16px 88px;
   animation: enter var(--dur-base) var(--ease);
+}
+
+/* O foco de contexto (troca de tela, "pular para o conteúdo") fica dentro da
+   área do conteúdo para não estourar a largura da tela. */
+.content:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: -2px;
+  border-radius: var(--radius-card);
 }
 
 .sidebar {

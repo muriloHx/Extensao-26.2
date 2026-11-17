@@ -131,6 +131,8 @@ Sob sol a sombra desaparece antes da cor: a hierarquia de superfícies vem de `-
 :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: 2px; }
 ```
 
+- **Navegação por teclado:** o primeiro elemento focável da tela é o link "Pular para o conteúdo", que leva o foco para `<main id="conteudo" tabindex="-1">`. A cada troca de rota o foco vai para o conteúdo, e diálogos (confirmação, apresentação) prendem o foco enquanto abertos, fecham com `Esc` e devolvem o foco ao botão que os abriu. Formulários que aparecem na própria tela recebem o foco no primeiro campo ao abrir.
+
 ## Faça e não faça
 
 - **Faça** usar as variáveis, não hex solto, e manter os alvos de toque em 44px ou mais.

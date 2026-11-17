@@ -404,22 +404,23 @@ onMounted(loadData);
           </v-select>
         </label>
       </div>
-      <label v-if="!quick" class="field">
+      <div v-if="!quick" class="field">
           <div class="field-name-input">
-              <span>Nome do elemento *</span>
+              <label for="element-name">Nome do elemento *</label>
 
               <div id="field-name-input__checkbox">
                   <input type="checkbox" id="auto-name-chk" v-model="autoName" />
-                  <p @click.stop="autoName = !autoName">Auto Nomear</p>
+                  <label for="auto-name-chk">Auto Nomear</label>
               </div>
           </div>
         <input
+          id="element-name"
           v-model="form.name"
           required
           placeholder="Ex.: Porta principal"
         />
 
-      </label>
+      </div>
 
       <div class="form-divider">
         <strong>Dados para avaliação</strong>
@@ -443,11 +444,12 @@ onMounted(loadData);
               :title="parameter.definicao"
               :aria-label="`Definição: ${parameter.label ?? key}`"
               :aria-expanded="openDefinition === key"
+              :aria-controls="`parameter-definition-${key}`"
               @click.stop="openDefinition = openDefinition === key ? null : key"
             >
               <CircleHelp :size="16" aria-hidden="true" />
             </button>
-            <small v-if="parameter.definicao && openDefinition === key" class="parameter-definition">
+            <small v-if="parameter.definicao && openDefinition === key" :id="`parameter-definition-${key}`" class="parameter-definition">
               {{ parameter.definicao }}
             </small>
             <small v-if="expectedByParameter[key]?.length" class="expected-value">

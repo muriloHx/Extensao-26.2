@@ -1,6 +1,6 @@
 <script setup>
 import { computed, inject, onMounted, ref } from "vue";
-import { ChevronLeft, ChevronRight, CircleHelp, ClipboardCheck, Trash2 } from "@lucide/vue";
+import { ChevronRight, CircleHelp, ClipboardCheck, Trash2 } from "@lucide/vue";
 import { RouterLink, useRouter } from "vue-router";
 import { groupBuiltInRuleSets, groupCustomRuleSets } from "../domain/ruleGroup.js";
 import PageHeader from "../components/PageHeader.vue";
@@ -150,8 +150,6 @@ onMounted(load);
 <template>
   <!-- Documentação -->
   <template v-if="documentation">
-    <RouterLink class="back-link" to="/rules"><ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">Conjuntos de regras</span></RouterLink>
-
     <PageHeader
       title="Crie e importe regras"
       description="Monte checklists em YAML para avaliar os elementos do seu projeto."
@@ -279,8 +277,6 @@ regras:
 
   <!-- Detalhe de um conjunto -->
   <template v-else-if="groupId">
-    <RouterLink class="back-link" to="/rules"><ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">Conjuntos de regras</span></RouterLink>
-
     <template v-if="loading">
       <p class="muted" role="status">Carregando…</p>
     </template>
