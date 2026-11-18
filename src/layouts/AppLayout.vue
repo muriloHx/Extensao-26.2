@@ -1,11 +1,12 @@
 <script setup>
-import { computed, nextTick, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { ClipboardCheck, Folder } from "@lucide/vue";
 import { RouterLink, useRoute } from "vue-router";
 
 const route = useRoute();
 const area = computed(() => route.path.startsWith("/rules") ? "rules" : route.path.startsWith("/quick-evaluation") ? "quick" : "projects");
 const content = ref(null);
+let interacted = false;
 
 // Leva o foco para o conteúdo depois de cada navegação: quem usa teclado ou
 // leitor de tela continua de onde a tela nova começa, em vez de tabular pela
@@ -15,7 +16,26 @@ async function focusContent() {
   content.value?.focus();
 }
 
-watch(() => route.fullPath, focusContent);
+// A abertura do app resolve a rota inicial sozinha ("" → "/projects"), o que
+// dispara o watch abaixo. Sem esta trava, a tela abriria com o anel de foco em
+// volta do conteúdo sem o usuário ter navegado para lugar nenhum.
+function markInteraction() {
+  interacted = true;
+}
+
+onMounted(() => {
+  document.addEventListener("pointerdown", markInteraction, { passive: true });
+  document.addEventListener("keydown", markInteraction);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("pointerdown", markInteraction);
+  document.removeEventListener("keydown", markInteraction);
+});
+
+watch(() => route.fullPath, () => {
+  if (interacted) focusContent();
+});
 </script>
 
 <template>
