@@ -53,6 +53,11 @@ regras:
       operador: <=
       valor: 30
     mensagem: Para inclinação acima de 3 % e até 5 %, recomenda-se uma área de descanso a cada 30 m.
+  - quando:
+      operador: '>'
+      valor: 5
+    resultado: atencao
+    mensagem: Acima de 5 % o percurso deve ser avaliado como rampa; confira as áreas de descanso nos patamares no checklist de Rampas.
   referencia: ABNT NBR 9050:2020 — 6.5
 - id: fora_circulacao
   nome: Área fora da faixa de circulação

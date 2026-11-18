@@ -98,6 +98,11 @@ regras:
       operador: <=
       valor: 0.8
     mensagem: Para inclinação acima de 6,25 % até 8,33 %, o desnível de cada segmento deve ser de até 0,80 m.
+  - quando:
+      operador: '>'
+      valor: 8.33
+    resultado: nao_conforme
+    mensagem: Inclinação acima de 8,33 % excede o limite admissível em rampas; o trecho deve ser refeito.
   referencia: ABNT NBR 9050:2020 — 6.6.2.1 e Tabela 4
 - id: numero_segmentos_inclinacao_alta
   nome: Número máximo de segmentos para inclinação acima de 6,25 %
@@ -116,6 +121,11 @@ regras:
       operador: <=
       valor: 15
     mensagem: Para inclinação acima de 6,25 % até 8,33 %, são permitidos no máximo 15 segmentos.
+  - quando:
+      operador: '>'
+      valor: 8.33
+    resultado: nao_conforme
+    mensagem: Inclinação acima de 8,33 % excede o limite admissível em rampas; o número de segmentos não corrige a inclinação.
   referencia: ABNT NBR 9050:2020 — 6.6.2.1 e Tabela 4
 - id: largura_minima
   nome: Largura livre mínima
