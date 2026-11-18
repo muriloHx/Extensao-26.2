@@ -6,6 +6,7 @@ import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import StatusBadge from "../components/StatusBadge.vue";
 import { compare } from "../core/operators.js";
+import { statusBucket } from "../core/evaluationStatus.js";
 import { formatExpected } from "../core/formatExpected.js";
 
 const props = defineProps({
@@ -67,22 +68,26 @@ function getRuleDetails(item) {
   };
 }
 
+// Contagem e rótulo saem da mesma classificação (src/core/evaluationStatus.js).
 const failedCount = computed(
   () =>
-    resultList.value.filter((item) =>
-      ["nao_conforme", "erro", "invalido"].includes(item.status)
+    resultList.value.filter(
+      (item) => statusBucket(item.status) === "nao_conforme"
     ).length
 );
 
 const pendingCount = computed(
   () =>
-    resultList.value.filter((item) =>
-      ["nao_avaliado", "manual", "atencao"].includes(item.status)
+    resultList.value.filter(
+      (item) => statusBucket(item.status) === "pendente"
     ).length
 );
 
 const passedCount = computed(
-  () => resultList.value.length - failedCount.value - pendingCount.value
+  () =>
+    resultList.value.filter(
+      (item) => statusBucket(item.status) === "conforme"
+    ).length
 );
 
 const overallStatus = computed(() => {

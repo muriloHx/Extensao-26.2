@@ -1,4 +1,5 @@
 import { RuleEngine } from "../core/RuleEngine.js";
+import { statusBucket } from "../core/evaluationStatus.js";
 import { createEvaluation } from "../domain/evaluation.js";
 
 export function evaluateChecklist(checklist, data) {
@@ -11,19 +12,17 @@ export function evaluateChecklist(checklist, data) {
   );
 }
 
-const NON_CONFORMING_STATUSES = ["nao_conforme", "erro", "invalido"];
-const PENDING_STATUSES = ["atencao", "manual", "nao_avaliado"];
-
 // A avaliação consolidada representa a última execução de cada elemento.
 // Histórico anterior continua disponível em listEvaluations.
+// A contagem usa a mesma classificação do badge (src/core/evaluationStatus.js).
 export function getEvaluationStatus(evaluations) {
   const result = evaluations[0]?.result;
 
   if (!result?.length) return "nao_avaliado";
-  if (result.some((item) => NON_CONFORMING_STATUSES.includes(item.status))) {
+  if (result.some((item) => statusBucket(item.status) === "nao_conforme")) {
     return "nao_conforme";
   }
-  if (result.some((item) => PENDING_STATUSES.includes(item.status))) {
+  if (result.some((item) => statusBucket(item.status) === "pendente")) {
     return "nao_avaliado";
   }
 
