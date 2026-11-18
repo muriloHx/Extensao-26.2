@@ -236,9 +236,11 @@ regras:
       resultado: atencao
       mensagem: Avaliar como rampa.</code></pre>
           <p class="documentation__note">
-            Se nenhuma condição bater, o resultado fica <code>nao_avaliado</code>. Um parâmetro usado dentro de
-            <code>verificar</code> (aqui, <code>possui_chanfro</code>) também precisa estar declarado em
-            <code>parametros</code>.
+            As condições precisam cobrir todos os valores do parâmetro: para números, um ramo final com
+            <code>&gt;</code> ou <code>&gt;=</code>; para booleanos e seleções, um ramo para cada opção. Valor
+            informado que nenhuma condição alcança vira <code>erro</code>, e a importação recusa o conjunto sem
+            essa cobertura. Um parâmetro usado dentro de <code>verificar</code> (aqui, <code>possui_chanfro</code>)
+            também precisa estar declarado em <code>parametros</code>.
           </p>
         </details>
       </section>
@@ -249,8 +251,9 @@ regras:
           <li><code>conforme</code> / <code>nao_conforme</code> — comparação direta, ou condição explícita.</li>
           <li><code>manual</code> — regra do tipo <code>checklist</code>.</li>
           <li><code>atencao</code> — resultado explícito opcional numa condição de <code>conditional</code>.</li>
-          <li><code>nao_avaliado</code> — parâmetro opcional sem valor, ou nenhuma condição satisfeita.</li>
+          <li><code>nao_avaliado</code> — parâmetro opcional sem valor preenchido.</li>
           <li><code>invalido</code> — parâmetro obrigatório sem valor preenchido.</li>
+          <li><code>erro</code> — regra apontando para parâmetro inexistente, ou valor informado que nenhuma condição cobre.</li>
         </ul>
       </section>
 

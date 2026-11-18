@@ -1,6 +1,14 @@
 import { SUPPORTED_OPERATORS } from "./operators.js";
 
 const RULE_TYPES = new Set(["checklist", "conditional"]);
+const PARAMETER_TYPES = new Set(["number", "boolean", "select"]);
+const RESULT_STATUSES = new Set([
+  "conforme",
+  "nao_conforme",
+  "nao_avaliado",
+  "atencao",
+  "manual"
+]);
 
 function isRecord(value) {
   return value !== null && typeof value === "object" && !Array.isArray(value);
@@ -28,6 +36,58 @@ function validateComparison(comparison, path, errors) {
   if (!("valor" in comparison)) {
     errors.push(`${path}.valor é obrigatório.`);
   }
+}
+
+function validateParameters(parameters, errors) {
+  for (const [key, parameter] of Object.entries(parameters)) {
+    const path = `parametros.${key}`;
+
+    if (!isRecord(parameter)) {
+      errors.push(`${path} deve ser um objeto.`);
+      continue;
+    }
+
+    if (!PARAMETER_TYPES.has(parameter.tipo)) {
+      errors.push(`${path}.tipo deve ser number, boolean ou select.`);
+    }
+
+    if (parameter.tipo === "select" && (!Array.isArray(parameter.opcoes) || parameter.opcoes.length === 0)) {
+      errors.push(`${path}.opcoes deve listar as opções do campo do tipo select.`);
+    }
+  }
+}
+
+// Um valor está coberto quando alguma condição o alcança: igualdade com ele ou
+// desigualdade em relação a outro valor ("!= x" cobre tudo menos x).
+function coversValue(comparisons, value) {
+  return comparisons.some((comparison) =>
+    comparison.operador === "=="
+      ? comparison.valor === value
+      : comparison.operador === "!=" && comparison.valor !== value
+  );
+}
+
+// Condição sem ramo que cubra o valor informado faz a regra terminar em erro na
+// avaliação. Para números, o ramo final precisa ser ">" ou ">="; para boolean
+// e select, cada valor possível precisa ser alcançado por alguma condição.
+function coversAllValues(branches, parameter) {
+  const comparisons = branches
+    .map((branch) => (isRecord(branch) ? branch.quando : null))
+    .filter(isRecord);
+
+  if (comparisons.some((comparison) => comparison.operador === ">" || comparison.operador === ">=")) {
+    return true;
+  }
+
+  if (parameter.tipo === "boolean") {
+    return [true, false].every((value) => coversValue(comparisons, value));
+  }
+
+  if (parameter.tipo === "select") {
+    return (parameter.opcoes ?? []).every((option) => coversValue(comparisons, option));
+  }
+
+  return false;
 }
 
 function validateRule(rule, index, parameters, errors) {
@@ -65,6 +125,9 @@ function validateRule(rule, index, parameters, errors) {
       if (hasResult === hasCheck) {
         errors.push(`${branchPath} deve informar exatamente resultado ou verificar.`);
       }
+      if (hasResult && !RESULT_STATUSES.has(branch.resultado)) {
+        errors.push(`${branchPath}.resultado deve ser um de: ${[...RESULT_STATUSES].join(", ")}.`);
+      }
       if (hasCheck) {
         validateComparison(branch.verificar, `${branchPath}.verificar`, errors);
         if (typeof branch.verificar?.parametro !== "string" || !(branch.verificar.parametro in parameters)) {
@@ -72,6 +135,14 @@ function validateRule(rule, index, parameters, errors) {
         }
       }
     });
+
+    const driver = parameters[rule.parametro];
+    if (isRecord(driver) && !coversAllValues(rule.condicoes, driver)) {
+      errors.push(
+        `${path}.condicoes deve cobrir todos os valores de ${rule.parametro}: `
+        + "inclua um ramo final com operador \">\" ou \">=\", ou um ramo para cada opção do campo."
+      );
+    }
     return;
   }
 
@@ -101,6 +172,7 @@ export function validateRuleSet(ruleSet) {
   }
 
   if (isRecord(ruleSet.parametros) && Array.isArray(ruleSet.regras)) {
+    validateParameters(ruleSet.parametros, errors);
     ruleSet.regras.forEach((rule, index) => validateRule(rule, index, ruleSet.parametros, errors));
   }
 
