@@ -133,6 +133,22 @@
   font-size: 0.875rem;
 }
 
+/* Abertura das pendências: cada grupo é lido junto do número. */
+.result-summary__pending-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--radius-badge);
+  background: var(--fill);
+  color: var(--text-2);
+  font-size: 0.875rem;
+}
+
+.result-summary__pending-item strong {
+  color: var(--text);
+}
+
 .results > h2 {
   margin-bottom: 12px;
 }

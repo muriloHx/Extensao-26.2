@@ -6,7 +6,7 @@ import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import StatusBadge from "../components/StatusBadge.vue";
 import { compare } from "../core/operators.js";
-import { statusBucket } from "../core/evaluationStatus.js";
+import { summarizeResult } from "../core/evaluationStatus.js";
 import { formatExpected } from "../core/formatExpected.js";
 
 const props = defineProps({
@@ -69,31 +69,12 @@ function getRuleDetails(item) {
 }
 
 // Contagem e rótulo saem da mesma classificação (src/core/evaluationStatus.js).
-const failedCount = computed(
-  () =>
-    resultList.value.filter(
-      (item) => statusBucket(item.status) === "nao_conforme"
-    ).length
-);
-
-const pendingCount = computed(
-  () =>
-    resultList.value.filter(
-      (item) => statusBucket(item.status) === "pendente"
-    ).length
-);
-
-const passedCount = computed(
-  () =>
-    resultList.value.filter(
-      (item) => statusBucket(item.status) === "conforme"
-    ).length
-);
+const counts = computed(() => summarizeResult(resultList.value));
 
 const overallStatus = computed(() => {
   if (!resultList.value.length) return "nao_avaliado";
-  if (failedCount.value > 0) return "nao_conforme";
-  if (pendingCount.value > 0) return "nao_avaliado";
+  if (counts.value.nao_conforme > 0) return "nao_conforme";
+  if (counts.value.pendente > 0) return "nao_avaliado";
   return "conforme";
 });
 
@@ -195,12 +176,19 @@ onMounted(loadData);
       <StatusBadge :status="overallStatus" />
       <h2>{{ summaryTitle }}</h2>
       <div class="result-summary__counts" aria-label="Resumo das regras">
-        <span><strong>{{ passedCount }}</strong> conformes</span>
-        <span><strong>{{ failedCount }}</strong> não conformes</span>
-        <span><strong>{{ pendingCount }}</strong> pendentes ou para verificar</span>
+        <span><strong>{{ counts.conforme }}</strong> conformes</span>
+        <span><strong>{{ counts.nao_conforme }}</strong> não conformes</span>
+        <span><strong>{{ counts.pendente }}</strong> pendentes</span>
       </div>
-      <div v-if="pendingCount" class="result-summary__pending">
-        <span>Há regras pendentes ou para verificar.</span>
+      <div v-if="counts.pendente" class="result-summary__pending">
+        <span>Pendências:</span>
+        <span
+          v-for="group in counts.pendingBreakdown"
+          :key="group.id"
+          class="result-summary__pending-item"
+        >
+          <strong>{{ group.count }}</strong> {{ group.label }}
+        </span>
         <RouterLink v-if="!quick" class="text-button" :to="`/elements/${element.id}`">
           Editar elemento
         </RouterLink>

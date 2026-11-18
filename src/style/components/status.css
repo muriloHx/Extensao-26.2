@@ -24,11 +24,13 @@
 
 .status--nao_avaliado,
 .status--invalido,
-.status--erro {
-  color: var(--text-2);
-}
-
 .status--atencao,
 .status--manual {
   color: var(--text-2);
+}
+
+/* Conjunto quebrado ou valor sem condição: precisa de correção, não de nova
+   medição. O texto do badge já diz qual é o caso. */
+.status--erro {
+  color: var(--error);
 }

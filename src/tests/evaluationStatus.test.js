@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { STATUS_LABELS, statusBucket, statusLabel } from "../core/evaluationStatus.js";
+import { STATUS_LABELS, statusBucket, statusLabel, summarizeResult } from "../core/evaluationStatus.js";
 import { evaluateChecklist, getEvaluationStatus } from "../services/evaluationService.js";
 
 test("o rótulo do badge e a contagem usam a mesma classificação", () => {
@@ -26,6 +26,59 @@ test("status desconhecido cai no mesmo balde do rótulo padrão", () => {
   assert.equal(statusBucket("status-que-nao-existe"), "pendente");
 });
 
+test("cada tipo de pendência tem rótulo próprio", () => {
+  assert.notEqual(statusLabel("erro"), statusLabel("nao_avaliado"));
+  assert.notEqual(statusLabel("invalido"), statusLabel("nao_avaliado"));
+  assert.notEqual(statusLabel("erro"), statusLabel("invalido"));
+});
+
+test("summarizeResult conta os totais e abre as pendências", () => {
+  const counts = summarizeResult([
+    { status: "conforme" },
+    { status: "nao_conforme" },
+    { status: "invalido" },
+    { status: "nao_avaliado" },
+    { status: "manual" },
+    { status: "atencao" },
+    { status: "erro" }
+  ]);
+
+  assert.equal(counts.conforme, 1);
+  assert.equal(counts.nao_conforme, 1);
+  assert.equal(counts.pendente, 5);
+  assert.deepEqual(counts.pendingBreakdown, [
+    { id: "preencher", label: "aguardando medição", count: 2 },
+    { id: "verificar", label: "para verificar", count: 2 },
+    { id: "erro", label: "com erro no conjunto", count: 1 }
+  ]);
+});
+
+test("a abertura das pendências sempre fecha com o total", () => {
+  const counts = summarizeResult([
+    { status: "invalido" },
+    { status: "status-desconhecido" }
+  ]);
+
+  assert.equal(counts.pendente, 2);
+  assert.equal(
+    counts.pendingBreakdown.reduce((total, group) => total + group.count, 0),
+    counts.pendente
+  );
+  assert.deepEqual(
+    counts.pendingBreakdown.map((group) => group.id),
+    ["preencher", "outros"]
+  );
+});
+
+test("resultado vazio não gera contagem", () => {
+  assert.deepEqual(summarizeResult([]), {
+    conforme: 0,
+    nao_conforme: 0,
+    pendente: 0,
+    pendingBreakdown: []
+  });
+});
+
 const checklist = {
   parametros: {
     largura: { tipo: "number", unidade: "m", obrigatorio: true },
@@ -41,7 +94,10 @@ test("avaliação em branco fica pendente, não não conforme", () => {
   const result = evaluateChecklist(checklist, {});
 
   assert.deepEqual(result.map((item) => item.status), ["invalido", "invalido"]);
-  assert.deepEqual(result.map((item) => statusLabel(item.status)), ["Pendente", "Pendente"]);
+  for (const item of result) {
+    assert.equal(statusBucket(item.status), "pendente");
+    assert.equal(statusLabel(item.status), statusLabel("invalido"));
+  }
   assert.equal(getEvaluationStatus([{ result }]), "nao_avaliado");
 });
 
