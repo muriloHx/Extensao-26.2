@@ -33,9 +33,9 @@ function arquivos() {
   return fs.readdirSync(DIR).filter((name) => name.endsWith(".yaml"));
 }
 
-// Uma condição sem ramo que cubra o valor informado devolve "nao_avaliado":
-// a regra nunca chega a um veredito, mesmo com todos os campos preenchidos.
-// Foi assim que a distância entre áreas de descanso ficou pendente acima de 5 %.
+// Uma regra condicional que não chega a um veredito é defeito do conjunto:
+// sem valor informado ela fica pendente; com valor que nenhuma condição cobre,
+// o motor devolve erro. Nenhum dos dois é veredito.
 test("toda regra chega a um veredito com os campos preenchidos", () => {
   const pendencias = new Set();
 
@@ -51,8 +51,8 @@ test("toda regra chega a um veredito com os campos preenchidos", () => {
 
     for (const data of combinacoes) {
       for (const item of evaluateChecklist(checklist, data)) {
-        if (item.status === "nao_avaliado") {
-          pendencias.add(`${file.replace(".yaml", "")} › ${item.id}`);
+        if (item.status === "nao_avaliado" || item.status === "erro") {
+          pendencias.add(`${file.replace(".yaml", "")} › ${item.id} (${item.status})`);
         }
       }
     }

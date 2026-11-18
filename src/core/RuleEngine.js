@@ -85,9 +85,10 @@ export class RuleEngine {
   }
 
   evaluateConditional(rule, data, parameters) {
-    for (const branch of rule.condicoes ?? []) {
-      const actual = data[rule.parametro];
+    const actual = data[rule.parametro];
+    const hasValue = actual !== undefined && actual !== null && actual !== "";
 
+    for (const branch of rule.condicoes ?? []) {
       if (branch.quando && compare(actual, branch.quando.operador, branch.quando.valor)) {
         if (branch.resultado) {
           return {
@@ -122,6 +123,18 @@ export class RuleEngine {
           };
         }
       }
+    }
+
+    // Nenhuma condição cobriu o valor informado: é lacuna do conjunto de
+    // regras, não falta de dado. Sem valor, o resultado continua pendente.
+    if (hasValue) {
+      return {
+        id: rule.id,
+        nome: rule.nome,
+        status: "erro",
+        mensagem: `Nenhuma condição cobre ${rule.parametro} = ${actual}. Revise o conjunto de regras.`,
+        referencia: rule.referencia
+      };
     }
 
     return {
