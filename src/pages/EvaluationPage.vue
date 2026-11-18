@@ -6,8 +6,8 @@ import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import StatusBadge from "../components/StatusBadge.vue";
 import { compare } from "../core/operators.js";
+import { formatExpected, formatUnit } from "../core/formatExpected.js";
 import { summarizeResult } from "../core/evaluationStatus.js";
-import { formatExpected } from "../core/formatExpected.js";
 
 const props = defineProps({
   elementId: String,
@@ -62,7 +62,7 @@ function getRuleDetails(item) {
   return {
     parameterLabel: parameter.label ?? parameterKey,
     actual: typeof actual === "boolean" ? (actual ? "Sim" : "Não") : actual,
-    unit: typeof actual === "boolean" ? "" : (item.unidade ?? parameter.unidade ?? ""),
+    unit: typeof actual === "boolean" ? "" : formatUnit(item.unidade ?? parameter.unidade ?? "", actual),
     expected: hasExpected ? formatExpected(operator, expected, item.unidade ?? parameter.unidade) : "",
     conditionalDescription,
   };

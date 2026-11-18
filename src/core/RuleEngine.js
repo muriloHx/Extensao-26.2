@@ -61,6 +61,7 @@ export class RuleEngine {
         nome: rule.nome,
         status: "manual",
         valor: actual,
+        mensagem: rule.mensagem,
         referencia: rule.referencia
       };
     }

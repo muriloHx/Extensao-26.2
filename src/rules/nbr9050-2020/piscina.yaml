@@ -171,10 +171,10 @@ regras:
   valor: 0.45
   referencia: ABNT NBR 9050:2020 — 10.12.2.1 b
 - id: banco_barras
-  nome: Distância entre barras do banco (verificar intervalo normativo de 1,00 m a 1,10 m)
+  nome: Distância entre barras do banco
   parametro: distancia_barras_banco
   referencia: ABNT NBR 9050:2020 — 10.12.2.1 c
-  tipo: checklist
+  tipo: conditional
   condicoes:
   - quando:
       operador: <=

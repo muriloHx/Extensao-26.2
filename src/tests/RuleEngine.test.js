@@ -86,3 +86,23 @@ test("condição sem ramo para o valor informado vira erro do conjunto", () => {
   assert.equal(result[0].status, "erro");
   assert.match(result[0].mensagem, /nenhuma condição cobre inclinacao = 10/i);
 });
+
+// Regra de julgamento humano devolve a instrução junto do status.
+test("checklist sem valor esperado devolve a mensagem de julgamento", () => {
+  const engine = new RuleEngine();
+
+  const result = engine.evaluate(
+    [{
+      id: "formula",
+      nome: "Relação entre piso e espelho",
+      tipo: "checklist",
+      parametro: "inclinacao",
+      mensagem: "Confira 0,63 m ≤ p + 2e ≤ 0,65 m."
+    }],
+    { inclinacao: 30 },
+    parameters
+  );
+
+  assert.equal(result[0].status, "manual");
+  assert.match(result[0].mensagem, /p \+ 2e/);
+});

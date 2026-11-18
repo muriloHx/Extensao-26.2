@@ -20,7 +20,7 @@ parametros:
     label: Número de segmentos
     definicao: "Contagem ou duração do componente/ciclo descrito, usada para verificar o requisito correspondente. Valor informado em segmentos."
     tipo: number
-    unidade: segmentos
+    unidade: { singular: segmento, plural: segmentos }
     obrigatorio: true
   largura:
     label: Largura livre

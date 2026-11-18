@@ -8,7 +8,7 @@ parametros:
     label: Quantidade de degraus
     definicao: "Contagem ou duração do componente/ciclo descrito, usada para verificar o requisito correspondente. Valor informado em degraus."
     tipo: number
-    unidade: degraus
+    unidade: { singular: degrau, plural: degraus }
     obrigatorio: true
   piso:
     label: Piso do degrau
@@ -124,4 +124,5 @@ regras:
   nome: Relação entre piso e espelho
   tipo: checklist
   parametro: piso
+  mensagem: "Confira a relação entre piso e espelho: 0,63 m ≤ p + 2e ≤ 0,65 m."
   referencia: ABNT NBR 9050:2020 — 6.7.2 e 6.8.2 alínea a; verificar 0,63 m ≤ p + 2e ≤ 0,65 m.

@@ -38,7 +38,7 @@ parametros:
     label: Quantidade de lados com corrimão
     definicao: "Contagem ou duração do componente/ciclo descrito, usada para verificar o requisito correspondente. Valor informado em lados."
     tipo: number
-    unidade: lados
+    unidade: { singular: lado, plural: lados }
     obrigatorio: true
   largura_escada_rampa:
     label: Largura da escada ou rampa

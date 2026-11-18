@@ -136,6 +136,86 @@ test("tipo de parâmetro desconhecido é rejeitado", () => {
   assert.match(erros(invalido), /tipo deve ser number, boolean ou select/);
 });
 
+test("unidade precisa ser texto ou ter singular e plural", () => {
+  const semPlural = base({ parametros: { largura: { tipo: "number", unidade: { singular: "metro" } } } });
+  assert.equal(validateRuleSet(semPlural).valid, false);
+  assert.match(erros(semPlural), /unidade deve ser um texto ou/);
+
+  const comSingularEPlural = base({
+    parametros: { largura: { tipo: "number", unidade: { singular: "metro", plural: "metros" } } }
+  });
+  assert.equal(validateRuleSet(comSingularEPlural).valid, true);
+
+  const simbolo = base({ parametros: { largura: { tipo: "number", unidade: "m" } } });
+  assert.equal(validateRuleSet(simbolo).valid, true);
+});
+
+test("regra checklist não aceita campos que o motor ignora", () => {
+  const invalido = base({
+    regras: [{
+      id: "r1",
+      nome: "Regra",
+      parametro: "largura",
+      tipo: "checklist",
+      mensagem: "Confira o critério.",
+      condicoes: [{ quando: { operador: "<=", valor: 1 }, resultado: "conforme" }]
+    }]
+  });
+
+  assert.equal(validateRuleSet(invalido).valid, false);
+  assert.match(erros(invalido), /não usa condicoes/);
+});
+
+test("regra condicional não aceita operador ou valor direto", () => {
+  const invalido = base({
+    regras: [{
+      id: "r1",
+      nome: "Regra",
+      tipo: "conditional",
+      parametro: "largura",
+      operador: ">=",
+      valor: 1,
+      condicoes: [
+        { quando: { operador: "<=", valor: 1 }, resultado: "conforme" },
+        { quando: { operador: ">", valor: 1 }, resultado: "nao_conforme" }
+      ]
+    }]
+  });
+
+  assert.equal(validateRuleSet(invalido).valid, false);
+  assert.match(erros(invalido), /não usa operador, valor/);
+});
+
+test("checklist de campo numérico exige mensagem de julgamento", () => {
+  const semMensagem = base({
+    regras: [{ id: "r1", nome: "Regra", parametro: "largura", tipo: "checklist" }]
+  });
+
+  assert.equal(validateRuleSet(semMensagem).valid, false);
+  assert.match(erros(semMensagem), /mensagem é obrigatória/);
+
+  const comMensagem = base({
+    regras: [{
+      id: "r1",
+      nome: "Regra",
+      parametro: "largura",
+      tipo: "checklist",
+      mensagem: "Confira a relação entre piso e espelho."
+    }]
+  });
+
+  assert.equal(validateRuleSet(comMensagem).valid, true);
+});
+
+test("checklist de campo booleano dispensa mensagem", () => {
+  const ruleSet = base({
+    parametros: { possui_corrimao: { tipo: "boolean" } },
+    regras: [{ id: "r1", nome: "Regra", parametro: "possui_corrimao", tipo: "checklist" }]
+  });
+
+  assert.equal(validateRuleSet(ruleSet).valid, true);
+});
+
 test("todos os conjuntos oficiais passam na validação", () => {
   const falhas = [];
 

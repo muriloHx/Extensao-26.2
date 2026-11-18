@@ -8,7 +8,7 @@ parametros:
     label: Diferença de LRV
     definicao: "Diferença entre os valores de refletância luminosa da sinalização e da superfície adjacente, usada para verificar contraste visual. Valor informado em pontos."
     tipo: number
-    unidade: pontos
+    unidade: { singular: ponto, plural: pontos }
   material_sem_reflexo:
     label: Material sem brilho ou alta reflexão
     definicao: "Verifica se a informação está disponível de forma perceptível e legível para orientar o uso e a circulação."

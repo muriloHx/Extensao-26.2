@@ -16,7 +16,7 @@ parametros:
     label: Diferença de LRV em relação à superfície adjacente
     definicao: "Diferença entre os valores de refletância luminosa da sinalização e da superfície adjacente, usada para verificar contraste visual. Valor informado em pontos."
     tipo: number
-    unidade: pontos
+    unidade: { singular: ponto, plural: pontos }
 regras:
 - id: atendimento_nbr_16537
   nome: Atendimento à NBR 16537

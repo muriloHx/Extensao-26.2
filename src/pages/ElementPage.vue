@@ -7,7 +7,7 @@ import 'vue-select/dist/vue-select.css';
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import { compare } from "../core/operators.js";
-import { formatExpected } from "../core/formatExpected.js";
+import { formatExpected, formatUnit } from "../core/formatExpected.js";
 import { parseDecimalInput, sanitizeDecimalInput } from "../core/numberInput.js";
 
 const props = defineProps({
@@ -471,7 +471,7 @@ onMounted(loadData);
                não dispara quando o usuário clica no nome do parâmetro. -->
           <div class="field__heading">
             <label :for="`parameter-${key}`">
-              {{ parameter.label ?? key }}<template v-if="parameter.obrigatorio"> *</template><small v-if="parameter.unidade"> ({{ parameter.unidade }})</small>
+              {{ parameter.label ?? key }}<template v-if="parameter.obrigatorio"> *</template><small v-if="parameter.unidade"> ({{ formatUnit(parameter.unidade) }})</small>
             </label>
 
             <button

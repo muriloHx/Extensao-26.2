@@ -106,11 +106,18 @@ regras:
   operador: <=
   valor: 23
   referencia: ABNT NBR 9050:2020 — 7.8.2
-- id: ciclo
-  nome: Ciclo automático
+- id: ciclo_minimo
+  nome: Tempo de fechamento mínimo
   parametro: ciclo_fechamento
-  tipo: checklist
-  referencia: ABNT NBR 9050:2020 — 7.8.2; quando aplicável, verificar 10 s a 20 s.
+  operador: '>='
+  valor: 10
+  referencia: ABNT NBR 9050:2020 — 7.8.2
+- id: ciclo_maximo
+  nome: Tempo de fechamento máximo
+  parametro: ciclo_fechamento
+  operador: '<='
+  valor: 20
+  referencia: ABNT NBR 9050:2020 — 7.8.2
 - id: afastamento_barra
   nome: Afastamento mínimo da barra
   parametro: afastamento_barra

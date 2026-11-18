@@ -94,7 +94,7 @@ persistência e são removidos na exportação.
 | --- | --- | --- | --- |
 | `label` | texto | Não | Rótulo do campo; na ausência, a interface mostra o id do parâmetro. |
 | `tipo` | `number`, `boolean` ou `select` | Sim | Define o controle da interface e a validação de tipo. Qualquer outro valor é recusado na importação. |
-| `unidade` | texto | Não | Sufixo exibido para números, como `m`, `mm` ou `%`. Não converte unidades. |
+| `unidade` | texto ou `{ singular, plural }` | Não | Sufixo exibido para números, como `m`, `mm` ou `%`. Para contagens, use o objeto (`{ singular: degrau, plural: degraus }`), senão o critério sai como "1 degraus". Não converte unidades. |
 | `obrigatorio` | booleano | Não | Com `true`, valor ausente (`undefined`, `null` ou vazio) resulta em `invalido`; sem ele, resulta em `nao_avaliado`. |
 | `opcoes` | lista não vazia | Sim em `tipo: select` | Valores oferecidos no seletor. Use o mesmo tipo/valor em regras `==` ou `!=`; para a interface atual, prefira textos. A importação recusa `select` sem opções. |
 
@@ -144,16 +144,22 @@ Retorna `conforme` ou `nao_conforme`. Exemplo:
 ### Checklist manual (`tipo: checklist`)
 
 Use para uma observação que exige julgamento humano. Requer apenas os campos
-comuns; `operador` e `valor` não são usados. Se houver valor para o parâmetro,
-retorna `manual` e o registra como `valor`; não conclui automaticamente
-`conforme` ou `nao_conforme`.
+comuns; `operador`, `valor` e `condicoes` são recusados na importação. Se houver
+valor para o parâmetro, retorna `manual` e o registra como `valor`; não conclui
+automaticamente `conforme` ou `nao_conforme`.
+
+Em campo que não é booleano, a regra precisa de `mensagem` dizendo **o que
+julgar** (ex.: a fórmula que o motor não sabe calcular); essa mensagem acompanha
+o resultado. Em campo booleano, a resposta `true`/`false` já decide sozinha e a
+mensagem é opcional.
 
 ```yaml
-- id: rota_livre
-  nome: Rota livre de obstáculos
+- id: relacao_piso_espelho
+  nome: Relação entre piso e espelho
   tipo: checklist
-  parametro: possui_rota_livre
-  referencia: "Vistoria em campo"
+  parametro: piso
+  mensagem: "Confira 0,63 m ≤ p + 2e ≤ 0,65 m."
+  referencia: "ABNT NBR 9050:2020 — 6.7.2"
 ```
 
 ### Regra condicional (`tipo: conditional`)
@@ -243,7 +249,7 @@ nem comparação entre dois campos fora de `conditional.verificar`.
 | --- | --- |
 | `conforme` | Comparação direta ou `verificar` atendida; ou `resultado: conforme`. |
 | `nao_conforme` | Comparação direta ou `verificar` não atendida. |
-| `manual` | Regra `checklist` com valor preenchido. |
+| `manual` | Regra `checklist` com valor preenchido; a `mensagem` da regra acompanha o resultado. |
 | `atencao` | Status explícito em `resultado`, normalmente para exigir análise. |
 | `nao_avaliado` | Parâmetro principal opcional sem valor. |
 | `invalido` | Parâmetro principal obrigatório sem valor, ou valor incompatível com `number`/`boolean`. |
@@ -267,6 +273,11 @@ numa regra condicional, aceita apenas os cinco status citados na tabela de
 - Cada regra `conditional` cobre todos os valores possíveis do seu parâmetro
   (ramo final `>`/`>=`, ou um ramo por opção), e cada `resultado` usa um dos
   cinco status aceitos.
+- Cada regra usa apenas os campos do seu tipo: `checklist` não aceita
+  `condicoes`, `operador` nem `valor`; `conditional` não aceita `operador` nem
+  `valor`; a comparação direta não aceita `condicoes`.
+- Regra `checklist` de campo não booleano traz `mensagem` com o critério de
+  julgamento, e campos de contagem usam `unidade: { singular, plural }`.
 - Campos opcionais que podem ficar sem dado não produzem uma conclusão
   indevida; em especial, os usados em `verificar`.
 - Cada critério técnico tem `referencia` no nível da regra e seus valores foram

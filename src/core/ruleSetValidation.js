@@ -1,6 +1,14 @@
 import { SUPPORTED_OPERATORS } from "./operators.js";
 
 const RULE_TYPES = new Set(["checklist", "conditional"]);
+
+// Campos que o motor ignora em cada tipo de regra: aceitar em silêncio foi como
+// uma regra checklist com condicoes completas passou sem nunca ser avaliada.
+const IGNORED_RULE_FIELDS = {
+  checklist: ["condicoes", "operador", "valor"],
+  conditional: ["operador", "valor"],
+  direta: ["condicoes"]
+};
 const PARAMETER_TYPES = new Set(["number", "boolean", "select"]);
 const RESULT_STATUSES = new Set([
   "conforme",
@@ -54,6 +62,10 @@ function validateParameters(parameters, errors) {
     if (parameter.tipo === "select" && (!Array.isArray(parameter.opcoes) || parameter.opcoes.length === 0)) {
       errors.push(`${path}.opcoes deve listar as opções do campo do tipo select.`);
     }
+
+    if ("unidade" in parameter && !isValidUnit(parameter.unidade)) {
+      errors.push(`${path}.unidade deve ser um texto ou { singular, plural }.`);
+    }
   }
 }
 
@@ -90,12 +102,31 @@ function coversAllValues(branches, parameter) {
   return false;
 }
 
+function isValidUnit(unit) {
+  if (typeof unit === "string") return true;
+  return isRecord(unit)
+    && typeof unit.singular === "string" && unit.singular.trim() !== ""
+    && typeof unit.plural === "string" && unit.plural.trim() !== "";
+}
+
+function rejectIgnoredFields(rule, path, errors) {
+  const tipo = rule.tipo ?? "direta";
+  const ignorados = (IGNORED_RULE_FIELDS[tipo] ?? []).filter((field) => field in rule);
+  if (ignorados.length) {
+    errors.push(
+      `${path} não usa ${ignorados.join(", ")} em regra do tipo ${tipo}; o motor ignora esse campo.`
+    );
+  }
+}
+
 function validateRule(rule, index, parameters, errors) {
   const path = `regras[${index}]`;
   if (!isRecord(rule)) {
     errors.push(`${path} deve ser um objeto.`);
     return;
   }
+
+  rejectIgnoredFields(rule, path, errors);
 
   requireText(rule.id, `${path}.id`, errors);
   requireText(rule.nome, `${path}.nome`, errors);
@@ -104,7 +135,15 @@ function validateRule(rule, index, parameters, errors) {
     errors.push(`${path}.parametro deve existir em parametros.`);
   }
 
-  if (rule.tipo === "checklist") return;
+  if (rule.tipo === "checklist") {
+    const parameter = parameters[rule.parametro];
+    // Julgamento humano precisa dizer o que julgar: a linha do resultado mostra
+    // a mensagem junto do status "Verificar".
+    if (isRecord(parameter) && parameter.tipo !== "boolean" && (typeof rule.mensagem !== "string" || rule.mensagem.trim() === "")) {
+      errors.push(`${path}.mensagem é obrigatória em regra checklist de campo ${parameter.tipo}: descreva o critério de julgamento.`);
+    }
+    return;
+  }
 
   if (rule.tipo === "conditional") {
     if (!Array.isArray(rule.condicoes) || rule.condicoes.length === 0) {
