@@ -7,7 +7,7 @@ import EmptyState from "../components/EmptyState.vue";
 import StatusBadge from "../components/StatusBadge.vue";
 import { compare } from "../core/operators.js";
 import { formatExpected, formatUnit } from "../core/formatExpected.js";
-import { summarizeResult } from "../core/evaluationStatus.js";
+import { summarizeResult, statusBucket } from "../core/evaluationStatus.js";
 
 const props = defineProps({
   elementId: String,
@@ -66,6 +66,38 @@ function getRuleDetails(item) {
     expected: hasExpected ? formatExpected(operator, expected, item.unidade ?? parameter.unidade) : "",
     conditionalDescription,
   };
+}
+
+// A linha pendente precisa dizer o que fazer: os status de pendência não têm
+// valor nem critério para comparar, então a página mostra a ação e esconde as
+// caixas de detalhe (que ficam só para conforme/não conforme).
+function ruleOf(item) {
+  return activeRuleSet.value?.regras?.find((candidate) => candidate.id === item.id);
+}
+
+function parameterLabelOf(item) {
+  const key = item.parametro ?? ruleOf(item)?.parametro;
+  const parameter = activeRuleSet.value?.parametros?.[key] ?? {};
+  return parameter.label ?? key ?? item.id;
+}
+
+function rowAction(item) {
+  const label = parameterLabelOf(item);
+
+  switch (item.status) {
+    case "invalido":
+      return item.motivo === "obrigatorio"
+        ? `Falta preencher: ${label}`
+        : `Ajuste “${label}”: ${item.mensagem}`;
+    case "nao_avaliado":
+      return `Aguardando: ${label}`;
+    case "manual":
+    case "atencao":
+    case "erro":
+      return item.mensagem ?? null;
+    default:
+      return null;
+  }
 }
 
 // Contagem e rótulo saem da mesma classificação (src/core/evaluationStatus.js).
@@ -208,24 +240,27 @@ onMounted(loadData);
           <StatusBadge :status="item.status" />
           <h3>{{ item.nome ?? item.id }}</h3>
 
-          <p v-if="item.mensagem">{{ item.mensagem }}</p>
+          <p v-if="rowAction(item)" class="result-row__action">{{ rowAction(item) }}</p>
+          <p v-else-if="item.mensagem">{{ item.mensagem }}</p>
 
-          <div v-for="details in [getRuleDetails(item)]" :key="item.id" class="result-row__details">
-            <div v-if="details.actual !== undefined || details.expected" class="result-values">
-              <div v-if="details.conditionalDescription" class="result-values__context">
-                <span>Condição desta regra</span>
-                <strong>{{ details.conditionalDescription }}</strong>
-              </div>
-              <div v-if="details.actual !== undefined" class="result-values__item">
-                <span>Valor informado · {{ details.parameterLabel }}</span>
-                <strong>{{ details.actual }}<template v-if="details.unit"> {{ details.unit }}</template></strong>
-              </div>
-              <div v-if="details.expected" class="result-values__item result-values__item--expected">
-                <span>Critério esperado</span>
-                <strong>{{ details.expected }}</strong>
+          <template v-if="statusBucket(item.status) !== 'pendente'">
+            <div v-for="details in [getRuleDetails(item)]" :key="item.id" class="result-row__details">
+              <div v-if="details.actual !== undefined || details.expected" class="result-values">
+                <div v-if="details.conditionalDescription" class="result-values__context">
+                  <span>Condição desta regra</span>
+                  <strong>{{ details.conditionalDescription }}</strong>
+                </div>
+                <div v-if="details.actual !== undefined" class="result-values__item">
+                  <span>Valor informado · {{ details.parameterLabel }}</span>
+                  <strong>{{ details.actual }}<template v-if="details.unit"> {{ details.unit }}</template></strong>
+                </div>
+                <div v-if="details.expected" class="result-values__item result-values__item--expected">
+                  <span>Critério esperado</span>
+                  <strong>{{ details.expected }}</strong>
+                </div>
               </div>
             </div>
-          </div>
+          </template>
 
           <small v-if="item.referencia" class="result-row__reference">Referência: {{ item.referencia }}</small>
         </div>

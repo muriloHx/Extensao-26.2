@@ -13,6 +13,7 @@ export class RuleEngine {
     if (!parameter) {
       return {
         id: rule.id,
+        parametro: rule.parametro,
         status: "erro",
         mensagem: `Parâmetro não definido: ${rule.parametro}`
       };
@@ -24,7 +25,9 @@ export class RuleEngine {
       return {
         id: rule.id,
         nome: rule.nome,
+        parametro: rule.parametro,
         status: "invalido",
+        motivo: validation.motivo,
         mensagem: validation.reason,
         referencia: rule.referencia
       };
@@ -34,6 +37,7 @@ export class RuleEngine {
       return {
         id: rule.id,
         nome: rule.nome,
+        parametro: rule.parametro,
         status: "nao_avaliado",
         referencia: rule.referencia
       };
@@ -132,6 +136,7 @@ export class RuleEngine {
       return {
         id: rule.id,
         nome: rule.nome,
+        parametro: rule.parametro,
         status: "erro",
         mensagem: `Nenhuma condição cobre ${rule.parametro} = ${actual}. Revise o conjunto de regras.`,
         referencia: rule.referencia
@@ -141,6 +146,7 @@ export class RuleEngine {
     return {
       id: rule.id,
       nome: rule.nome,
+      parametro: rule.parametro,
       status: "nao_avaliado",
       referencia: rule.referencia
     };

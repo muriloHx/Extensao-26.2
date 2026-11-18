@@ -63,6 +63,7 @@ test("condição sem valor informado continua pendente", () => {
   );
 
   assert.equal(result[0].status, "nao_avaliado");
+  assert.equal(result[0].parametro, "inclinacao_opcional");
 });
 
 // Valor informado que nenhuma condição cobre é lacuna do conjunto, não pendência.
@@ -84,6 +85,7 @@ test("condição sem ramo para o valor informado vira erro do conjunto", () => {
   );
 
   assert.equal(result[0].status, "erro");
+  assert.equal(result[0].parametro, "inclinacao");
   assert.match(result[0].mensagem, /nenhuma condição cobre inclinacao = 10/i);
 });
 
@@ -105,4 +107,33 @@ test("checklist sem valor esperado devolve a mensagem de julgamento", () => {
 
   assert.equal(result[0].status, "manual");
   assert.match(result[0].mensagem, /p \+ 2e/);
+});
+
+// A página usa o parâmetro e o motivo para dizer o que falta preencher.
+test("campo obrigatório vazio vira invalido com o parâmetro e o motivo", () => {
+  const engine = new RuleEngine();
+
+  const result = engine.evaluate(
+    [{ id: "largura", nome: "Largura", parametro: "largura", operador: ">=", valor: 80 }],
+    {},
+    parameters
+  );
+
+  assert.equal(result[0].status, "invalido");
+  assert.equal(result[0].parametro, "largura");
+  assert.equal(result[0].motivo, "obrigatorio");
+});
+
+test("valor de tipo errado vira invalido com motivo de tipo", () => {
+  const engine = new RuleEngine();
+
+  const result = engine.evaluate(
+    [{ id: "largura", nome: "Largura", parametro: "largura", operador: ">=", valor: 80 }],
+    { largura: "90" },
+    parameters
+  );
+
+  assert.equal(result[0].status, "invalido");
+  assert.equal(result[0].motivo, "tipo");
+  assert.match(result[0].mensagem, /numérico/i);
 });

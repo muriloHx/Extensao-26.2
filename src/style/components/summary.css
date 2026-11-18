@@ -192,6 +192,12 @@
   overflow-wrap: anywhere;
 }
 
+/* Ação da linha pendente: o que falta medir, julgar ou corrigir. */
+.result-row__action {
+  color: var(--text);
+  font-weight: 500;
+}
+
 .result-row__content {
   min-width: 0;
 }
