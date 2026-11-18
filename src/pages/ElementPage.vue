@@ -44,6 +44,15 @@ const activeChecklist = computed(() =>
   ruleSets.value.find((item) => item.id === form.ruleSet)
 );
 
+// Critérios de um mesmo campo são verificados todos pelo motor: mínimo,
+// igualdade e máximo, nessa ordem de leitura.
+const CHECK_ORDER = [">=", ">", "==", "eq", "!=", "<", "<="];
+
+function checkOrder(operator) {
+  const index = CHECK_ORDER.indexOf(operator);
+  return index === -1 ? CHECK_ORDER.length : index;
+}
+
 const expectedByParameter = computed(() => {
   const expected = {};
   for (const rule of activeChecklist.value?.regras ?? []) {
@@ -66,11 +75,34 @@ const expectedByParameter = computed(() => {
       if (!check.parametro || check.valor === undefined) continue;
       expected[check.parametro] ??= [];
       const description = formatExpected(check.operador, check.valor, activeChecklist.value.parametros?.[check.parametro]?.unidade);
-      if (!expected[check.parametro].includes(description)) expected[check.parametro].push(description);
+      if (expected[check.parametro].some((item) => item.description === description)) continue;
+      expected[check.parametro].push({ description, order: checkOrder(check.operador) });
     }
   }
-  return expected;
+
+  return Object.fromEntries(
+    Object.entries(expected).map(([key, checks]) => [
+      key,
+      checks.sort((a, b) => a.order - b.order).map((item) => item.description),
+    ])
+  );
 });
+
+// Parâmetros cujo critério é julgamento humano: não há valor esperado a exibir.
+const manualParameters = computed(() => {
+  const manual = new Set();
+  for (const rule of activeChecklist.value?.regras ?? []) {
+    if (rule.tipo === "checklist" && rule.parametro) manual.add(rule.parametro);
+  }
+  return manual;
+});
+
+// O botão de ajuda aparece quando há algo para mostrar: definição ou critério.
+function hasParameterHelp(key, parameter) {
+  return Boolean(parameter?.definicao)
+    || Boolean(expectedByParameter.value[key]?.length)
+    || manualParameters.value.has(key);
+}
 
 // Lista dinâmica de normas únicas disponíveis nos ruleSets
 const normasDisponiveis = computed(() => {
@@ -319,6 +351,8 @@ watch(selectedNorma, () => {
 watch(
   () => form.ruleSet,
   () => {
+    openDefinition.value = null;
+
     const allowedKeys = Object.keys(
       activeChecklist.value?.parametros ?? {}
     );
@@ -428,37 +462,51 @@ onMounted(loadData);
       </div>
 
       <div class="fields-grid">
-        <label
+        <div
           v-for="(parameter, key) in activeChecklist?.parametros"
           :key="key"
           class="field"
         >
-          <span>
-            {{ parameter.label ?? key }}
-            <template v-if="parameter.obrigatorio"> *</template>
-            <small v-if="parameter.unidade"> ({{ parameter.unidade }})</small>
+          <!-- O <label> cobre só o texto do campo: fora dele, o botão de ajuda
+               não dispara quando o usuário clica no nome do parâmetro. -->
+          <div class="field__heading">
+            <label :for="`parameter-${key}`">
+              {{ parameter.label ?? key }}<template v-if="parameter.obrigatorio"> *</template><small v-if="parameter.unidade"> ({{ parameter.unidade }})</small>
+            </label>
+
             <button
-              v-if="parameter.definicao"
+              v-if="hasParameterHelp(key, parameter)"
               class="parameter-help"
+              :class="{ 'is-open': openDefinition === key }"
               type="button"
-              :title="parameter.definicao"
-              :aria-label="`Definição: ${parameter.label ?? key}`"
+              :aria-label="`Definição e critério: ${parameter.label ?? key}`"
               :aria-expanded="openDefinition === key"
-              :aria-controls="`parameter-definition-${key}`"
-              @click.stop="openDefinition = openDefinition === key ? null : key"
+              :aria-controls="`parameter-help-${key}`"
+              @click="openDefinition = openDefinition === key ? null : key"
+              @keydown.esc="openDefinition = null"
             >
               <CircleHelp :size="16" aria-hidden="true" />
             </button>
-            <small v-if="parameter.definicao && openDefinition === key" :id="`parameter-definition-${key}`" class="parameter-definition">
-              {{ parameter.definicao }}
-            </small>
-            <small v-if="expectedByParameter[key]?.length" class="expected-value">
-              Esperado: {{ expectedByParameter[key].join(' ou ') }}
-            </small>
-          </span>
+          </div>
+
+          <!-- Definição e critério do campo, revelados pelo botão de ajuda. -->
+          <div
+            v-if="openDefinition === key"
+            :id="`parameter-help-${key}`"
+            class="parameter-help__panel"
+          >
+            <p v-if="parameter.definicao">{{ parameter.definicao }}</p>
+            <p v-if="expectedByParameter[key]?.length" class="parameter-help__expected">
+              <strong>Esperado:</strong> {{ expectedByParameter[key].join(' e ') }}
+            </p>
+            <p v-else-if="manualParameters.has(key)" class="parameter-help__expected">
+              <strong>Esperado:</strong> verificação manual
+            </p>
+          </div>
 
           <select
             v-if="parameter.tipo === 'boolean'"
+            :id="`parameter-${key}`"
             v-model="form.data[key]"
           >
             <option value="">Não informado</option>
@@ -468,6 +516,7 @@ onMounted(loadData);
 
           <select
             v-else-if="parameter.tipo === 'select'"
+            :id="`parameter-${key}`"
             v-model="form.data[key]"
           >
             <option value="">Selecione</option>
@@ -482,6 +531,7 @@ onMounted(loadData);
 
           <input
             v-else
+            :id="`parameter-${key}`"
             :value="form.data[key] ?? ''"
             type="text"
             inputmode="decimal"
@@ -491,7 +541,7 @@ onMounted(loadData);
             @input="onNumberInput(key, $event)"
           />
 
-        </label>
+        </div>
       </div>
 
       <div class="form-actions">

@@ -32,40 +32,81 @@
   font-size: 0.875rem;
 }
 
-.expected-value {
-  display: block;
-  margin-top: 4px;
-  color: var(--text-3);
-  font-size: 0.875rem;
-  font-weight: 400;
-  overflow-wrap: anywhere;
+/* Cabeçalho do campo: rótulo e ajuda lado a lado, fora do <label>. Assim
+   clicar no nome do parâmetro foca o campo, não abre a ajuda. */
+.field__heading {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
 }
 
+.field__heading > label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+/* Ajuda do parâmetro: ícone compacto com alvo de toque de 44px. */
 .parameter-help {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  margin-left: 4px;
+  position: relative;
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin-top: -5px;
   padding: 0;
   border: 0;
-  border-radius: var(--radius-control);
+  border-radius: var(--radius-pill);
   background: transparent;
-  color: var(--text-2);
-  cursor: help;
-  vertical-align: middle;
-}
-
-.parameter-help:hover {
-  background: var(--fill);
-}
-
-.parameter-definition {
-  display: block;
-  margin-top: 4px;
   color: var(--text-3);
+  cursor: pointer;
+  transition:
+    background var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+/* O alvo de toque cresce para 44 × 44 sem aumentar o ícone. */
+.parameter-help::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+
+.parameter-help:hover,
+.parameter-help.is-open {
+  background: var(--fill);
+  color: var(--brand);
+}
+
+/* Painel com a definição e o critério esperado do campo. */
+.parameter-help__panel {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border-radius: var(--radius-control);
+  background: var(--fill);
+  box-shadow: var(--edge);
+  color: var(--text-2);
   font-size: 0.875rem;
   font-weight: 400;
+  line-height: 1.5;
+}
+
+.parameter-help__panel p {
+  margin: 0;
+  color: inherit;
+  font-size: inherit;
   overflow-wrap: anywhere;
+}
+
+.parameter-help__panel p + p {
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+
+.parameter-help__expected strong {
+  color: var(--text);
+  font-weight: 600;
 }

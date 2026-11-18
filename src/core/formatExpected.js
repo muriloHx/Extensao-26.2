@@ -1,8 +1,8 @@
 export function formatExpected(operator, value, unit = "") {
   const formattedValue = typeof value === "boolean"
-    ? (value ? "Sim" : "Não")
+    ? (value ? "sim" : "não")
     : value;
-  const valueWithUnit = `${formattedValue}${unit ?? ""}`;
+  const valueWithUnit = unit ? `${formattedValue} ${unit}` : formattedValue;
 
   switch (operator) {
     case ">=": return `No mínimo ${valueWithUnit} (inclusive)`;
