@@ -70,6 +70,27 @@ test("um conjunto exportado pode ser importado em outro repositório", async () 
   assert.equal(imported.regras[0].valor, 0.9);
 });
 
+test("a importação em lote segue com os arquivos válidos", async () => {
+  const store = repository();
+  const service = new RuleSetService({ ruleSetRepository: store });
+  const grupo = { id: "importado-lote", nome: "Lote" };
+
+  const result = await service.importFromEntries([
+    { name: "portas.json", content: JSON.stringify({ ...customRuleSet(), id: "portas-lote" }) },
+    { name: "quebrado.yaml", content: "id: [" },
+    { name: "sem-leitura.yml", error: "Falha ao ler o arquivo." }
+  ], grupo);
+
+  assert.equal(result.imported, 1);
+  assert.equal(result.failures.length, 2);
+  assert.match(result.failures[0], /^quebrado\.yaml: /);
+  assert.equal(result.failures[1], "sem-leitura.yml: Falha ao ler o arquivo.");
+
+  const stored = await service.get("portas-lote");
+  assert.equal(stored.grupo.nome, "Lote");
+  assert.equal((await service.list()).length, 1);
+});
+
 test("o intercâmbio em YAML preserva o formato dos conjuntos oficiais", async () => {
   const source = new RuleSetService({ ruleSetRepository: repository() });
   await source.save(customRuleSet());

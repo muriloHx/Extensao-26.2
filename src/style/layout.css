@@ -157,6 +157,14 @@
   color: var(--brand-hover);
 }
 
+/* Ação destrutiva de página. Fica no fim do conteúdo, separada por uma linha das
+   ações do cabeçalho: excluir não deve competir com o botão principal. */
+.page-footer-actions {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
 /* 5.2 NAVEGAÇÃO INFERIOR (Mobile Bottom Nav) */
 .bottom-nav {
   position: fixed;

@@ -227,6 +227,135 @@ test("deleteElement remove apenas o elemento escolhido e suas avaliações", asy
   assert.equal((await service.getEnvironment(environment.id)).id, environment.id);
 });
 
+test("nome de projeto repetido é recusado na criação", async () => {
+  const service = new ProjectService(createInMemoryRepositories());
+  await service.createProject({ name: "Escola" });
+
+  await assert.rejects(
+    service.createProject({ name: "escola" }),
+    /Já existe um projeto com esse nome/
+  );
+
+  assert.equal((await service.listProjects()).length, 1);
+});
+
+test("renomear um projeto para um nome já usado é recusado", async () => {
+  const service = new ProjectService(createInMemoryRepositories());
+  await service.createProject({ name: "Escola" });
+  const clube = await service.createProject({ name: "Clube" });
+
+  await assert.rejects(
+    service.renameProject(clube.id, "Escola"),
+    /Já existe um projeto com esse nome/
+  );
+
+  assert.equal((await service.getProject(clube.id)).name, "Clube");
+});
+
+test("salvar de novo o mesmo nome não é conflito, mesmo com duplicata antiga", async () => {
+  const repositories = createInMemoryRepositories();
+  const service = new ProjectService(repositories);
+  const escola = await service.createProject({ name: "Escola" });
+
+  // Dado gravado antes da regra existir: dois projetos com o mesmo nome.
+  await repositories.projectRepository.put({ ...escola, id: "projeto-legado" });
+
+  const updated = await service.updateProject(escola.id, {
+    name: "Escola",
+    description: "Bloco A"
+  });
+
+  assert.equal(updated.description, "Bloco A");
+  assert.equal((await service.listProjects()).length, 2);
+});
+
+test("ambiente repetido é recusado no mesmo projeto e permitido em outro", async () => {
+  const service = new ProjectService(createInMemoryRepositories());
+  const escola = await service.createProject({ name: "Escola" });
+  const clube = await service.createProject({ name: "Clube" });
+
+  await service.createEnvironment(escola.id, { name: "Hall" });
+
+  await assert.rejects(
+    service.createEnvironment(escola.id, { name: "hall" }),
+    /Já existe um ambiente com esse nome neste projeto/
+  );
+
+  const outro = await service.createEnvironment(clube.id, { name: "Hall" });
+  assert.equal(outro.projectId, clube.id);
+});
+
+test("renomear um ambiente para um nome já usado no projeto é recusado", async () => {
+  const service = new ProjectService(createInMemoryRepositories());
+  const escola = await service.createProject({ name: "Escola" });
+  await service.createEnvironment(escola.id, { name: "Hall" });
+  const patio = await service.createEnvironment(escola.id, { name: "Pátio" });
+
+  await assert.rejects(
+    service.renameEnvironment(patio.id, "Hall"),
+    /Já existe um ambiente com esse nome neste projeto/
+  );
+
+  assert.equal((await service.getEnvironment(patio.id)).name, "Pátio");
+});
+
+test("elemento repetido é recusado no mesmo ambiente e permitido em outro", async () => {
+  const service = new ProjectService(createInMemoryRepositories());
+  const escola = await service.createProject({ name: "Escola" });
+  const hall = await service.createEnvironment(escola.id, { name: "Hall" });
+  const patio = await service.createEnvironment(escola.id, { name: "Pátio" });
+  const dados = { type: "porta", rule: "nbr9050-2020/portas" };
+
+  await service.createElement(hall.id, { ...dados, name: "Porta" });
+
+  await assert.rejects(
+    service.createElement(hall.id, { ...dados, name: "Porta" }),
+    /Já existe um elemento com esse nome neste ambiente/
+  );
+
+  const outro = await service.createElement(patio.id, { ...dados, name: "Porta" });
+  assert.equal(outro.environmentId, patio.id);
+});
+
+test("salvar respostas de um elemento não é bloqueado por duplicata antiga", async () => {
+  const repositories = createInMemoryRepositories();
+  const service = new ProjectService(repositories);
+  const escola = await service.createProject({ name: "Escola" });
+  const hall = await service.createEnvironment(escola.id, { name: "Hall" });
+  const porta = await service.createElement(hall.id, {
+    name: "Porta",
+    type: "porta",
+    rule: "nbr9050-2020/portas"
+  });
+
+  // Dado gravado antes da regra existir: outro elemento com o mesmo nome.
+  await repositories.elementRepository.put({ ...porta, id: "elemento-legado" });
+
+  const saved = await service.updateElement(porta.id, {
+    name: "Porta",
+    type: "porta",
+    rule: "nbr9050-2020/portas"
+  });
+
+  assert.equal(saved.id, porta.id);
+});
+
+test("mudar o nome de um elemento para um nome já usado é recusado", async () => {
+  const service = new ProjectService(createInMemoryRepositories());
+  const escola = await service.createProject({ name: "Escola" });
+  const hall = await service.createEnvironment(escola.id, { name: "Hall" });
+  const dados = { type: "porta", rule: "nbr9050-2020/portas" };
+  await service.createElement(hall.id, { ...dados, name: "Porta" });
+  const rampa = await service.createElement(hall.id, { ...dados, name: "Rampa" });
+
+  await assert.rejects(
+    service.updateElement(rampa.id, { name: "Porta" }),
+    /Já existe um elemento com esse nome neste ambiente/
+  );
+
+  assert.equal((await service.getElement(rampa.id)).name, "Rampa");
+});
+
 test("EvaluationService persiste o resultado do RuleEngine", async () => {
   const element = { id: "elemento-1" };
   let saved;

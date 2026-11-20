@@ -1,5 +1,6 @@
 import { compare } from "./operators.js";
 import { validateValue } from "./validation.js";
+import { firstMatchingCondition } from "./conditions.js";
 
 export class RuleEngine {
   evaluate(rules, data, parameters = {}) {
@@ -92,42 +93,39 @@ export class RuleEngine {
   evaluateConditional(rule, data, parameters) {
     const actual = data[rule.parametro];
     const hasValue = actual !== undefined && actual !== null && actual !== "";
+    const branch = firstMatchingCondition(rule, actual);
 
-    for (const branch of rule.condicoes ?? []) {
-      if (branch.quando && compare(actual, branch.quando.operador, branch.quando.valor)) {
-        if (branch.resultado) {
-          return {
-            id: rule.id,
-            nome: rule.nome,
-            status: branch.resultado,
-            valorInformado: actual,
-            referencia: rule.referencia,
-            mensagem: branch.mensagem
-          };
-        }
+    if (branch?.resultado) {
+      return {
+        id: rule.id,
+        nome: rule.nome,
+        status: branch.resultado,
+        valorInformado: actual,
+        referencia: rule.referencia,
+        mensagem: branch.mensagem
+      };
+    }
 
-        if (branch.verificar) {
-          const target = data[branch.verificar.parametro];
-          const ok = compare(target, branch.verificar.operador, branch.verificar.valor);
+    if (branch?.verificar) {
+      const target = data[branch.verificar.parametro];
+      const ok = compare(target, branch.verificar.operador, branch.verificar.valor);
 
-          return {
-            id: rule.id,
-            nome: rule.nome,
-            status: ok ? "conforme" : "nao_conforme",
-            valorInformado: target,
-            valorEsperado: branch.verificar.valor,
-            operador: branch.verificar.operador,
-            parametro: branch.verificar.parametro,
-            unidade: parameters[branch.verificar.parametro]?.unidade,
-            parametroCondicional: rule.parametro,
-            valorCondicional: actual,
-            operadorCondicional: branch.quando.operador,
-            limiteCondicional: branch.quando.valor,
-            mensagem: branch.mensagem,
-            referencia: rule.referencia
-          };
-        }
-      }
+      return {
+        id: rule.id,
+        nome: rule.nome,
+        status: ok ? "conforme" : "nao_conforme",
+        valorInformado: target,
+        valorEsperado: branch.verificar.valor,
+        operador: branch.verificar.operador,
+        parametro: branch.verificar.parametro,
+        unidade: parameters[branch.verificar.parametro]?.unidade,
+        parametroCondicional: rule.parametro,
+        valorCondicional: actual,
+        operadorCondicional: branch.quando.operador,
+        limiteCondicional: branch.quando.valor,
+        mensagem: branch.mensagem,
+        referencia: rule.referencia
+      };
     }
 
     // Nenhuma condição cobriu o valor informado: é lacuna do conjunto de

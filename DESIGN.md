@@ -124,6 +124,7 @@ Sob sol a sombra desaparece antes da cor: a hierarquia de superfícies vem de `-
 - **Botão secundário:** fundo transparente, borda `--border` 1px, texto `--text`.
 - **Input:** fundo `--bg`, borda `--border` 1px, raio 4px, altura mínima 44px. Rótulo sempre visível acima do campo (nunca só placeholder).
 - **Card:** fundo `--surface`, raio 6px, `--shadow-sm`, padding 16–24px. Sem cores pastel por categoria.
+- **Mensagem de erro:** faixa com fundo `--fill`, borda esquerda 3px `--error`, ícone `CircleAlert` de 16px e texto `--error` (6,1:1 sobre `--fill`). Fica junto do formulário que falhou, com `role="alert"` — nunca em `alert()` do navegador. Uma por vez: a mensagem é limpa ao abrir o formulário e a cada nova tentativa.
 - **Link:** cor `--brand` e sublinhado sempre visível no texto corrido.
 - **Foco (obrigatório em todo elemento interativo):**
 

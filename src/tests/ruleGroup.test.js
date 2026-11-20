@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { groupBuiltInRuleSets, groupCustomRuleSets } from "../domain/ruleGroup.js";
+import { countFields, countGroupRules, countRules, groupBuiltInRuleSets, groupCustomRuleSets } from "../domain/ruleGroup.js";
 
 const ruleSet = (id, nome = id) => ({ id, nome, parametros: {}, regras: [] });
 
@@ -25,4 +25,22 @@ test("importações do mesmo grupo aparecem juntas", () => {
 
   assert.equal(groups.length, 2);
   assert.equal(groups.find((group) => group.id === "importado-escritorio")?.ruleSets.length, 2);
+});
+
+test("a biblioteca conta regras e campos de cada checklist", () => {
+  const portas = {
+    ...ruleSet("portas"),
+    parametros: { largura: {}, altura: {} },
+    regras: [{ id: "a" }, { id: "b" }, { id: "c" }]
+  };
+
+  assert.equal(countRules(portas), 3);
+  assert.equal(countFields(portas), 2);
+  assert.equal(countGroupRules({ ruleSets: [portas, ruleSet("rampas")] }), 3);
+});
+
+test("as contagens toleram checklist e conjunto incompletos", () => {
+  assert.equal(countRules({}), 0);
+  assert.equal(countFields({}), 0);
+  assert.equal(countGroupRules({}), 0);
 });

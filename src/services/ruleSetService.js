@@ -50,6 +50,36 @@ export class RuleSetService {
     return this.save(group ? { ...ruleSet, grupo: group } : ruleSet);
   }
 
+  /**
+   * Importa vários checklists de uma vez. Cada arquivo é independente: um erro não
+   * impede os demais, e as mensagens voltam prontas para a tela. O texto continua
+   * sendo lido pela UI — esta camada só decide o formato pelo nome do arquivo.
+   */
+  async importFromEntries(entries, group) {
+    const failures = [];
+    let imported = 0;
+
+    for (const entry of entries) {
+      if (entry.error) {
+        failures.push(`${entry.name}: ${entry.error}`);
+        continue;
+      }
+
+      try {
+        if (/\.json$/i.test(entry.name)) {
+          await this.importFromJson(entry.content, group);
+        } else {
+          await this.importFromYaml(entry.content, group);
+        }
+        imported += 1;
+      } catch (error) {
+        failures.push(`${entry.name}: ${error.message}`);
+      }
+    }
+
+    return { imported, failures };
+  }
+
   exportToJson(ruleSet) {
     assertValidRuleSet(ruleSet);
     const { source, createdAt, updatedAt, ...portableRuleSet } = ruleSet;

@@ -1,5 +1,5 @@
 <script setup>
-import { ChevronLeft, Pencil, Trash2 } from "@lucide/vue";
+import { ChevronLeft, Pencil } from "@lucide/vue";
 import { computed, inject, onMounted, ref } from "vue";
 import { RouterLink, useRouter } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
@@ -192,14 +192,6 @@ onMounted(loadData);
           >
             <Pencil :size="18" aria-hidden="true" />Editar elemento
           </RouterLink>
-          <button
-            class="icon-button icon-button--danger"
-            title="Excluir"
-            aria-label="Excluir elemento"
-            @click="removeElement"
-          >
-            <Trash2 :size="18" aria-hidden="true" />
-          </button>
         </div>
       </template>
     </PageHeader>
@@ -271,6 +263,13 @@ onMounted(loadData);
       <RouterLink class="button" to="/quick-evaluation">
         Nova avaliação rápida
       </RouterLink>
+    </div>
+
+    <!-- Ação destrutiva: no fim do conteúdo, longe das ações do topo -->
+    <div v-if="!quick" class="page-footer-actions">
+      <button class="text-button text-button--danger" @click="removeElement">
+        Excluir elemento
+      </button>
     </div>
   </template>
 

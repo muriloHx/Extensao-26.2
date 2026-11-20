@@ -6,7 +6,9 @@ import EvaluationPage from "../pages/EvaluationPage.vue";
 import ProjectPage from "../pages/ProjectPage.vue";
 import ProjectStatusPage from "../pages/ProjectStatusPage.vue";
 import ProjectsPage from "../pages/ProjectsPage.vue";
-import RulesPage from "../pages/RulesPage.vue";
+import RulesDocumentationPage from "../pages/RulesDocumentationPage.vue";
+import RulesGroupPage from "../pages/RulesGroupPage.vue";
+import RulesLibraryPage from "../pages/RulesLibraryPage.vue";
 
 const routes = [
   // Redirecionamento Inicial
@@ -78,18 +80,17 @@ const routes = [
   {
     path: "/rules",
     name: "rules",
-    component: RulesPage,
+    component: RulesLibraryPage,
   },
   {
     path: "/rules/documentation",
     name: "rules-documentation",
-    component: RulesPage,
-    props: { documentation: true },
+    component: RulesDocumentationPage,
   },
   {
     path: "/rules/:source/:groupId",
     name: "rules-group",
-    component: RulesPage,
+    component: RulesGroupPage,
     props: true,
   },
 

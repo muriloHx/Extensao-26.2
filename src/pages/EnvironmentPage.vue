@@ -125,14 +125,6 @@ onMounted(loadData);
           >
             <Plus :size="18" aria-hidden="true" />Adicionar elemento
           </RouterLink>
-          <button
-            class="icon-button icon-button--danger"
-            title="Excluir"
-            aria-label="Excluir ambiente"
-            @click="removeEnvironment"
-          >
-            <Trash2 :size="18" aria-hidden="true" />
-          </button>
         </div>
       </template>
     </PageHeader>
@@ -191,6 +183,13 @@ onMounted(loadData);
         <Plus :size="18" aria-hidden="true" />Adicionar elemento
       </RouterLink>
     </EmptyState>
+
+    <!-- Ação destrutiva: no fim do conteúdo, longe das ações do topo -->
+    <div class="page-footer-actions">
+      <button class="text-button text-button--danger" @click="removeEnvironment">
+        Excluir ambiente
+      </button>
+    </div>
   </template>
 
   <!-- Estado Vazio (Ambiente não encontrado) -->

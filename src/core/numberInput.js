@@ -26,3 +26,22 @@ export function parseDecimalInput(raw) {
   const value = Number(text);
   return Number.isFinite(value) ? value : null;
 }
+
+/**
+ * Posição do cursor no texto já sanitizado, para ele não pular para o fim quando
+ * o usuário digita no meio do número. Conta quantos dígitos existiam antes do
+ * cursor e para na mesma altura do texto limpo — separador não conta como dígito.
+ */
+export function caretAfterSanitize(raw, sanitized, caret) {
+  const digitsBeforeCaret = String(raw ?? "").slice(0, caret).replace(/\D/g, "").length;
+
+  let position = 0;
+  let digits = 0;
+
+  while (position < sanitized.length && digits < digitsBeforeCaret) {
+    if (/\d/.test(sanitized[position])) digits += 1;
+    position += 1;
+  }
+
+  return position;
+}

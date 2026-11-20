@@ -1,6 +1,7 @@
 import { createElement } from "../domain/element.js";
 import { createEnvironment } from "../domain/environment.js";
 import { toIsoDate } from "../domain/model.js";
+import { isNameTaken, normalizeName } from "../domain/naming.js";
 import { createProject } from "../domain/project.js";
 
 export class ProjectService {
@@ -18,6 +19,13 @@ export class ProjectService {
 
   async createProject(input) {
     const project = createProject(input);
+
+    await this.#assertNameFree({
+      items: this.projectRepository.getAll(),
+      name: project.name,
+      message: "Já existe um projeto com esse nome."
+    });
+
     return this.projectRepository.put(project);
   }
 
@@ -31,6 +39,15 @@ export class ProjectService {
 
   async updateProject(id, { name, description }) {
     const current = await this.#require(this.projectRepository.get(id), "Projeto");
+
+    await this.#assertNameFree({
+      items: this.projectRepository.getAll(),
+      name,
+      currentName: current.name,
+      exceptId: id,
+      message: "Já existe um projeto com esse nome."
+    });
+
     return this.projectRepository.put(createProject({
       ...current,
       name,
@@ -47,6 +64,13 @@ export class ProjectService {
   async createEnvironment(projectId, input) {
     await this.#require(this.projectRepository.get(projectId), "Projeto");
     const environment = createEnvironment({ ...input, projectId });
+
+    await this.#assertNameFree({
+      items: this.environmentRepository.getByProjectId(projectId),
+      name: environment.name,
+      message: "Já existe um ambiente com esse nome neste projeto."
+    });
+
     return this.environmentRepository.put(environment);
   }
 
@@ -60,6 +84,15 @@ export class ProjectService {
 
   async renameEnvironment(id, name) {
     const current = await this.#require(this.environmentRepository.get(id), "Ambiente");
+
+    await this.#assertNameFree({
+      items: this.environmentRepository.getByProjectId(current.projectId),
+      name,
+      currentName: current.name,
+      exceptId: id,
+      message: "Já existe um ambiente com esse nome neste projeto."
+    });
+
     return this.environmentRepository.put(createEnvironment({
       ...current,
       name,
@@ -70,6 +103,13 @@ export class ProjectService {
   async createElement(environmentId, input) {
     await this.#require(this.environmentRepository.get(environmentId), "Ambiente");
     const element = createElement({ ...input, environmentId });
+
+    await this.#assertNameFree({
+      items: this.elementRepository.getByEnvironmentId(environmentId),
+      name: element.name,
+      message: "Já existe um elemento com esse nome neste ambiente."
+    });
+
     return this.elementRepository.put(element);
   }
 
@@ -83,6 +123,15 @@ export class ProjectService {
 
   async updateElement(id, changes) {
     const current = await this.#require(this.elementRepository.get(id), "Elemento");
+
+    await this.#assertNameFree({
+      items: this.elementRepository.getByEnvironmentId(current.environmentId),
+      name: changes.name ?? current.name,
+      currentName: current.name,
+      exceptId: id,
+      message: "Já existe um elemento com esse nome neste ambiente."
+    });
+
     return this.elementRepository.put(createElement({
       ...current,
       ...changes,
@@ -131,5 +180,20 @@ export class ProjectService {
       throw new Error(`${label} não encontrado.`);
     }
     return entity;
+  }
+
+  /**
+   * Um nome só é recusado quando passa a ocupar o lugar de outro item. Renomear
+   * sem mudar o nome nunca é conflito — é o que evita bloquear dado antigo que já
+   * tenha dois registros com o mesmo nome.
+   */
+  async #assertNameFree({ items, name, currentName, exceptId, message }) {
+    if (currentName !== undefined && normalizeName(name) === normalizeName(currentName)) {
+      return;
+    }
+
+    if (isNameTaken(await items, name, { exceptId })) {
+      throw new Error(message);
+    }
   }
 }

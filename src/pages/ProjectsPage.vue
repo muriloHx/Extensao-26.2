@@ -4,6 +4,7 @@ import { ChevronRight, FolderKanban, FolderPlus, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
+import ErrorMessage from "../components/ErrorMessage.vue";
 import WelcomePopup from "../components/WelcomePopup.vue";
 
 const services = inject("services");
@@ -148,7 +149,7 @@ onMounted(loadProjects);
       </label>
     </div>
 
-    <p v-if="error" class="muted">{{ error }}</p>
+    <ErrorMessage :message="error" />
 
     <div class="form-actions">
       <button class="button button--ghost" type="button" @click="cancelEdit">

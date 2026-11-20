@@ -1,0 +1,29 @@
+/* Mensagem de estado (erro). Só usa tokens: --fill, --error, --radius-control. */
+
+.alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 16px 0;
+  padding: 12px 14px;
+  border-radius: var(--radius-control);
+  background: var(--fill);
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+.alert--error {
+  border-left: 3px solid var(--error);
+  color: var(--error);
+}
+
+/* Mantém o ícone alinhado com a primeira linha do texto. */
+.alert svg {
+  flex: none;
+  margin-top: 2px;
+}
+
+/* Dentro de formulário o respiro vertical vem do gap da grade de campos. */
+.form-card .alert {
+  margin: 0;
+}

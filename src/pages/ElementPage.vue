@@ -6,9 +6,17 @@ import vSelect from 'vue-select';
 import 'vue-select/dist/vue-select.css';
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
-import { compare } from "../core/operators.js";
-import { formatExpected, formatUnit } from "../core/formatExpected.js";
-import { parseDecimalInput, sanitizeDecimalInput } from "../core/numberInput.js";
+import ErrorMessage from "../components/ErrorMessage.vue";
+import { formatUnit } from "../core/formatExpected.js";
+import { caretAfterSanitize, sanitizeDecimalInput } from "../core/numberInput.js";
+import { matchesRuleSetQuery } from "../core/ruleSetSearch.js";
+import {
+  expectedCriteria,
+  hasParameterHelp,
+  manualParameters as collectManualParameters,
+} from "../core/expectedCriteria.js";
+import { normalizeAnswers } from "../domain/answers.js";
+import { namesInUse, uniqueName } from "../domain/elementName.js";
 
 const props = defineProps({
   elementId: String,
@@ -30,6 +38,7 @@ const evaluation = ref(null);
 const selectedNorma = ref("todas");
 const autoName = ref(localStorage.getItem("elementAutoName") === "true");
 const openDefinition = ref(null);
+const error = ref("");
 
 const form = reactive({
   name: "",
@@ -44,64 +53,14 @@ const activeChecklist = computed(() =>
   ruleSets.value.find((item) => item.id === form.ruleSet)
 );
 
-// Critérios de um mesmo campo são verificados todos pelo motor: mínimo,
-// igualdade e máximo, nessa ordem de leitura.
-const CHECK_ORDER = [">=", ">", "==", "eq", "!=", "<", "<="];
-
-function checkOrder(operator) {
-  const index = CHECK_ORDER.indexOf(operator);
-  return index === -1 ? CHECK_ORDER.length : index;
-}
-
-const expectedByParameter = computed(() => {
-  const expected = {};
-  for (const rule of activeChecklist.value?.regras ?? []) {
-    const checks = rule.tipo === "conditional"
-      ? (() => {
-          const parameter = activeChecklist.value?.parametros?.[rule.parametro];
-          const rawValue = form.data[rule.parametro];
-          // O campo numérico guarda texto enquanto o usuário digita: compara como número.
-          const actual = parameter?.tipo === "number" ? parseDecimalInput(rawValue) : rawValue;
-          if (actual === undefined || actual === null || actual === "") return [];
-          const condition = (rule.condicoes ?? []).find((branch) =>
-            branch.quando && compare(actual, branch.quando.operador, branch.quando.valor)
-          );
-          return condition?.verificar ? [condition.verificar] : [];
-        })()
-      : rule.operador && rule.valor !== undefined
-        ? [{ ...rule, parametro: rule.parametro }]
-        : [];
-    for (const check of checks) {
-      if (!check.parametro || check.valor === undefined) continue;
-      expected[check.parametro] ??= [];
-      const description = formatExpected(check.operador, check.valor, activeChecklist.value.parametros?.[check.parametro]?.unidade);
-      if (expected[check.parametro].some((item) => item.description === description)) continue;
-      expected[check.parametro].push({ description, order: checkOrder(check.operador) });
-    }
-  }
-
-  return Object.fromEntries(
-    Object.entries(expected).map(([key, checks]) => [
-      key,
-      checks.sort((a, b) => a.order - b.order).map((item) => item.description),
-    ])
-  );
-});
+const expectedByParameter = computed(() => expectedCriteria(activeChecklist.value, form.data));
 
 // Parâmetros cujo critério é julgamento humano: não há valor esperado a exibir.
-const manualParameters = computed(() => {
-  const manual = new Set();
-  for (const rule of activeChecklist.value?.regras ?? []) {
-    if (rule.tipo === "checklist" && rule.parametro) manual.add(rule.parametro);
-  }
-  return manual;
-});
+const manualParameters = computed(() => collectManualParameters(activeChecklist.value));
 
 // O botão de ajuda aparece quando há algo para mostrar: definição ou critério.
-function hasParameterHelp(key, parameter) {
-  return Boolean(parameter?.definicao)
-    || Boolean(expectedByParameter.value[key]?.length)
-    || manualParameters.value.has(key);
+function helpVisible(key, parameter) {
+  return hasParameterHelp(parameter, expectedByParameter.value[key], manualParameters.value.has(key));
 }
 
 // Lista dinâmica de normas únicas disponíveis nos ruleSets
@@ -170,30 +129,6 @@ async function loadData() {
   Object.assign(form.data, evaluation.value?.data ?? {});
 }
 
-function normalizeFormData() {
-  const processedData = {};
-  const activeParams = activeChecklist.value?.parametros ?? {};
-
-  for (const [key, parameter] of Object.entries(activeParams)) {
-    const rawValue = form.data[key];
-
-    if (rawValue === "" || rawValue === undefined || rawValue === null) {
-      continue;
-    }
-
-    if (parameter.tipo === "number") {
-      const parsed = parseDecimalInput(rawValue);
-      if (parsed !== null) processedData[key] = parsed;
-    } else if (parameter.tipo === "boolean") {
-      processedData[key] = rawValue === true || rawValue === "true";
-    } else {
-      processedData[key] = rawValue;
-    }
-  }
-
-  return processedData;
-}
-
 // Filtra a digitação e a colagem no campo numérico: letras, sinais e
 // separadores extras não chegam a aparecer. O cursor fica onde o usuário estava.
 function onNumberInput(key, event) {
@@ -206,27 +141,23 @@ function onNumberInput(key, event) {
   if (raw === sanitized) return;
 
   const caret = input.selectionStart ?? raw.length;
-  const digitsBeforeCaret = raw.slice(0, caret).replace(/\D/g, "").length;
 
   input.value = sanitized;
-
-  let position = 0;
-  let digits = 0;
-  while (position < sanitized.length && digits < digitsBeforeCaret) {
-    if (/\d/.test(sanitized[position])) digits++;
-    position++;
-  }
+  const position = caretAfterSanitize(raw, sanitized, caret);
   input.setSelectionRange(position, position);
 }
 
 // Salva o cadastro e as respostas e volta para o ambiente.
 // Com respostas, o motor roda e o elemento deixa de ficar pendente.
 async function saveAndReturn() {
+  error.value = "";
+
   if (!activeChecklist.value) {
-    return window.alert("Selecione um conjunto de regras.");
+    error.value = "Selecione um conjunto de regras.";
+    return;
   }
 
-  const data = normalizeFormData();
+  const data = normalizeAnswers(activeChecklist.value, form.data);
   const payload = {
     name: form.name,
     type: activeChecklist.value.nome,
@@ -247,33 +178,9 @@ async function saveAndReturn() {
     router.push(
       `/projects/${environment.value.projectId}/environments/${environment.value.id}`
     );
-  } catch (error) {
-    window.alert(error.message);
+  } catch (e) {
+    error.value = e.message;
   }
-}
-
-function getAutoName(baseName) {
-  if (!baseName) return "";
-
-  const existingNames = new Set(
-    environmentElements.value
-      .filter((item) => item.id !== element.value?.id)
-      .map((item) => item.name)
-  );
-
-  if (!existingNames.has(baseName)) {
-    return baseName;
-  }
-
-  let counter = 1;
-  let newName = `${baseName} (${counter})`;
-
-  while (existingNames.has(newName)) {
-    counter++;
-    newName = `${baseName} (${counter})`;
-  }
-
-  return newName;
 }
 
 watch([autoName, () => form.ruleSet], ([isAuto, newRuleSet]) => {
@@ -285,17 +192,20 @@ watch([autoName, () => form.ruleSet], ([isAuto, newRuleSet]) => {
     );
 
     const baseName = ruleSet?.nome ?? "";
-    form.name = getAutoName(baseName);
+    form.name = uniqueName(baseName, namesInUse(environmentElements.value, { exceptId: element.value?.id }));
   }
 });
 
 // Salva o elemento, avalia os dados preenchidos e vai para a página de resultado
 async function saveAndEvaluate() {
+  error.value = "";
+
   if (!activeChecklist.value) {
-    return window.alert("Selecione um conjunto de regras.");
+    error.value = "Selecione um conjunto de regras.";
+    return;
   }
 
-  const data = normalizeFormData();
+  const data = normalizeAnswers(activeChecklist.value, form.data);
 
   if (props.quick) {
     try {
@@ -305,8 +215,8 @@ async function saveAndEvaluate() {
         data,
       });
       router.push("/quick-evaluation/result");
-    } catch (error) {
-      window.alert(error.message);
+    } catch (e) {
+      error.value = e.message;
     }
     return;
   }
@@ -332,8 +242,8 @@ async function saveAndEvaluate() {
     });
 
     router.push(`/elements/${savedElement.id}/evaluation`);
-  } catch (error) {
-    window.alert(error.message);
+  } catch (e) {
+    error.value = e.message;
   }
 }
 
@@ -352,6 +262,7 @@ watch(
   () => form.ruleSet,
   () => {
     openDefinition.value = null;
+    error.value = "";
 
     const allowedKeys = Object.keys(
       activeChecklist.value?.parametros ?? {}
@@ -365,21 +276,8 @@ watch(
   }
 );
 
-// Permite buscar por nome do elemento, norma ou regras internas dentro do v-select
-function filterRuleSets(option, label, search) {
-  const query = (search || '').toLowerCase().trim();
-  if (!query) return true;
-
-  const matchNome = option.nome?.toLowerCase().includes(query);
-  const matchNorma = option.norma?.nome?.toLowerCase().includes(query);
-  const matchRegras = option.regras?.some(
-    (regra) =>
-      regra.nome?.toLowerCase().includes(query) ||
-      regra.id?.toLowerCase().includes(query)
-  );
-
-  return Boolean(matchNome || matchNorma || matchRegras);
-}
+// O v-select chama filter-by(option, label, search); a busca em si é do core.
+const filterRuleSets = (option, _label, search) => matchesRuleSetQuery(option, search);
 
 onMounted(loadData);
 
@@ -475,7 +373,7 @@ onMounted(loadData);
             </label>
 
             <button
-              v-if="hasParameterHelp(key, parameter)"
+              v-if="helpVisible(key, parameter)"
               class="parameter-help"
               :class="{ 'is-open': openDefinition === key }"
               type="button"
@@ -543,6 +441,8 @@ onMounted(loadData);
 
         </div>
       </div>
+
+      <ErrorMessage :message="error" />
 
       <div class="form-actions">
         <RouterLink

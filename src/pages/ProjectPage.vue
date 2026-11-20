@@ -1,9 +1,10 @@
 <script setup>
 import { inject, nextTick, onMounted, ref } from "vue";
 import { ClipboardCheck, FolderPlus, House, Trash2 } from "@lucide/vue";
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
+import ErrorMessage from "../components/ErrorMessage.vue";
 import EvaluationSummary from "../components/EvaluationSummary.vue";
 
 const props = defineProps({
@@ -12,12 +13,14 @@ const props = defineProps({
 
 const services = inject("services");
 const confirmPopup = inject("confirmPopup");
+const router = useRouter();
 
 // Estados Reativos
 const project = ref(null);
 const environments = ref([]);
 const name = ref("");
 const editing = ref(null);
+const error = ref("");
 const summary = ref(null);
 const inputCreate = ref(null);
 const nameInput = ref(null);
@@ -48,6 +51,7 @@ async function startCreate(event) {
   formTrigger.value = event?.currentTarget ?? null;
   editing.value = {};
   name.value = "";
+  error.value = "";
 
   await nextTick();
   inputCreate.value?.scrollIntoView({ behavior: "smooth" });
@@ -60,6 +64,7 @@ async function startEdit(environment, event) {
   formTrigger.value = event?.currentTarget ?? null;
   editing.value = environment;
   name.value = environment.name;
+  error.value = "";
 
   await nextTick();
   nameInput.value?.focus();
@@ -69,23 +74,30 @@ async function startEdit(environment, event) {
 function cancelEdit() {
   editing.value = null;
   name.value = "";
+  error.value = "";
   restoreTriggerFocus();
 }
 
 async function save() {
-  if (editing.value?.id) {
-    await services.projectService.renameEnvironment(
-      editing.value.id,
-      name.value
-    );
-  } else {
-    await services.projectService.createEnvironment(props.projectId, {
-      name: name.value,
-    });
-  }
+  error.value = "";
 
-  cancelEdit();
-  await loadData();
+  try {
+    if (editing.value?.id) {
+      await services.projectService.renameEnvironment(
+        editing.value.id,
+        name.value
+      );
+    } else {
+      await services.projectService.createEnvironment(props.projectId, {
+        name: name.value,
+      });
+    }
+
+    cancelEdit();
+    await loadData();
+  } catch (e) {
+    error.value = e.message;
+  }
 }
 
 function remove(environment, event) {
@@ -114,6 +126,21 @@ async function deleteEnvironment(environment) {
 
   await services.repositories.environmentRepository.delete(environment.id);
   await loadData();
+}
+
+// Excluir o projeto a partir da própria página dele: a confirmação fica no mesmo
+// popup das outras exclusões e, ao concluir, a lista de projetos é o destino.
+function removeProject(event) {
+  confirmPopup.open({
+    target: event.currentTarget,
+    message: `Excluir o projeto “${project.value.name}” e seus ambientes?`,
+    onAccept: deleteProject,
+  });
+}
+
+async function deleteProject() {
+  await services.projectService.deleteProject(props.projectId);
+  router.push("/projects");
 }
 
 onMounted(loadData);
@@ -151,6 +178,8 @@ onMounted(loadData);
         <span>Nome do ambiente</span>
         <input ref="nameInput" v-model="name" required />
       </label>
+
+      <ErrorMessage :message="error" />
 
       <div class="form-actions">
         <button
@@ -214,6 +243,12 @@ onMounted(loadData);
 
     </div>
 
+    <!-- Ação destrutiva: no fim do conteúdo, longe das ações do topo -->
+    <div class="page-footer-actions">
+      <button class="text-button text-button--danger" @click="removeProject">
+        Excluir projeto
+      </button>
+    </div>
   </template>
 
   <!-- Cenário 2: Projeto não encontrado -->

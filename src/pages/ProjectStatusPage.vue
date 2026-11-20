@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
+import ErrorMessage from "../components/ErrorMessage.vue";
 import StatusBadge from "../components/StatusBadge.vue";
 import EvaluationSummary from "../components/EvaluationSummary.vue";
 
@@ -60,7 +61,7 @@ onMounted(loadData);
       :description="`${project.name} · ${plural(status.environments.length, 'ambiente', 'ambientes')}`"
     />
 
-    <p v-if="error" class="alert alert--error" role="alert">{{ error }}</p>
+    <ErrorMessage :message="error" />
 
     <EvaluationSummary
       v-if="status.summary.totalElements"

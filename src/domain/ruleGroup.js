@@ -1,3 +1,18 @@
+/** Quantidade de regras de um checklist. */
+export function countRules(ruleSet) {
+  return ruleSet?.regras?.length ?? 0;
+}
+
+/** Quantidade de campos (parâmetros) de um checklist. */
+export function countFields(ruleSet) {
+  return Object.keys(ruleSet?.parametros ?? {}).length;
+}
+
+/** Soma das regras de todos os checklists de um conjunto. */
+export function countGroupRules(group) {
+  return (group?.ruleSets ?? []).reduce((total, ruleSet) => total + countRules(ruleSet), 0);
+}
+
 function folderId(path = "") {
   const segments = path.replace(/^(\.\.\/|\.\/|\/)+/, "").split("/");
   return segments.length > 1 ? segments.slice(0, -1).join("/") : "";
