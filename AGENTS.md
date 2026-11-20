@@ -24,6 +24,7 @@ Aplicação web em Vue 3 e Vite para organizar avaliações de acessibilidade. A
 - Regras padrão devem continuar compatíveis com o formato consumido pelo `RuleEngine`.
 - Reutilize componentes e utilitários existentes quando fizer sentido; mantenha a interface e as mensagens em português.
 - Evite adicionar dependências sem necessidade.
+- Não adicione comentários genéricos, redundantes ou com tom artificial ("AI-like"). Mantenha comentários apenas quando registrarem uma decisão, restrição ou comportamento relevante que não fique claro no código; preserve comentários úteis existentes.
 
 ## Interface e design
 

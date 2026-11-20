@@ -29,7 +29,6 @@ const builtInRuleSets = inject("builtInRuleSets");
 const route = useRoute();
 const router = useRouter();
 
-// Estado da Tela
 const element = ref(null);
 const environment = ref(null);
 const environmentElements = ref([]);
@@ -46,7 +45,6 @@ const form = reactive({
   data: {},
 });
 
-// Computed Properties
 const isNew = computed(() => !props.elementId);
 
 const activeChecklist = computed(() =>
@@ -63,7 +61,6 @@ function helpVisible(key, parameter) {
   return hasParameterHelp(parameter, expectedByParameter.value[key], manualParameters.value.has(key));
 }
 
-// Lista dinâmica de normas únicas disponíveis nos ruleSets
 const normasDisponiveis = computed(() => {
   const normas = ruleSets.value
     .map((item) => item.norma?.nome)
@@ -71,7 +68,6 @@ const normasDisponiveis = computed(() => {
   return ["todas", ...new Set(normas)];
 });
 
-// Filtra a lista de ruleSets exibida no v-select de acordo com a norma escolhida
 const filteredRuleSets = computed(() => {
   if (selectedNorma.value === "todas") {
     return ruleSets.value;
@@ -81,7 +77,6 @@ const filteredRuleSets = computed(() => {
   );
 });
 
-// Métodos
 async function loadData() {
   if (props.quick) {
     services.quickEvaluationService.clear();
@@ -299,7 +294,6 @@ onMounted(loadData);
     />
 
     <form class="form-card" @submit.prevent>
-      <!-- Seleção de Norma e Elemento em Cascata -->
       <div class="ruleset-grid">
         <label class="field">
           <span>Norma de referência</span>
@@ -387,7 +381,6 @@ onMounted(loadData);
             </button>
           </div>
 
-          <!-- Definição e critério do campo, revelados pelo botão de ajuda. -->
           <div
             v-if="openDefinition === key"
             :id="`parameter-help-${key}`"
@@ -456,7 +449,6 @@ onMounted(loadData);
           Salvar e voltar
         </button>
 
-        <!-- Opção 2: Salva, realiza a avaliação e vai para a página de resultado -->
         <button class="button" type="button" @click="saveAndEvaluate">
           {{ quick ? 'Avaliar' : 'Salvar e avaliar' }}
         </button>

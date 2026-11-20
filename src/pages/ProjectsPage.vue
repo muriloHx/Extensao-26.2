@@ -130,7 +130,6 @@ onMounted(loadProjects);
     </template>
   </PageHeader>
 
-  <!-- Form Modal/Card -->
   <form v-if="editing" class="form-card collection-form" @submit.prevent="save" @keydown.esc="cancelEdit">
     <div class="collection-form__heading">
       <h2>{{ editing.id ? "Dados do projeto" : "Novo projeto" }}</h2>
@@ -159,7 +158,6 @@ onMounted(loadProjects);
     </div>
   </form>
 
-  <!-- Projects List -->
   <div v-if="projects.length" class="card-list collection-list">
     <article v-for="project in projects" :key="project.id" class="card project-card">
       <RouterLink class="card__link" :to="`/projects/${project.id}`">
@@ -183,7 +181,6 @@ onMounted(loadProjects);
     </article>
   </div>
 
-  <!-- Empty State: só aparece quando não há projetos e nenhum formulário aberto -->
   <EmptyState
     v-else-if="!editing"
     class="collection-empty"

@@ -19,7 +19,6 @@ const builtInRuleSets = inject("builtInRuleSets");
 const confirmPopup = inject("confirmPopup");
 const router = useRouter();
 
-// Estado da Tela
 const element = ref(null);
 const environment = ref(null);
 const evaluation = ref(null);
@@ -28,7 +27,6 @@ const environmentRoute = computed(() => environment.value
   ? `/projects/${environment.value.projectId}/environments/${environment.value.id}`
   : "/projects");
 
-// Computed Properties
 const resultList = computed(() => evaluation.value?.result ?? []);
 const activeRuleSet = computed(() => ruleSets.value.find((item) => item.id === element.value?.rule));
 
@@ -121,7 +119,6 @@ const summaryTitle = computed(() => {
   }
 });
 
-// Funções Auxiliares
 function formatDate(dateString) {
   if (!dateString) return "";
   return new Intl.DateTimeFormat("pt-BR", {
@@ -174,7 +171,6 @@ onMounted(loadData);
 </script>
 
 <template>
-  <!-- Cenário 1: Elemento e Avaliação Carregados -->
   <template v-if="element && evaluation">
     <RouterLink v-if="!quick" class="back-link" :to="environmentRoute">
       <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ environment?.name ?? element.name }}</span>
@@ -265,7 +261,6 @@ onMounted(loadData);
       </RouterLink>
     </div>
 
-    <!-- Ação destrutiva: no fim do conteúdo, longe das ações do topo -->
     <div v-if="!quick" class="page-footer-actions">
       <button class="text-button text-button--danger" @click="removeElement">
         Excluir elemento
@@ -273,7 +268,6 @@ onMounted(loadData);
     </div>
   </template>
 
-  <!-- Cenário 2: Elemento encontrado, mas sem avaliação -->
   <template v-else-if="element">
     <RouterLink v-if="!quick" class="back-link" :to="environmentRoute">
       <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">Elemento</span>
@@ -289,7 +283,6 @@ onMounted(loadData);
     </EmptyState>
   </template>
 
-  <!-- Cenário 3: Elemento não existe / Não encontrado -->
   <EmptyState
     v-else
     title="Avaliação não encontrada"

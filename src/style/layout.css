@@ -165,7 +165,6 @@
   border-top: 1px solid var(--line);
 }
 
-/* 5.2 NAVEGAÇÃO INFERIOR (Mobile Bottom Nav) */
 .bottom-nav {
   position: fixed;
   right: 0;

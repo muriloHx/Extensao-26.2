@@ -15,7 +15,6 @@ const services = inject("services");
 const confirmPopup = inject("confirmPopup");
 const router = useRouter();
 
-// Estados Reativos
 const project = ref(null);
 const environments = ref([]);
 const name = ref("");
@@ -35,7 +34,6 @@ function restoreTriggerFocus() {
   });
 }
 
-// Funções de Negócio
 async function loadData() {
   project.value = await services.projectService.getProject(props.projectId);
 
@@ -147,7 +145,6 @@ onMounted(loadData);
 </script>
 
 <template>
-  <!-- Cenário 1: Projeto encontrado -->
   <template v-if="project">
     <PageHeader
       :title="project.name"
@@ -168,7 +165,6 @@ onMounted(loadData);
       </template>
     </PageHeader>
 
-    <!-- Form Modal/Card para criação/edição -->
     <form v-if="editing" class="form-card collection-form" @submit.prevent="save" @keydown.esc="cancelEdit" ref="inputCreate">
       <div class="collection-form__heading">
         <h2>{{ editing.id ? "Nome do ambiente" : "Novo ambiente" }}</h2>
@@ -195,7 +191,6 @@ onMounted(loadData);
 
     <EvaluationSummary v-if="summary && environments.length" :summary="summary" scope="projeto" />
 
-    <!-- Lista de Ambientes -->
     <div class="environments-summary-container">
       <div v-if="environments.length" class="card-grid-environment collection-list">
         <article
@@ -230,7 +225,6 @@ onMounted(loadData);
         </article>
       </div>
 
-      <!-- Estado vazio: some enquanto o formulário de criação está aberto -->
       <EmptyState
         v-if="!environments.length && !editing"
         class="collection-empty"
@@ -251,7 +245,6 @@ onMounted(loadData);
     </div>
   </template>
 
-  <!-- Cenário 2: Projeto não encontrado -->
   <EmptyState
     v-else
     title="Projeto não encontrado"

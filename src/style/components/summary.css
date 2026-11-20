@@ -64,7 +64,6 @@
   .evaluation-summary__cards { grid-template-columns: 1fr; }
 }
 
-/* 5.3 Resultados e Resumos */
 .result-summary {
   padding: 24px;
   margin-bottom: 24px;

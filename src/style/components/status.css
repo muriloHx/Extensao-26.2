@@ -1,6 +1,5 @@
 /* Badges de status. */
 
-/* 4.2 Badges de Status — o texto sempre carrega o estado */
 .status {
   display: inline-flex;
   align-items: center;

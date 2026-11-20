@@ -1,6 +1,5 @@
 /* Cards, listas de cards e elementos internos. */
 
-/* 4.3 Cards Gerais */
 .card-list {
   display: grid;
   gap: 12px;

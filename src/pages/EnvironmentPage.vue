@@ -17,7 +17,6 @@ const services = inject("services");
 const confirmPopup = inject("confirmPopup");
 const router = useRouter();
 
-// Estados reativos
 const environment = ref(null);
 const project = ref(null);
 const rows = ref([]);
@@ -58,7 +57,6 @@ async function deleteEnvironment() {
 
 
 async function loadData() {
-  // 1. Carrega dados do Ambiente
   environment.value = await services.projectService.getEnvironment(
     props.environmentId
   );
@@ -67,12 +65,10 @@ async function loadData() {
     return;
   }
 
-  // 2. Carrega dados do Projeto relacionado
   project.value = await services.projectService.getProject(
     environment.value.projectId
   );
 
-  // 3. Carrega os Elementos do Ambiente com suas respectivas avaliações
   const elements = await services.projectService.listElements(
     environment.value.id
   );
@@ -102,7 +98,6 @@ onMounted(loadData);
 
 <template>
   <template v-if="environment">
-    <!-- Navegação Voltar -->
     <RouterLink
       class="back-link"
       :to="`/projects/${environment.projectId}`"
@@ -110,7 +105,6 @@ onMounted(loadData);
       <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ project?.name ?? "Projeto" }}</span>
     </RouterLink>
 
-    <!-- Cabeçalho -->
     <PageHeader
       :title="environment.name"
     >
@@ -131,14 +125,12 @@ onMounted(loadData);
 
     <EvaluationSummary v-if="summary && rows.length" :summary="summary" scope="ambiente" />
 
-    <!-- Lista de Elementos -->
     <div v-if="rows.length" class="card-list collection-list">
       <article
         v-for="row in rows"
         :key="row.element.id"
         class="card card--interactive"
       >
-        <!-- Link navegável do card -->
         <RouterLink
           class="card__link"
           :to="elementLink(row)"
@@ -152,7 +144,6 @@ onMounted(loadData);
           <ChevronRight :size="20" class="chevron" aria-hidden="true" />
         </RouterLink>
 
-        <!-- Área de ações (dentro do card, abaixo ou ao lado) -->
         <div class="card__menu">
           <button
             class="icon-button icon-button--danger"
@@ -166,7 +157,6 @@ onMounted(loadData);
       </article>
     </div>
 
-    <!-- Estado Vazio (Sem elementos no ambiente) -->
     <EmptyState
       v-if="!rows.length"
       class="collection-empty"
@@ -184,7 +174,6 @@ onMounted(loadData);
       </RouterLink>
     </EmptyState>
 
-    <!-- Ação destrutiva: no fim do conteúdo, longe das ações do topo -->
     <div class="page-footer-actions">
       <button class="text-button text-button--danger" @click="removeEnvironment">
         Excluir ambiente
@@ -192,7 +181,6 @@ onMounted(loadData);
     </div>
   </template>
 
-  <!-- Estado Vazio (Ambiente não encontrado) -->
   <EmptyState
     v-else
     title="Ambiente não encontrado"

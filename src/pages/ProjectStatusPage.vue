@@ -50,7 +50,6 @@ onMounted(loadData);
 <template>
   <p v-if="loading" class="muted" role="status">Carregando…</p>
 
-  <!-- Projeto e status carregados -->
   <template v-else-if="project && status">
     <RouterLink class="back-link" :to="`/projects/${projectId}`">
       <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ project.name }}</span>
@@ -125,7 +124,6 @@ onMounted(loadData);
     </EmptyState>
   </template>
 
-  <!-- Projeto existe, mas o status não pôde ser carregado -->
   <template v-else-if="project">
     <EmptyState
       title="Não foi possível carregar o status"
@@ -135,7 +133,6 @@ onMounted(loadData);
     </EmptyState>
   </template>
 
-  <!-- Projeto não encontrado -->
   <EmptyState
     v-else
     title="Projeto não encontrado"
