@@ -1,23 +1,31 @@
 <script setup>
 import { inject, nextTick, onMounted, ref } from "vue";
-import { ChevronRight, FolderKanban, FolderPlus, Trash2 } from "@lucide/vue";
+import { FolderKanban, FolderPlus, Pencil, Trash2 } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
+import ActionMenu from "../components/ActionMenu.vue";
 import EmptyState from "../components/EmptyState.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
+import StatusBadge from "../components/StatusBadge.vue";
 import WelcomePopup from "../components/WelcomePopup.vue";
+import { plural } from "../core/plural.js";
 
 const services = inject("services");
 const confirmPopup = inject("confirmPopup");
 
 const projects = ref([]);
 const name = ref("");
-const description = ref("")
+const description = ref("");
 const editing = ref(null);
 const error = ref("");
 const showWelcome = ref(false);
 const nameInput = ref(null);
 const formTrigger = ref(null);
+
+const projectMenuItems = [
+  { id: "rename", label: "Renomear", icon: Pencil },
+  { id: "delete", label: "Excluir", icon: Trash2, danger: true },
+];
 
 // Abre o formulário já com o foco no primeiro campo, pronto para digitar.
 function focusNameInput() {
@@ -33,6 +41,7 @@ function restoreTriggerFocus() {
   formTrigger.value = null;
   nextTick(() => {
     if (trigger?.isConnected) trigger.focus();
+    else document.getElementById("conteudo")?.focus?.();
   });
 }
 
@@ -40,8 +49,29 @@ function openWelcome() {
   showWelcome.value = true;
 }
 
+// Cada cartão mostra os totais e a situação do projeto.
 async function loadProjects() {
-  projects.value = await services.projectService.listProjects();
+  const list = await services.projectService.listProjects();
+
+  projects.value = await Promise.all(
+    list.map(async (project) => {
+      const status = await services.evaluationService.getProjectStatus(project.id);
+
+      return {
+        ...project,
+        environmentCount: status.environments.length,
+        elementCount: status.summary.totalElements,
+        status: status.summary.overallStatus,
+      };
+    })
+  );
+}
+
+function projectMeta(project) {
+  return [
+    plural(project.environmentCount, "ambiente", "ambientes"),
+    plural(project.elementCount, "elemento", "elementos"),
+  ].join(" · ");
 }
 
 async function startCreate(event) {
@@ -98,21 +128,22 @@ async function save() {
   }
 }
 
-function remove(project, event) {
-  confirmPopup.confirm(
-    event,
-    `Excluir o projeto “${project.name}” e seus dados?`,
-    () => deleteProject(project)
-  );
+function onProjectAction(action, project) {
+  if (action === "rename") startEdit(project);
+  else remove(project);
+}
+
+function remove(project) {
+  confirmPopup.open({
+    title: `Excluir projeto “${project.name}”?`,
+    details: `Também serão removidos ${plural(project.environmentCount, "ambiente", "ambientes")}, ${plural(project.elementCount, "elemento", "elementos")} e todas as avaliações registradas.`,
+    onAccept: () => deleteProject(project),
+  });
 }
 
 async function deleteProject(project) {
   await services.projectService.deleteProject(project.id);
   await loadProjects();
-}
-
-function formatDate(dateString) {
-  return new Intl.DateTimeFormat("pt-BR", { dateStyle: "medium" }).format(new Date(dateString));
 }
 
 onMounted(loadProjects);
@@ -124,11 +155,7 @@ onMounted(loadProjects);
     description="Acompanhe seus locais e avaliações."
     helpButton
     @help="openWelcome"
-  >
-    <template #action>
-      <button v-if="projects.length" class="button" @click="startCreate($event)"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
-    </template>
-  </PageHeader>
+  />
 
   <form v-if="editing" class="form-card collection-form" @submit.prevent="save" @keydown.esc="cancelEdit">
     <div class="collection-form__heading">
@@ -159,36 +186,45 @@ onMounted(loadProjects);
   </form>
 
   <div v-if="projects.length" class="card-list collection-list">
-    <article v-for="project in projects" :key="project.id" class="card project-card">
+    <article
+      v-for="project in projects"
+      :key="project.id"
+      class="card card--interactive card--with-action"
+    >
       <RouterLink class="card__link" :to="`/projects/${project.id}`">
         <span class="card__icon"><FolderKanban :size="22" aria-hidden="true" /></span>
-        <div>
+        <div class="card__body">
           <h2>{{ project.name }}</h2>
-          <p>Atualizado em {{ formatDate(project.updatedAt) }}</p>
-          <p v-if="project.description">{{ project.description }}</p>
+          <span class="card__meta">{{ projectMeta(project) }}</span>
         </div>
-        <ChevronRight :size="20" class="chevron" aria-hidden="true" />
+        <StatusBadge :status="project.status" />
       </RouterLink>
 
-      <div class="card__menu">
-        <button class="text-button" @click="startEdit(project, $event)">
-          Editar
-        </button>
-        <button class="icon-button icon-button--danger" title="Excluir" aria-label="Excluir" @click="remove(project, $event)">
-          <Trash2 :size="18" aria-hidden="true" />
-        </button>
-      </div>
+      <ActionMenu
+        class="card__action"
+        :label="`Ações de ${project.name}`"
+        :items="projectMenuItems"
+        @select="(action) => onProjectAction(action, project)"
+      />
     </article>
   </div>
 
   <EmptyState
     v-else-if="!editing"
-    class="collection-empty"
+    :icon="FolderKanban"
     title="Comece por um projeto"
-    text="Organize as avaliações de acessibilidade por obra ou local."
+    text="Organize as avaliações por obra ou local."
   >
-    <button class="button" @click="startCreate($event)"><FolderPlus :size="18" aria-hidden="true" />Novo projeto</button>
+    <button class="button" @click="startCreate($event)">
+      <FolderPlus :size="18" aria-hidden="true" />Novo projeto
+    </button>
   </EmptyState>
+
+  <div v-if="projects.length && !editing" class="page-action">
+    <button class="button" @click="startCreate($event)">
+      <FolderPlus :size="18" aria-hidden="true" />Novo projeto
+    </button>
+  </div>
 
   <WelcomePopup v-if="showWelcome" @close="showWelcome = false" />
 </template>
