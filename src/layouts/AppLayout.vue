@@ -5,6 +5,8 @@ import { RouterLink, useRoute } from "vue-router";
 
 const route = useRoute();
 const area = computed(() => route.path.startsWith("/rules") ? "rules" : route.path.startsWith("/quick-evaluation") ? "quick" : "projects");
+const year = new Date().getFullYear();
+const repositoryUrl = "https://github.com/muriloHx/Extensao-26.2";
 const content = ref(null);
 let interacted = false;
 
@@ -76,5 +78,9 @@ watch(() => route.fullPath, () => {
         <span>Regras</span>
       </RouterLink>
     </nav>
+    <footer class="app-footer">
+      <p class="app-footer__legal">© {{ year }} Acesso Verificador · Licença MIT</p>
+      <a class="app-footer__link" :href="repositoryUrl" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </footer>
   </div>
 </template>

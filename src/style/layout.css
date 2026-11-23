@@ -57,6 +57,34 @@
   display: none;
 }
 
+/* Rodapé global: crédito e link do código-fonte. Só no desktop — no celular a
+   navegação inferior já fecha a tela. */
+.app-footer {
+  display: none;
+}
+
+.app-footer__legal {
+  margin: 0;
+  color: var(--text-3);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.app-footer__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--brand);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.app-footer__link:hover {
+  color: var(--brand-hover);
+}
+
 .page-header {
   margin-bottom: 24px;
 }
@@ -391,4 +419,19 @@
     padding: 32px;
   }
 
+  .app-footer {
+    grid-column: 2;
+    align-self: end;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0 12px;
+    max-width: 1088px;
+    margin: 0 auto;
+    padding: 0 32px 16px;
+    color: var(--text-3);
+    font-size: 0.875rem;
+    text-align: center;
+  }
 }
