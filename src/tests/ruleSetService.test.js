@@ -95,6 +95,7 @@ test("o intercâmbio em YAML preserva o formato dos conjuntos oficiais", async (
   const source = new RuleSetService({ ruleSetRepository: repository() });
   await source.save(customRuleSet());
   const fileContent = await source.exportByIdToYaml("portas-personalizadas");
+  assert.doesNotMatch(fileContent, /^(source|createdAt|updatedAt):/m);
 
   const target = new RuleSetService({ ruleSetRepository: repository() });
   const imported = await target.importFromYaml(fileContent);

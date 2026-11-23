@@ -1,5 +1,5 @@
 import { assertValidRuleSet } from "../core/ruleSetValidation.js";
-import { createCustomRuleSet } from "../domain/ruleSet.js";
+import { createCustomRuleSet, portableRuleSet } from "../domain/ruleSet.js";
 import yaml from "js-yaml";
 
 /**
@@ -82,14 +82,12 @@ export class RuleSetService {
 
   exportToJson(ruleSet) {
     assertValidRuleSet(ruleSet);
-    const { source, createdAt, updatedAt, ...portableRuleSet } = ruleSet;
-    return JSON.stringify(portableRuleSet, null, 2);
+    return JSON.stringify(portableRuleSet(ruleSet), null, 2);
   }
 
   exportToYaml(ruleSet) {
     assertValidRuleSet(ruleSet);
-    const { source, createdAt, updatedAt, ...portableRuleSet } = ruleSet;
-    return yaml.dump(portableRuleSet, { noRefs: true });
+    return yaml.dump(portableRuleSet(ruleSet), { noRefs: true });
   }
 
   async exportByIdToJson(id) {

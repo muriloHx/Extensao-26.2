@@ -44,24 +44,19 @@
   box-shadow: var(--shadow-md), var(--edge-strong);
 }
 
-.rules-card h2,
-.ruleset-card h2 {
+.rules-card h2 {
   margin: 0 0 4px;
   font-size: 1.125rem;
   line-height: 1.2;
 }
 
-.rules-card > div,
-.ruleset-card > div {
+.rules-card > div {
   min-width: 0;
 }
 
 .rules-card h2,
 .rules-card p,
-.rules-card small,
-.ruleset-card h2,
-.ruleset-card p,
-.ruleset-card small {
+.rules-card small {
   overflow-wrap: anywhere;
 }
 
@@ -70,42 +65,311 @@
   font-size: 0.875rem;
 }
 
-.rules-card p,
-.ruleset-card p {
+.rules-card p {
   font-size: 0.875rem;
+}
+
+.rules-section__hint {
+  margin-top: 4px;
+  color: var(--text-2);
+  font-size: 1rem;
 }
 
 .ruleset-list {
   gap: 12px;
 }
 
+/* Checklist: o cartão inteiro é o botão que abre o popup com parâmetros e YAML. */
 .ruleset-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 24px;
-  padding: 24px;
+  padding: 0;
 }
 
-.ruleset-card small {
-  display: inline-block;
-  margin-top: 8px;
+/* O h3 existe para a lista continuar navegável por títulos; quem recebe o
+   clique e o padding é o botão. */
+.ruleset-card__heading {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.ruleset-card__trigger {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20px;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 64px;
+  padding: 16px 24px;
+  border: 0;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.ruleset-card__trigger:hover {
+  background: var(--fill);
+}
+
+/* O card tem overflow: hidden — puxa o anel de foco para dentro */
+.ruleset-card__trigger:focus-visible {
+  outline-offset: -2px;
+}
+
+.ruleset-card__text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ruleset-card__title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.ruleset-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
   color: var(--text-3);
   font-size: 0.875rem;
+}
+
+.ruleset-card__meta code {
+  padding: 0;
+  background: transparent;
+  color: var(--text-2);
+  font: 400 0.875rem var(--font-mono);
+  overflow-wrap: anywhere;
 }
 
 .ruleset-card__actions {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
   gap: 8px;
+  padding: 12px 24px 16px;
+  border-top: 1px solid var(--line);
 }
 
 .ruleset-card__actions .button {
   min-height: 44px;
   padding: 8px 12px;
   font-size: 0.875rem;
+}
+
+/* Parâmetros listados no popup do checklist. */
+.ruleset-params {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+}
+
+.ruleset-param {
+  min-width: 0;
+  padding: 12px;
+  border-radius: var(--radius-control);
+  background: var(--fill);
+}
+
+.ruleset-param dt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.ruleset-param__key {
+  padding: 0;
+  background: transparent;
+  color: var(--text-3);
+  font: 400 0.875rem var(--font-mono);
+}
+
+.ruleset-param dd {
+  display: grid;
+  gap: 4px;
+  margin: 4px 0 0;
+  color: var(--text-2);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+/* Bloco de código: rola na horizontal sem alargar o popup. */
+.ruleset-code {
+  margin: 0;
+  padding: 16px;
+  max-height: min(360px, 50vh);
+  max-height: min(360px, 50dvh);
+  overflow: auto;
+  border-radius: var(--radius-card);
+  background: var(--text);
+  color: var(--bg);
+  font: 0.875rem/1.6 var(--font-mono);
+}
+
+.ruleset-code code {
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+/* Popup do checklist: mostra parâmetros e YAML sem sair da listagem. */
+.ruleset-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  place-items: safe center;
+  overflow-y: auto;
+  padding: 24px;
+  background: color-mix(in srgb, var(--text) 60%, transparent);
+}
+
+.ruleset-popup {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 720px);
+  max-height: min(720px, 85vh);
+  max-height: min(720px, 85dvh);
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow-md), var(--edge);
+}
+
+.ruleset-popup__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 44px;
+  align-items: start;
+  gap: 8px;
+  padding: 16px 8px 12px 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.ruleset-popup__heading {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ruleset-popup__title {
+  margin: 0;
+  font-size: 1.375rem;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+.ruleset-popup__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 8px;
+  margin: 0;
+  color: var(--text-3);
+  font-size: 0.875rem;
+}
+
+.ruleset-popup__meta code {
+  padding: 0;
+  background: transparent;
+  color: var(--text-2);
+  font: 400 0.875rem var(--font-mono);
+  overflow-wrap: anywhere;
+}
+
+.ruleset-popup__close {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.ruleset-popup__close:hover {
+  background: var(--fill);
+}
+
+.ruleset-popup__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 8px;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 16px 24px 24px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.ruleset-popup__section {
+  margin: 8px 0 0;
+  font-size: 1rem;
+}
+
+.ruleset-popup__empty {
+  color: var(--text-2);
+  font-size: 0.875rem;
+}
+
+/* Pulldown do YAML: fechado por padrão para o popup caber na tela. */
+.ruleset-popup__code {
+  min-width: 0;
+}
+
+.ruleset-popup__summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: var(--radius-control);
+  background: var(--fill);
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+
+.ruleset-popup__summary::-webkit-details-marker {
+  display: none;
+}
+
+.ruleset-popup__summary:focus-visible {
+  outline-offset: -2px;
+}
+
+.ruleset-popup__summary > svg {
+  flex: none;
+  color: var(--text-3);
+  transition: transform var(--dur-base) var(--ease);
+}
+
+.ruleset-popup__code[open] .ruleset-popup__summary > svg {
+  transform: rotate(180deg);
+}
+
+.ruleset-popup__code[open] .ruleset-code {
+  margin-top: 8px;
 }
 
 .rules-page-header .page-header__row {
@@ -172,13 +436,12 @@
     justify-content: flex-start;
   }
 
-  .ruleset-card {
-    grid-template-columns: 1fr;
-    gap: 16px;
+  .ruleset-card__trigger {
+    padding: 16px;
   }
 
   .ruleset-card__actions {
-    justify-content: flex-start;
+    padding: 12px 16px 16px;
   }
 }
 
@@ -198,6 +461,22 @@
     padding-right: 8px;
     padding-left: 8px;
     font-size: 0.875rem;
+  }
+
+  .ruleset-backdrop {
+    padding: 16px;
+  }
+
+  .ruleset-popup__head {
+    padding: 12px 8px 12px 16px;
+  }
+
+  .ruleset-popup__title {
+    font-size: 1.125rem;
+  }
+
+  .ruleset-popup__body {
+    padding: 12px 16px 20px;
   }
 }
 

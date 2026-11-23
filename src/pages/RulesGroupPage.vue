@@ -1,10 +1,12 @@
 <script setup>
 import { computed, inject, onMounted, ref } from "vue";
-import { Trash2 } from "@lucide/vue";
+import { ChevronRight, Trash2 } from "@lucide/vue";
 import { countFields, countRules, groupBuiltInRuleSets, groupCustomRuleSets } from "../domain/ruleGroup.js";
+import { ruleSetToYaml } from "../domain/ruleSet.js";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
+import RuleSetPopup from "../components/RuleSetPopup.vue";
 
 const props = defineProps({
   source: String,
@@ -18,10 +20,20 @@ const confirmPopup = inject("confirmPopup");
 const groups = ref([]);
 const loading = ref(true);
 const error = ref("");
+const openRuleSet = ref(null);
+const openTrigger = ref(null);
 
 const currentGroup = computed(() =>
   groups.value.find(group => group.source === props.source && group.id === props.groupId)
 );
+
+// Prévia no mesmo formato aceito pela importação, gerada só quando o popup abre.
+const openYaml = computed(() => (openRuleSet.value ? ruleSetToYaml(openRuleSet.value) : ""));
+
+function openDetail(ruleSet, event) {
+  openTrigger.value = event.currentTarget;
+  openRuleSet.value = ruleSet;
+}
 
 async function load() {
   loading.value = true;
@@ -85,13 +97,31 @@ onMounted(load);
 
     <section class="rules-section rules-section--first">
       <h2>Checklists</h2>
+      <p class="rules-section__hint">Toque em um checklist para ver os parâmetros e o YAML.</p>
       <div class="card-list ruleset-list">
-        <article v-for="ruleSet in currentGroup.ruleSets" :key="ruleSet.id" class="card ruleset-card">
-          <div>
-            <h2>{{ ruleSet.nome }}</h2>
-            <p>{{ ruleSet.norma?.nome ?? 'Conjunto personalizado' }}</p>
-            <small>{{ countRules(ruleSet) }} regras · {{ countFields(ruleSet) }} campos</small>
-          </div>
+        <article
+          v-for="ruleSet in currentGroup.ruleSets"
+          :key="ruleSet.id"
+          class="card ruleset-card"
+        >
+          <h3 class="ruleset-card__heading">
+            <button
+              type="button"
+              class="ruleset-card__trigger"
+              aria-haspopup="dialog"
+              @click="openDetail(ruleSet, $event)"
+            >
+              <span class="ruleset-card__text">
+                <span class="ruleset-card__title">{{ ruleSet.nome }}</span>
+                <span class="ruleset-card__meta">
+                  <code>{{ ruleSet.id }}</code>
+                  <span>{{ countRules(ruleSet) }} regras · {{ countFields(ruleSet) }} campos</span>
+                </span>
+              </span>
+              <ChevronRight :size="20" class="chevron" aria-hidden="true" />
+            </button>
+          </h3>
+
           <div v-if="source === 'user'" class="ruleset-card__actions">
             <button class="button button--outline" @click="exportRule(ruleSet, 'yaml')">Exportar YAML</button>
             <button class="button button--outline" @click="exportRule(ruleSet, 'json')">Exportar JSON</button>
@@ -100,6 +130,14 @@ onMounted(load);
         </article>
       </div>
     </section>
+
+    <RuleSetPopup
+      v-if="openRuleSet"
+      :rule-set="openRuleSet"
+      :yaml="openYaml"
+      :opener="openTrigger"
+      @close="openRuleSet = null"
+    />
   </template>
 
   <EmptyState v-else title="Conjunto não encontrado" text="Ele pode ter sido removido." />
