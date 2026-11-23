@@ -88,3 +88,41 @@ test("área de descanso dá veredito em toda faixa de inclinação", () => {
     assert.match(item.mensagem, /rampa/i);
   }
 });
+
+const regraNova = (arquivo) => yaml.load(fs.readFileSync(path.join(DIR, arquivo), "utf8"));
+
+test("controle de acesso exige vão maior quando o obstáculo passa de 0,40 m", () => {
+  const checklist = regraNova("controle_acesso.yaml");
+  const dados = (vao, obstaculo) => ({
+    tipo_controle: "catraca",
+    vao_livre: vao,
+    extensao_obstaculo: obstaculo,
+    localizado_em_rota_acessivel: true,
+    giro_180: true,
+    sinalizacao: true,
+  });
+  const regra = (vao, obstaculo) =>
+    evaluateChecklist(checklist, dados(vao, obstaculo)).find((item) => item.id === "transposicao_obstaculo");
+
+  assert.equal(regra(0.8, 0.4).status, "conforme");
+  assert.equal(regra(0.8, 0.5).status, "nao_conforme");
+  assert.equal(regra(0.9, 0.5).status, "conforme");
+});
+
+test("plataforma vertical só aceita percurso aberto até 2 m", () => {
+  const checklist = regraNova("plataforma_elevacao_vertical.yaml");
+  const dados = (tipo, desnivel) => ({
+    tipo_percurso: tipo,
+    desnivel_percurso: desnivel,
+    fechamento_continuo: true,
+    altura_fechamento: 1.1,
+    comunicacao_auxilio: true,
+    atende_iso_9386_1: true,
+  });
+  const regra = (tipo, desnivel) =>
+    evaluateChecklist(checklist, dados(tipo, desnivel)).find((item) => item.id === "percurso_conforme");
+
+  assert.equal(regra("aberto", 2).status, "conforme");
+  assert.equal(regra("aberto", 2.1).status, "nao_conforme");
+  assert.equal(regra("fechado", 3).status, "conforme");
+});

@@ -1,0 +1,89 @@
+id: controle_acesso
+nome: Controle de acesso
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  tipo_controle:
+    label: Tipo de controle
+    definicao: "Identifica o equipamento de bloqueio avaliado (catraca, portão, porta ou similar)."
+    tipo: select
+    opcoes:
+    - catraca
+    - portao
+    - porta
+    - outro
+    obrigatorio: true
+  vao_livre:
+    label: Vão livre da passagem acessível
+    definicao: "Dimensão transversal útil da passagem, medida entre os limites físicos. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  extensao_obstaculo:
+    label: Extensão do obstáculo isolado
+    definicao: "Extensão do obstáculo que a pessoa precisa transpor junto ao controle de acesso. Valor informado em m."
+    tipo: number
+    unidade: m
+  localizado_em_rota_acessivel:
+    label: Localizado em rota acessível
+    definicao: "A passagem acessível está conectada a uma rota contínua e utilizável por pessoas com mobilidade reduzida."
+    tipo: boolean
+    obrigatorio: true
+  giro_180:
+    label: Circulação adjacente permite giro de 180 graus
+    definicao: "Há espaço livre junto à passagem para a cadeira de rodas realizar a rotação indicada."
+    tipo: boolean
+    obrigatorio: true
+  sinalizacao:
+    label: Dispositivo acessível sinalizado
+    definicao: "A passagem acessível está sinalizada de forma que a pessoa a localize e utilize com autonomia."
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: vao_livre
+  nome: Vão livre mínimo
+  parametro: vao_livre
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 9.4.1.1
+- id: transposicao_obstaculo
+  nome: Largura para transposição de obstáculo isolado
+  tipo: conditional
+  parametro: extensao_obstaculo
+  condicoes:
+  - quando:
+      operador: '<='
+      valor: 0.4
+    verificar:
+      parametro: vao_livre
+      operador: '>='
+      valor: 0.8
+    mensagem: Obstáculo com extensão de até 0,40 m exige vão livre de no mínimo 0,80 m.
+  - quando:
+      operador: '>'
+      valor: 0.4
+    verificar:
+      parametro: vao_livre
+      operador: '>='
+      valor: 0.9
+    mensagem: Obstáculo com extensão superior a 0,40 m exige vão livre de no mínimo 0,90 m.
+  referencia: ABNT NBR 9050:2020 — 9.4.1.1 e 4.3.2
+- id: rota_acessivel
+  nome: Localizado em rota acessível
+  parametro: localizado_em_rota_acessivel
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.1.2
+- id: giro_180
+  nome: Circulação adjacente para giro de 180 graus
+  parametro: giro_180
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.1.2
+- id: sinalizacao
+  nome: Sinalização do dispositivo acessível
+  parametro: sinalizacao
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 9.4.1.3

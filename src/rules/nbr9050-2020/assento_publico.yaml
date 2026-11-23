@@ -1,0 +1,114 @@
+id: assento_publico
+nome: Assento público
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  altura_assento:
+    label: Altura do assento
+    definicao: "Altura medida na parte mais alta e frontal do assento em relação ao piso. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  largura_assento:
+    label: Largura do módulo individual
+    definicao: "Largura do módulo individual do assento. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  profundidade_assento:
+    label: Profundidade do assento
+    definicao: "Profundidade medida entre a parte frontal do assento e a projeção vertical do ponto mais frontal do encosto. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  angulo_encosto:
+    label: Ângulo entre assento e encosto
+    definicao: "Ângulo formado entre o assento e o encosto. Valor informado em graus."
+    tipo: number
+    unidade: { singular: grau, plural: graus }
+    obrigatorio: true
+  superficie_nivelada:
+    label: Superfície nivelada
+    definicao: "O assento está implantado sobre superfície nivelada com o piso adjacente."
+    tipo: boolean
+    obrigatorio: true
+  espaco_mr_largura:
+    label: Largura do módulo de referência ao lado
+    definicao: "Dimensão longitudinal do módulo de referência (M.R.) garantida ao lado dos assentos fixos, sem interferir na faixa livre. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  espaco_mr_profundidade:
+    label: Profundidade do módulo de referência ao lado
+    definicao: "Dimensão transversal do módulo de referência (M.R.) garantida ao lado dos assentos fixos. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+regras:
+- id: altura_minima
+  nome: Altura mínima do assento
+  parametro: altura_assento
+  operador: '>='
+  valor: 0.4
+  referencia: ABNT NBR 9050:2020 — 8.9.1 a)
+- id: altura_maxima
+  nome: Altura máxima do assento
+  parametro: altura_assento
+  operador: '<='
+  valor: 0.45
+  referencia: ABNT NBR 9050:2020 — 8.9.1 a)
+- id: largura_minima
+  nome: Largura mínima do módulo
+  parametro: largura_assento
+  operador: '>='
+  valor: 0.45
+  referencia: ABNT NBR 9050:2020 — 8.9.1 b)
+- id: largura_maxima
+  nome: Largura máxima do módulo
+  parametro: largura_assento
+  operador: '<='
+  valor: 0.5
+  referencia: ABNT NBR 9050:2020 — 8.9.1 b)
+- id: profundidade_minima
+  nome: Profundidade mínima do assento
+  parametro: profundidade_assento
+  operador: '>='
+  valor: 0.4
+  referencia: ABNT NBR 9050:2020 — 8.9.1 c)
+- id: profundidade_maxima
+  nome: Profundidade máxima do assento
+  parametro: profundidade_assento
+  operador: '<='
+  valor: 0.45
+  referencia: ABNT NBR 9050:2020 — 8.9.1 c)
+- id: angulo_minimo
+  nome: Ângulo mínimo entre assento e encosto
+  parametro: angulo_encosto
+  operador: '>='
+  valor: 100
+  referencia: ABNT NBR 9050:2020 — 8.9.1 d)
+- id: angulo_maximo
+  nome: Ângulo máximo entre assento e encosto
+  parametro: angulo_encosto
+  operador: '<='
+  valor: 110
+  referencia: ABNT NBR 9050:2020 — 8.9.1 d)
+- id: superficie_nivelada
+  nome: Superfície nivelada
+  parametro: superficie_nivelada
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 8.9.2
+- id: espaco_mr_largura
+  nome: Largura mínima do módulo de referência ao lado
+  parametro: espaco_mr_largura
+  operador: '>='
+  valor: 1.2
+  referencia: ABNT NBR 9050:2020 — 8.9.3 e Figura 134
+- id: espaco_mr_profundidade
+  nome: Profundidade mínima do módulo de referência ao lado
+  parametro: espaco_mr_profundidade
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 8.9.3 e Figura 134

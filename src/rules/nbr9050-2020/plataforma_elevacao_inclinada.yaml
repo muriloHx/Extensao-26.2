@@ -1,0 +1,80 @@
+id: plataforma_elevacao_inclinada
+nome: Plataforma de elevação inclinada
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  distancia_entre_paradas:
+    label: Distância entre paradas
+    definicao: "Distância máxima percorrida entre paradas programadas nos patamares. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  assento_escamoteavel:
+    label: Assento escamoteável ou rebatível
+    definicao: "A plataforma possui assento escamoteável ou rebatível para uso de pessoas com mobilidade reduzida."
+    tipo: boolean
+    obrigatorio: true
+  aviso_acompanhamento:
+    label: Aviso de acompanhamento obrigatório
+    definicao: "Há sinalização tátil e visual informando a obrigatoriedade de acompanhamento por pessoal habilitado."
+    tipo: boolean
+    obrigatorio: true
+  intercomunicador_altura:
+    label: Altura do intercomunicador
+    definicao: "Altura do intercomunicador para solicitação de auxílio na área de espera. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  sinalizacao_piso_espera:
+    label: Sinalização visual da área de espera
+    definicao: "O piso da área de espera e o limite da projeção do percurso têm sinalização visual em cor contrastante."
+    tipo: boolean
+    obrigatorio: true
+  atende_iso_9386_2:
+    label: Atende à ABNT NBR ISO 9386-2
+    definicao: "A plataforma atende aos requisitos de segurança da ABNT NBR ISO 9386-2."
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: distancia_paradas
+  nome: Paradas a cada 3,20 m
+  parametro: distancia_entre_paradas
+  operador: '<='
+  valor: 3.2
+  referencia: ABNT NBR 9050:2020 — 6.10.4.2
+- id: assento_escamoteavel
+  nome: Assento escamoteável
+  parametro: assento_escamoteavel
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.10.4.2
+- id: aviso_acompanhamento
+  nome: Aviso de acompanhamento
+  parametro: aviso_acompanhamento
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.10.4.3
+- id: intercomunicador_minimo
+  nome: Altura mínima do intercomunicador
+  parametro: intercomunicador_altura
+  operador: '>='
+  valor: 0.8
+  referencia: ABNT NBR 9050:2020 — 6.10.4.3
+- id: intercomunicador_maximo
+  nome: Altura máxima do intercomunicador
+  parametro: intercomunicador_altura
+  operador: '<='
+  valor: 1
+  referencia: ABNT NBR 9050:2020 — 6.10.4.3
+- id: sinalizacao_piso
+  nome: Sinalização visual no piso
+  parametro: sinalizacao_piso_espera
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.10.4.4
+- id: iso_9386_2
+  nome: Atendimento à ABNT NBR ISO 9386-2
+  tipo: checklist
+  parametro: atende_iso_9386_2
+  referencia: ABNT NBR 9050:2020 — 6.10.4

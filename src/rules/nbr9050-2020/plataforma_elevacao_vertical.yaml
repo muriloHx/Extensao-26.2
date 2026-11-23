@@ -1,0 +1,84 @@
+id: plataforma_elevacao_vertical
+nome: Plataforma de elevação vertical
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  tipo_percurso:
+    label: Tipo de percurso
+    definicao: "Indica se a plataforma tem percurso aberto ou caixa enclausurada (percurso fechado)."
+    tipo: select
+    opcoes:
+    - aberto
+    - fechado
+    obrigatorio: true
+  desnivel_percurso:
+    label: Desnível do percurso
+    definicao: "Diferença vertical de nível vencida pela plataforma. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  fechamento_continuo:
+    label: Fechamento contínuo sem vãos
+    definicao: "O fechamento da plataforma é contínuo em todas as laterais, sem vãos, até a altura exigida."
+    tipo: boolean
+    obrigatorio: true
+  altura_fechamento:
+    label: Altura do fechamento
+    definicao: "Altura do fechamento contínuo em relação ao piso da plataforma. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  comunicacao_auxilio:
+    label: Dispositivo de comunicação para auxílio
+    definicao: "Existe dispositivo de comunicação para solicitação de auxílio nos pavimentos atendidos e no equipamento, para uso acompanhado ou assistido."
+    tipo: boolean
+    obrigatorio: true
+  atende_iso_9386_1:
+    label: Atende à ABNT NBR ISO 9386-1
+    definicao: "A plataforma atende aos requisitos de segurança da ABNT NBR ISO 9386-1."
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: fechamento_continuo
+  nome: Fechamento contínuo
+  parametro: fechamento_continuo
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.10.3.1
+- id: altura_fechamento
+  nome: Altura mínima do fechamento
+  parametro: altura_fechamento
+  operador: '>='
+  valor: 1.1
+  referencia: ABNT NBR 9050:2020 — 6.10.3.1
+- id: percurso_conforme
+  nome: Percurso aberto limitado a 2,00 m
+  tipo: conditional
+  parametro: desnivel_percurso
+  condicoes:
+  - quando:
+      operador: '<='
+      valor: 2
+    resultado: conforme
+    mensagem: Percurso de até 2,00 m pode ser aberto ou fechado.
+  - quando:
+      operador: '>'
+      valor: 2
+    verificar:
+      parametro: tipo_percurso
+      operador: ==
+      valor: fechado
+    mensagem: Acima de 2,00 m a plataforma deve ter caixa enclausurada (percurso fechado).
+  referencia: ABNT NBR 9050:2020 — 6.10.3.2
+- id: comunicacao_auxilio
+  nome: Comunicação para solicitação de auxílio
+  parametro: comunicacao_auxilio
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 6.10.3.3
+- id: iso_9386_1
+  nome: Atendimento à ABNT NBR ISO 9386-1
+  tipo: checklist
+  parametro: atende_iso_9386_1
+  referencia: ABNT NBR 9050:2020 — 6.10.3.4

@@ -1,0 +1,87 @@
+id: sanitario_familiar
+nome: Sanitário familiar
+norma:
+  nome: ABNT NBR 9050
+  versao: 2020 - versão corrigida 2021
+parametros:
+  entrada_independente:
+    label: Entrada independente
+    definicao: "O sanitário familiar pode ser acessado diretamente, sem atravessar outro sanitário de uso coletivo."
+    tipo: boolean
+    obrigatorio: true
+  boxe_acessivel:
+    label: Possui boxe com sanitário acessível
+    definicao: "Há no sanitário familiar um boxe com sanitário acessível, conforme 7.5, além do boxe com superfície de troca."
+    tipo: boolean
+    obrigatorio: true
+  largura_trocador:
+    label: Largura da superfície de troca
+    definicao: "Dimensão transversal da superfície para troca de roupas na posição deitada. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  comprimento_trocador:
+    label: Comprimento da superfície de troca
+    definicao: "Dimensão longitudinal da superfície para troca de roupas na posição deitada. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  altura_trocador:
+    label: Altura da superfície de troca
+    definicao: "Altura da superfície de troca em relação ao piso acabado. Valor informado em m."
+    tipo: number
+    unidade: m
+    obrigatorio: true
+  resistencia_trocador:
+    label: Resistência da superfície de troca
+    definicao: "Carga que a superfície de troca suporta sem romper ou perder estabilidade. Valor informado em kg."
+    tipo: number
+    unidade: kg
+    obrigatorio: true
+  barras_apoio:
+    label: Barras de apoio do trocador
+    definicao: "As barras de apoio do boxe com trocador estão instaladas conforme 7.14.1."
+    tipo: boolean
+    obrigatorio: true
+regras:
+- id: entrada_independente
+  nome: Entrada independente
+  parametro: entrada_independente
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 7.9
+- id: boxe_acessivel
+  nome: Boxe com sanitário acessível
+  parametro: boxe_acessivel
+  operador: ==
+  valor: true
+  referencia: ABNT NBR 9050:2020 — 7.9 e 7.5
+- id: largura_trocador
+  nome: Largura mínima da superfície de troca
+  parametro: largura_trocador
+  operador: '>='
+  valor: 0.7
+  referencia: ABNT NBR 9050:2020 — 7.9
+- id: comprimento_trocador
+  nome: Comprimento mínimo da superfície de troca
+  parametro: comprimento_trocador
+  operador: '>='
+  valor: 1.8
+  referencia: ABNT NBR 9050:2020 — 7.9
+- id: altura_trocador
+  nome: Altura da superfície de troca
+  parametro: altura_trocador
+  operador: ==
+  valor: 0.46
+  referencia: ABNT NBR 9050:2020 — 7.9
+- id: resistencia_trocador
+  nome: Resistência mínima da superfície de troca
+  parametro: resistencia_trocador
+  operador: '>='
+  valor: 150
+  referencia: ABNT NBR 9050:2020 — 7.9
+- id: barras_apoio
+  nome: Barras de apoio do trocador
+  tipo: checklist
+  parametro: barras_apoio
+  referencia: ABNT NBR 9050:2020 — 7.9 e 7.14.1
