@@ -1,5 +1,5 @@
 <script setup>
-import { nextTick, onBeforeUnmount, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref } from "vue";
 
 const cancelButton = ref(null);
 const acceptButton = ref(null);
@@ -8,6 +8,15 @@ const title = ref("");
 const message = ref("");
 const details = ref("");
 const acceptLabel = ref("Excluir");
+
+// O texto que complementa o título entra na descrição do diálogo; só vale
+// apontar para um id que existe na tela.
+const describedBy = computed(() => {
+  if (message.value) return "confirm-popup-message";
+  if (details.value) return "confirm-popup-details";
+  return null;
+});
+
 let target = null;
 let acceptAction = null;
 let previousBodyOverflow = "";
@@ -131,11 +140,11 @@ onBeforeUnmount(() => {
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="confirm-popup-title"
-        :aria-describedby="message || details ? 'confirm-popup-message' : null"
+        :aria-describedby="describedBy"
       >
         <h2 id="confirm-popup-title" class="confirm-popup__title">{{ title }}</h2>
         <p v-if="message" id="confirm-popup-message" class="confirm-popup__message">{{ message }}</p>
-        <p v-if="details" class="confirm-popup__details">{{ details }}</p>
+        <p v-if="details" id="confirm-popup-details" class="confirm-popup__details">{{ details }}</p>
 
         <div class="confirm-popup__actions">
           <button ref="cancelButton" class="button button--ghost" type="button" @click="close()">
