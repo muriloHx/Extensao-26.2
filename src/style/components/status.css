@@ -3,6 +3,7 @@
 .status {
   display: inline-flex;
   align-items: center;
+  gap: 4px;
   width: max-content;
   padding: 4px 8px;
   border-radius: var(--radius-badge);
@@ -11,6 +12,11 @@
   font-size: 0.875rem;
   font-weight: 600;
   white-space: nowrap;
+}
+
+/* Ícone + texto: a cor não é a única informação do badge. */
+.status > svg {
+  flex: none;
 }
 
 .status--conforme {

@@ -9,6 +9,25 @@
   box-shadow: var(--shadow-sm), var(--edge);
 }
 
+/* Contadores do cabeçalho: uma linha abaixo do título, sem caixa. */
+.evaluation-summary--compact {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  margin: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  color: var(--text-2);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.evaluation-summary--compact .evaluation-summary__separator {
+  color: var(--text-3);
+}
+
 .evaluation-summary__heading {
   display: flex;
   justify-content: space-between;

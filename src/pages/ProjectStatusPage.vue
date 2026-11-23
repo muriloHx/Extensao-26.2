@@ -1,12 +1,13 @@
 <script setup>
 import { inject, onMounted, ref } from "vue";
-import { ChevronLeft, ChevronRight } from "@lucide/vue";
+import { ChevronRight } from "@lucide/vue";
 import { RouterLink } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
 import EmptyState from "../components/EmptyState.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import StatusBadge from "../components/StatusBadge.vue";
 import EvaluationSummary from "../components/EvaluationSummary.vue";
+import { plural } from "../core/plural.js";
 
 const props = defineProps({
   projectId: String,
@@ -40,10 +41,6 @@ function elementLink(row) {
     : `/elements/${row.element.id}/evaluation`;
 }
 
-function plural(count, singular, pluralForm) {
-  return `${count} ${count === 1 ? singular : pluralForm}`;
-}
-
 onMounted(loadData);
 </script>
 
@@ -51,13 +48,11 @@ onMounted(loadData);
   <p v-if="loading" class="muted" role="status">Carregando…</p>
 
   <template v-else-if="project && status">
-    <RouterLink class="back-link" :to="`/projects/${projectId}`">
-      <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ project.name }}</span>
-    </RouterLink>
-
     <PageHeader
       title="Status do projeto"
-      :description="`${project.name} · ${plural(status.environments.length, 'ambiente', 'ambientes')}`"
+      :parent="project.name"
+      :back-to="`/projects/${projectId}`"
+      :description="plural(status.environments.length, 'ambiente', 'ambientes')"
     />
 
     <ErrorMessage :message="error" />
@@ -116,7 +111,6 @@ onMounted(loadData);
 
     <EmptyState
       v-else
-      class="collection-empty"
       title="Nenhum ambiente cadastrado"
       text="Crie um ambiente e cadastre elementos para acompanhar o status do projeto."
     >

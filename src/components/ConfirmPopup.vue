@@ -4,7 +4,10 @@ import { nextTick, onBeforeUnmount, ref } from "vue";
 const cancelButton = ref(null);
 const acceptButton = ref(null);
 const visible = ref(false);
+const title = ref("");
 const message = ref("");
+const details = ref("");
+const acceptLabel = ref("Excluir");
 let target = null;
 let acceptAction = null;
 let previousBodyOverflow = "";
@@ -46,6 +49,10 @@ function removeListeners() {
   document.body.style.overflow = previousBodyOverflow;
 }
 
+function focusContent() {
+  document.getElementById("conteudo")?.focus?.();
+}
+
 function close({ restoreFocus = true } = {}) {
   if (!visible.value) return;
 
@@ -56,13 +63,24 @@ function close({ restoreFocus = true } = {}) {
   const previousTarget = target;
   target = null;
   acceptAction = null;
-  if (restoreFocus) nextTick(() => previousTarget?.focus?.());
+
+  // Sem alvo (ex.: exclusão aberta por um menu que já fechou), o foco volta
+  // para o conteúdo em vez de se perder no body.
+  if (restoreFocus) {
+    nextTick(() => {
+      if (previousTarget?.isConnected) previousTarget.focus?.();
+      else focusContent();
+    });
+  }
 }
 
 async function open(options) {
   close({ restoreFocus: false });
-  target = options.target;
-  message.value = options.message;
+  target = options.target ?? null;
+  title.value = options.title ?? "Confirmar exclusão";
+  message.value = options.message ?? "";
+  details.value = options.details ?? "";
+  acceptLabel.value = options.acceptLabel ?? "Excluir";
   acceptAction = options.onAccept;
   visible.value = true;
   target?.setAttribute("aria-expanded", "true");
@@ -91,7 +109,7 @@ async function accept() {
   // volta para o conteúdo da página em vez de se perder no body.
   nextTick(() => {
     if (previousTarget?.isConnected) previousTarget.focus?.();
-    else document.getElementById("conteudo")?.focus();
+    else focusContent();
   });
 }
 
@@ -112,19 +130,22 @@ onBeforeUnmount(() => {
         class="confirm-popup"
         role="alertdialog"
         aria-modal="true"
-        aria-labelledby="confirm-popup-message"
+        aria-labelledby="confirm-popup-title"
+        :aria-describedby="message || details ? 'confirm-popup-message' : null"
       >
-        <p id="confirm-popup-message" class="confirm-popup__message">{{ message }}</p>
+        <h2 id="confirm-popup-title" class="confirm-popup__title">{{ title }}</h2>
+        <p v-if="message" id="confirm-popup-message" class="confirm-popup__message">{{ message }}</p>
+        <p v-if="details" class="confirm-popup__details">{{ details }}</p>
+
         <div class="confirm-popup__actions">
-          <button ref="cancelButton" class="confirm-popup__button confirm-popup__button--cancel" type="button" @click="close()">
+          <button ref="cancelButton" class="button button--ghost" type="button" @click="close()">
             Cancelar
           </button>
-          <button ref="acceptButton" class="confirm-popup__button confirm-popup__button--accept" type="button" @click="accept">
-            Excluir
+          <button ref="acceptButton" class="button button--danger" type="button" @click="accept">
+            {{ acceptLabel }}
           </button>
         </div>
       </section>
     </div>
   </Teleport>
 </template>
-

@@ -48,6 +48,18 @@
   color: var(--text);
 }
 
+/* Destrutivo: só em confirmações, nunca como ação da tela */
+.button--danger {
+  border-color: var(--error);
+  background: var(--error);
+  color: var(--on-brand);
+}
+
+.button--danger:hover {
+  border-color: var(--error-hover);
+  background: var(--error-hover);
+}
+
 .text-button {
   display: inline-flex;
   align-items: center;

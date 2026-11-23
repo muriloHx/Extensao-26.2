@@ -26,6 +26,7 @@
 
   /* Estado — também verificados sobre --fill (6,1:1 e 6,3:1) */
   --error: #9d1f13;       /* 7,8:1 */
+  --error-hover: #7b1a10; /* mesma matiz, mais escuro: hover do botão destrutivo */
   --success: #0b5a3b;     /* 8,1:1 */
 
   /* Tipografia */
@@ -50,4 +51,10 @@
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-fast: 150ms;
   --dur-base: 200ms;
+
+  /* Medidas de apoio — alvos de toque, navegação inferior e ação fixa */
+  --touch-lg: 48px;              /* voltar e menu de ações */
+  --bottom-nav-height: 68px;
+  --fixed-action-space: 76px;    /* botão de ação fixo + respiro */
+  --empty-state-icon: 64px;
 }
