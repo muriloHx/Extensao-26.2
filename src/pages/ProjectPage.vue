@@ -1,11 +1,14 @@
 <script setup>
-import { inject, nextTick, onMounted, ref } from "vue";
-import { ClipboardCheck, FolderPlus, House, Trash2 } from "@lucide/vue";
+import { computed, inject, nextTick, onMounted, ref } from "vue";
+import { ClipboardCheck, FolderPlus, House, Pencil, Trash2 } from "@lucide/vue";
 import { RouterLink, useRouter } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
+import ActionMenu from "../components/ActionMenu.vue";
 import EmptyState from "../components/EmptyState.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
+import StatusBadge from "../components/StatusBadge.vue";
 import EvaluationSummary from "../components/EvaluationSummary.vue";
+import { plural } from "../core/plural.js";
 
 const props = defineProps({
   projectId: String,
@@ -17,121 +20,131 @@ const router = useRouter();
 
 const project = ref(null);
 const environments = ref([]);
+const summary = ref(null);
 const name = ref("");
+const description = ref("");
 const editing = ref(null);
 const error = ref("");
-const summary = ref(null);
-const inputCreate = ref(null);
 const nameInput = ref(null);
-const formTrigger = ref(null);
+const formCard = ref(null);
 
-// Devolve o foco ao botão que abriu o formulário, quando ele ainda existe.
-function restoreTriggerFocus() {
-  const trigger = formTrigger.value;
-  formTrigger.value = null;
-  nextTick(() => {
-    if (trigger?.isConnected) trigger.focus();
-  });
-}
+const environmentMenuItems = [
+  { id: "rename", label: "Renomear", icon: Pencil },
+  { id: "delete", label: "Excluir", icon: Trash2, danger: true },
+];
+
+const formHeading = computed(() => {
+  if (editing.value?.kind === "project") return "Dados do projeto";
+  return editing.value?.environment ? "Nome do ambiente" : "Novo ambiente";
+});
+
+const isProjectForm = computed(() => editing.value?.kind === "project");
 
 async function loadData() {
   project.value = await services.projectService.getProject(props.projectId);
+  if (!project.value) return;
 
-  if (project.value) {
-    [environments.value, summary.value] = await Promise.all([
-      services.projectService.listEnvironments(props.projectId),
-      services.evaluationService.getProjectSummary(props.projectId),
-    ]);
-  }
+  const status = await services.evaluationService.getProjectStatus(props.projectId);
+
+  summary.value = status.summary;
+  environments.value = status.environments.map((row) => ({
+    ...row.environment,
+    elementCount: row.elements.length,
+    status: row.summary.overallStatus,
+  }));
 }
 
-async function startCreate(event) {
-  formTrigger.value = event?.currentTarget ?? null;
-  editing.value = {};
-  name.value = "";
-  error.value = "";
+function focusContent() {
+  nextTick(() => document.getElementById("conteudo")?.focus?.());
+}
 
+async function focusNameInput() {
   await nextTick();
-  inputCreate.value?.scrollIntoView({ behavior: "smooth" });
+  formCard.value?.scrollIntoView({ behavior: "smooth" });
   // O scroll suave acima cuida da posição: o foco não deve pular de novo.
   nameInput.value?.focus({ preventScroll: true });
   nameInput.value?.select();
 }
 
-async function startEdit(environment, event) {
-  formTrigger.value = event?.currentTarget ?? null;
-  editing.value = environment;
+async function startCreate() {
+  editing.value = { kind: "environment" };
+  name.value = "";
+  error.value = "";
+  await focusNameInput();
+}
+
+async function startRenameProject() {
+  editing.value = { kind: "project" };
+  name.value = project.value.name;
+  description.value = project.value.description ?? "";
+  error.value = "";
+  await focusNameInput();
+}
+
+async function startRenameEnvironment(environment) {
+  editing.value = { kind: "environment", environment };
   name.value = environment.name;
   error.value = "";
-
-  await nextTick();
-  nameInput.value?.focus();
-  nameInput.value?.select();
+  await focusNameInput();
 }
 
 function cancelEdit() {
   editing.value = null;
   name.value = "";
+  description.value = "";
   error.value = "";
-  restoreTriggerFocus();
+  focusContent();
 }
 
 async function save() {
   error.value = "";
 
   try {
-    if (editing.value?.id) {
-      await services.projectService.renameEnvironment(
-        editing.value.id,
-        name.value
-      );
+    if (isProjectForm.value) {
+      await services.projectService.updateProject(props.projectId, {
+        name: name.value,
+        description: description.value,
+      });
+    } else if (editing.value.environment) {
+      await services.projectService.renameEnvironment(editing.value.environment.id, name.value);
     } else {
       await services.projectService.createEnvironment(props.projectId, {
         name: name.value,
       });
     }
 
-    cancelEdit();
+    editing.value = null;
+    name.value = "";
+    description.value = "";
     await loadData();
+    focusContent();
   } catch (e) {
     error.value = e.message;
   }
 }
 
-function remove(environment, event) {
+function removeEnvironment(environment) {
   confirmPopup.open({
-    target: event.currentTarget,
-    message: `Excluir o ambiente “${environment.name}” e seus elementos?`,
+    title: `Excluir ambiente “${environment.name}”?`,
+    details: `Também serão removidos ${plural(environment.elementCount, "elemento", "elementos")} e as avaliações registradas neles.`,
     onAccept: () => deleteEnvironment(environment),
   });
 }
 
+function onEnvironmentAction(action, environment) {
+  if (action === "rename") startRenameEnvironment(environment);
+  else removeEnvironment(environment);
+}
+
 async function deleteEnvironment(environment) {
-  const elements = await services.projectService.listElements(environment.id);
-
-  // Deleção em cascata: Avaliações -> Elementos -> Ambiente
-  for (const element of elements) {
-    const evaluations = await services.evaluationService.listEvaluations(
-      element.id
-    );
-
-    for (const evaluation of evaluations) {
-      await services.repositories.evaluationRepository.delete(evaluation.id);
-    }
-
-    await services.repositories.elementRepository.delete(element.id);
-  }
-
-  await services.repositories.environmentRepository.delete(environment.id);
+  await services.projectService.deleteEnvironment(environment.id);
   await loadData();
 }
 
-// Excluir o projeto a partir da própria página dele: a confirmação fica no mesmo
-// popup das outras exclusões e, ao concluir, a lista de projetos é o destino.
-function removeProject(event) {
+function removeProject() {
   confirmPopup.open({
-    target: event.currentTarget,
-    message: `Excluir o projeto “${project.value.name}” e seus ambientes?`,
+    title: `Excluir projeto “${project.value.name}”?`,
+    details: `Também serão removidos ${plural(environments.value.length, "ambiente", "ambientes")}, ${plural(summary.value?.totalElements ?? 0, "elemento", "elementos")} e todas as avaliações registradas.`,
     onAccept: deleteProject,
   });
 }
@@ -148,105 +161,120 @@ onMounted(loadData);
   <template v-if="project">
     <PageHeader
       :title="project.name"
-      :description="`${environments.length} ambiente${environments.length === 1 ? '' : 's'} cadastrado${environments.length === 1 ? '' : 's'}.
-      \n${project.description}`"
+      parent="Projetos"
+      back-to="/projects"
+      :description="project.description"
+      menu
+      @rename="startRenameProject"
+      @delete="removeProject"
     >
+      <template #summary>
+        <EvaluationSummary
+          v-if="summary"
+          compact
+          :summary="summary"
+          :environment-count="environments.length"
+        />
+      </template>
+
       <template #action>
-        <div class="project-header__actions">
-          <RouterLink
-            v-if="environments.length"
-            class="button button--outline"
-            :to="`/projects/${projectId}/status`"
-          >
-            <ClipboardCheck :size="18" aria-hidden="true" />Status detalhado
-          </RouterLink>
-          <button v-if="environments.length" class="button" @click="startCreate($event)"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
-        </div>
+        <RouterLink
+          v-if="environments.length"
+          class="button button--outline"
+          :to="`/projects/${projectId}/status`"
+        >
+          <ClipboardCheck :size="18" aria-hidden="true" />Status detalhado
+        </RouterLink>
       </template>
     </PageHeader>
 
-    <form v-if="editing" class="form-card collection-form" @submit.prevent="save" @keydown.esc="cancelEdit" ref="inputCreate">
+    <form
+      v-if="editing"
+      ref="formCard"
+      class="form-card collection-form"
+      @submit.prevent="save"
+      @keydown.esc="cancelEdit"
+    >
       <div class="collection-form__heading">
-        <h2>{{ editing.id ? "Nome do ambiente" : "Novo ambiente" }}</h2>
-        <p>Use um nome que ajude a identificar este espaço no projeto.</p>
+        <h2>{{ formHeading }}</h2>
+        <p v-if="isProjectForm">
+          Defina um nome e, se quiser, uma breve descrição para este local.
+        </p>
+        <p v-else>Use um nome que ajude a identificar este espaço no projeto.</p>
       </div>
-      <label class="field">
-        <span>Nome do ambiente</span>
-        <input ref="nameInput" v-model="name" required />
-      </label>
+
+      <div :class="{ 'fields-grid': isProjectForm }">
+        <label class="field">
+          <span>{{ isProjectForm ? "Nome do projeto" : "Nome do ambiente" }}</span>
+          <input ref="nameInput" v-model="name" required />
+        </label>
+
+        <label v-if="isProjectForm" class="field">
+          <span>Descrição <small>(opcional)</small></span>
+          <input v-model="description" />
+        </label>
+      </div>
 
       <ErrorMessage :message="error" />
 
       <div class="form-actions">
-        <button
-          class="button button--ghost"
-          type="button"
-          @click="cancelEdit"
-        >
+        <button class="button button--ghost" type="button" @click="cancelEdit">
           Cancelar
         </button>
         <button class="button" type="submit">Salvar</button>
       </div>
     </form>
 
-    <EvaluationSummary v-if="summary && environments.length" :summary="summary" scope="projeto" />
-
-    <div class="environments-summary-container">
-      <div v-if="environments.length" class="card-grid-environment collection-list">
-        <article
-          v-for="environment in environments"
-          :key="environment.id"
-          class="card-environment"
-        >
-          <RouterLink
-            class="card__link"
-            :to="`/projects/${project.id}/environments/${environment.id}`"
-          >
-            <span class="card__icon"><House :size="22" aria-hidden="true" /></span>
-            <div>
-              <h2>{{ environment.name }}</h2>
-              <p>Ambiente</p>
-            </div>
-          </RouterLink>
-
-          <div class="card__menu">
-            <button class="text-button" @click="startEdit(environment, $event)">
-              Editar
-            </button>
-            <button
-              class="icon-button icon-button--danger"
-              title="Excluir"
-              aria-label="Excluir"
-              @click="remove(environment, $event)"
-            >
-              <Trash2 :size="18" aria-hidden="true" />
-            </button>
-          </div>
-        </article>
-      </div>
-
-      <EmptyState
-        v-if="!environments.length && !editing"
-        class="collection-empty"
-        title="Nenhum ambiente ainda"
-        text="Adicione espaços como entrada, banheiro ou circulação."
+    <div v-if="environments.length" class="card-list collection-list">
+      <article
+        v-for="environment in environments"
+        :key="environment.id"
+        class="card card--interactive card--with-action"
       >
-        <button class="button" @click="startCreate($event)"><FolderPlus :size="18" aria-hidden="true" />Novo ambiente</button>
-      </EmptyState>
+        <RouterLink
+          class="card__link"
+          :to="`/projects/${project.id}/environments/${environment.id}`"
+        >
+          <span class="card__icon"><House :size="22" aria-hidden="true" /></span>
+          <div class="card__body">
+            <h2>{{ environment.name }}</h2>
+            <span class="card__meta">
+              {{ plural(environment.elementCount, "elemento", "elementos") }}
+            </span>
+          </div>
+          <StatusBadge :status="environment.status" />
+        </RouterLink>
 
-
+        <ActionMenu
+          class="card__action"
+          :label="`Ações de ${environment.name}`"
+          :items="environmentMenuItems"
+          @select="(action) => onEnvironmentAction(action, environment)"
+        />
+      </article>
     </div>
 
-    <!-- Ação destrutiva: no fim do conteúdo, longe das ações do topo -->
-    <div class="page-footer-actions">
-      <button class="text-button text-button--danger" @click="removeProject">
-        Excluir projeto
+    <EmptyState
+      v-else-if="!editing"
+      :icon="House"
+      title="Nenhum ambiente ainda"
+      text="Adicione entrada, banheiro ou circulação."
+    >
+      <button class="button" @click="startCreate">
+        <FolderPlus :size="18" aria-hidden="true" />Novo ambiente
+      </button>
+    </EmptyState>
+
+    <div v-if="environments.length && !editing" class="page-action">
+      <button class="button" @click="startCreate">
+        <FolderPlus :size="18" aria-hidden="true" />Novo ambiente
       </button>
     </div>
   </template>
 
   <EmptyState
     v-else
+    :icon="House"
     title="Projeto não encontrado"
     text="Ele pode ter sido removido."
   >
