@@ -11,18 +11,15 @@ para importar em **Conjuntos de regras**. Cada arquivo representa um
 checklist avaliável; não produza código JavaScript, nem campos de banco de
 dados ou de interface que não estejam documentados aqui.
 
-## Contexto de Negócio e Domínio
+## Contexto
 
-O Acesso Verificador é uma aplicação voltada para a verificação técnica de requisitos de acessibilidade arquitetônica com base em normas como a ABNT NBR 9050.
+O Acesso Verificador avalia acessibilidade arquitetônica com base em normas como a
+ABNT NBR 9050, em três níveis: Projeto → Ambiente → Elemento. Cada arquivo YAML
+ou JSON é o checklist de um elemento (portas, rampas, sanitários): os parâmetros
+são os dados que o usuário mede no local, e as regras julgam esses dados.
 
-A estrutura do sistema é organizada em três níveis hierárquicos:
-Projeto -> Ambiente -> Elemento / Checklist
-
-* Cada arquivo YAML ou JSON representa um Elemento Arquitetônico individual (por exemplo: portas, rampas, sanitários acessíveis).
-
-* Objetivo do arquivo: Definir os parâmetros de entrada (medidas, dimensões e presença de recursos) que o usuário preencherá ao avaliar aquele elemento específico em um determinado ambiente, juntamente com as regras normativas para testar esses dados.
-
-* Escopo: O foco é a avaliação técnica, individual e objetiva de cada elemento. Não crie regras baseadas em leitura de plantas baixas ou análises de rotas de circulação entre ambientes.
+Mantenha o escopo individual e objetivo: não crie regras que dependam de leitura
+de planta baixa nem de rotas entre ambientes.
 
 ## Como responder
 
@@ -55,6 +52,7 @@ norma:
 parametros:
   altura_bica:
     label: Altura da bica
+    definicao: Altura da bica em relação ao piso acabado.
     tipo: number
     unidade: m
     obrigatorio: true
@@ -93,6 +91,7 @@ persistência e são removidos na exportação.
 | Campo | Tipo | Obrigatório | Uso e comportamento |
 | --- | --- | --- | --- |
 | `label` | texto | Não | Rótulo do campo; na ausência, a interface mostra o id do parâmetro. |
+| `definicao` | texto | Não | Explicação curta exibida na ajuda do campo durante a avaliação: o que medir e como. |
 | `tipo` | `number`, `boolean` ou `select` | Sim | Define o controle da interface e a validação de tipo. Qualquer outro valor é recusado na importação. |
 | `unidade` | texto ou `{ singular, plural }` | Não | Sufixo exibido para números, como `m`, `mm` ou `%`. Para contagens, use o objeto (`{ singular: degrau, plural: degraus }`), senão o critério sai como "1 degraus". Não converte unidades. |
 | `obrigatorio` | booleano | Não | Com `true`, valor ausente (`undefined`, `null` ou vazio) resulta em `invalido`; sem ele, resulta em `nao_avaliado`. |
@@ -144,14 +143,12 @@ Retorna `conforme` ou `nao_conforme`. Exemplo:
 ### Checklist manual (`tipo: checklist`)
 
 Use para uma observação que exige julgamento humano. Requer apenas os campos
-comuns; `operador`, `valor` e `condicoes` são recusados na importação. Se houver
-valor para o parâmetro, retorna `manual` e o registra como `valor`; não conclui
-automaticamente `conforme` ou `nao_conforme`.
+comuns; `operador`, `valor` e `condicoes` são recusados na importação. O
+resultado depende do tipo do campo:
 
-Em campo que não é booleano, a regra precisa de `mensagem` dizendo **o que
-julgar** (ex.: a fórmula que o motor não sabe calcular); essa mensagem acompanha
-o resultado. Em campo booleano, a resposta `true`/`false` já decide sozinha e a
-mensagem é opcional.
+- `boolean`: `true` vira `conforme`, `false` vira `nao_conforme`, e `mensagem` é opcional.
+- Demais tipos: retorna `manual` e registra o valor informado; `mensagem` é obrigatória e
+  deve dizer **o que julgar** (ex.: a fórmula que o motor não sabe calcular).
 
 ```yaml
 - id: relacao_piso_espelho
@@ -176,8 +173,9 @@ a importação recusa o conjunto que não cobre:
 - `boolean`: precisa de um ramo para `true` e outro para `false` (ou `== x` + `!= x`).
 - `select`: cada opção de `opcoes` precisa ser alcançada por `==`, ou por `!=` de outra opção.
 
-Sem valor informado, a regra fica `nao_avaliado`. Com valor informado que nenhuma
-condição cobre, o motor devolve `erro` avisando que o conjunto precisa ser revisto.
+Sem valor informado, a regra fica `nao_avaliado` (ou `invalido` se o parâmetro for
+`obrigatorio`). Com valor informado que nenhuma condição cobre, o motor devolve
+`erro` avisando que o conjunto precisa ser revisto.
 
 Cada item de `condicoes` aceita:
 
@@ -194,7 +192,7 @@ Um objeto de comparação — tanto `quando` quanto `verificar` — contém:
 | --- | --- | --- | --- |
 | `operador` | veja operadores | Sim | Operador da comparação. |
 | `valor` | qualquer valor YAML/JSON | Sim | Valor esperado. |
-| `parametro` | texto | Só em `verificar` | Chave existente em `parametros` a ser comparada. Não é usado nem permitido com efeito em `quando`. |
+| `parametro` | texto | Só em `verificar` | Chave existente em `parametros` a ser comparada. Em `quando`, não use: o motor ignora o campo. |
 
 ```yaml
 - id: tratamento_desnivel
@@ -249,7 +247,7 @@ nem comparação entre dois campos fora de `conditional.verificar`.
 | --- | --- |
 | `conforme` | Comparação direta ou `verificar` atendida; ou `resultado: conforme`. |
 | `nao_conforme` | Comparação direta ou `verificar` não atendida. |
-| `manual` | Regra `checklist` com valor preenchido; a `mensagem` da regra acompanha o resultado. |
+| `manual` | Regra `checklist` de campo não booleano com valor preenchido; a `mensagem` da regra acompanha o resultado. |
 | `atencao` | Status explícito em `resultado`, normalmente para exigir análise. |
 | `nao_avaliado` | Parâmetro principal opcional sem valor. |
 | `invalido` | Parâmetro principal obrigatório sem valor, ou valor incompatível com `number`/`boolean`. |
@@ -263,6 +261,7 @@ numa regra condicional, aceita apenas os cinco status citados na tabela de
 ## Checklist antes da entrega
 
 - O arquivo tem `id`, `nome`, `parametros` e `regras`.
+- Todo parâmetro tem `tipo` (`number`, `boolean` ou `select`); `select` tem `opcoes`.
 - Cada id de regra e de parâmetro é único e cada `parametro` referenciado
   existe.
 - Toda comparação tem `operador` aceito e contém `valor`, com tipo e unidade
