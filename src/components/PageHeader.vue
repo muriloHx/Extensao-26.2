@@ -42,6 +42,7 @@ function onMenuSelect(id, opener) {
         :aria-label="backLabel"
       >
         <ChevronLeft :size="24" aria-hidden="true" />
+        <span v-if="parent" class="page-header__back-label">{{ parent }}</span>
       </RouterLink>
 
       <div v-if="helpButton || menu" class="page-header__bar-actions">
@@ -67,7 +68,6 @@ function onMenuSelect(id, opener) {
 
     <div class="page-header__row">
       <div class="page-header__main">
-        <p v-if="parent" class="page-header__parent">{{ parent }}</p>
         <h1>{{ title }}</h1>
         <slot name="summary" />
         <p v-if="description" class="page-header__description">{{ description }}</p>

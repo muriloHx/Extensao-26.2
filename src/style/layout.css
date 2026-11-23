@@ -61,7 +61,7 @@
   margin-bottom: 24px;
 }
 
-/* Linha superior: voltar à esquerda, ajuda e menu de ações à direita. */
+/* Linha superior: voltar com o nome do pai à esquerda, ajuda e menu à direita. */
 .page-header__bar {
   display: flex;
   align-items: center;
@@ -71,13 +71,49 @@
 
 .page-header__bar-actions {
   display: flex;
+  flex: none;
   align-items: center;
   gap: 8px;
   margin-left: auto;
 }
 
-/* Alvo de toque de 48px mesmo com o ícone pequeno. */
-.page-header__back,
+/* Voltar e breadcrumb são um alvo só: 48px de altura e o nome do pai dentro. */
+.page-header__back {
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  min-height: var(--touch-lg);
+  margin-left: -8px;
+  padding: 0 12px 0 4px;
+  border-radius: var(--radius-pill);
+  color: var(--brand);
+  font-size: 1rem;
+  font-weight: 600;
+  transition:
+    background-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.page-header__back > svg {
+  flex: none;
+}
+
+/* O nome do pai fica em uma linha e termina em reticências. */
+.page-header__back-label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.page-header__back:hover {
+  background: var(--fill);
+  color: var(--brand-hover);
+}
+
+/* Ajuda: alvo de toque de 48px mesmo com o ícone pequeno. */
 .page-header__help {
   display: grid;
   flex: none;
@@ -88,38 +124,16 @@
   border: 0;
   border-radius: var(--radius-pill);
   background: transparent;
+  color: var(--text-3);
   cursor: pointer;
   transition:
     background-color var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
 }
 
-.page-header__back {
-  margin-left: -8px;
-  color: var(--brand);
-}
-
-.page-header__back:hover {
-  background: var(--fill);
-  color: var(--brand-hover);
-}
-
-.page-header__help {
-  color: var(--text-3);
-}
-
 .page-header__help:hover {
   background: var(--fill);
   color: var(--text);
-}
-
-/* Nome do projeto/ambiente onde a tela está: breadcrumb secundário. */
-.page-header__parent {
-  margin-bottom: 4px;
-  color: var(--text-2);
-  font-size: 0.875rem;
-  font-weight: 500;
-  overflow-wrap: anywhere;
 }
 
 .page-header__row {
