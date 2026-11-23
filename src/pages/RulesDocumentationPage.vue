@@ -26,12 +26,10 @@ norma:
 parametros:
   altura_bica:
     label: Altura da bica
+    definicao: Altura da bica em relação ao piso acabado.
     tipo: number
     unidade: m
     obrigatorio: true
-  possui_area_livre:
-    label: Possui área livre
-    tipo: boolean
 regras:
   - id: altura_maxima
     nome: Altura máxima da bica
@@ -40,15 +38,17 @@ regras:
     valor: 0.90
     referencia: "Norma interna — item 4.2"</code></pre>
       <p class="documentation__note">
-        <code>label</code>, <code>unidade</code>, <code>norma</code> e <code>referencia</code> são metadados
-        opcionais. <code>obrigatorio: true</code> faz o motor marcar a regra como <code>invalido</code> quando
-        o valor não foi preenchido; num campo não obrigatório, o valor ausente vira <code>nao_avaliado</code>.
+        <code>label</code>, <code>definicao</code>, <code>unidade</code>, <code>norma</code> e
+        <code>referencia</code> são metadados opcionais. <code>definicao</code> é o texto que explica o campo na
+        ajuda da tela de avaliação. <code>obrigatorio: true</code> faz o motor marcar a regra como
+        <code>invalido</code> quando o valor não foi preenchido; num campo não obrigatório, o valor ausente vira
+        <code>nao_avaliado</code>.
       </p>
     </section>
 
     <section class="documentation__section">
       <h2>Tipos de parâmetro</h2>
-      <p>Um parâmetro pode ser <code>number</code>, <code>boolean</code> ou <code>select</code> (lista fixa de opções):</p>
+      <p>Um parâmetro pode ser <code>number</code>, <code>boolean</code> ou <code>select</code> (lista fixa de opções). O <code>tipo</code> é obrigatório e, em <code>select</code>, <code>opcoes</code> precisa listar ao menos uma opção. <code>unidade</code> aceita um texto (<code>m</code>, <code>mm</code>, <code>%</code>) ou <code>{ singular, plural }</code> para contagens.</p>
       <pre class="documentation-code"><code>tipo_piso:
   label: Tipo de piso
   tipo: select
@@ -58,7 +58,7 @@ regras:
 
     <section class="documentation__section">
       <h2>Tipos de regra</h2>
-      <p>Uma regra sem <code>tipo</code> é uma comparação direta — use <code>&gt;=</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>==</code> ou <code>!=</code>. O resultado é <code>conforme</code> ou <code>nao_conforme</code>:</p>
+      <p>Uma regra sem <code>tipo</code> é uma comparação direta — use <code>&gt;=</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&lt;</code>, <code>==</code> ou <code>!=</code>. O resultado é <code>conforme</code> ou <code>nao_conforme</code>. Toda regra precisa de <code>id</code>, <code>nome</code> e <code>parametro</code> (uma chave existente em <code>parametros</code>); <code>referencia</code> é opcional:</p>
       <pre class="documentation-code"><code>- id: largura_minima
   nome: Largura mínima
   parametro: largura
@@ -98,7 +98,8 @@ regras:
           <code>&gt;</code> ou <code>&gt;=</code>; para booleanos e seleções, um ramo para cada opção. Valor
           informado que nenhuma condição alcança vira <code>erro</code>, e a importação recusa o conjunto sem
           essa cobertura. Um parâmetro usado dentro de <code>verificar</code> (aqui, <code>possui_chanfro</code>)
-          também precisa estar declarado em <code>parametros</code>.
+          também precisa estar declarado em <code>parametros</code>. Se ele ficar sem valor, a comparação ainda
+          é executada e tende a resultar em <code>nao_conforme</code>.
         </p>
       </details>
     </section>
@@ -107,10 +108,10 @@ regras:
       <h2>Resultados possíveis</h2>
       <ul class="documentation__list">
         <li><code>conforme</code> / <code>nao_conforme</code> — comparação direta, ou condição explícita.</li>
-        <li><code>manual</code> — regra do tipo <code>checklist</code>.</li>
+        <li><code>manual</code> — regra do tipo <code>checklist</code> com valor preenchido em campo que não é booleano.</li>
         <li><code>atencao</code> — resultado explícito opcional numa condição de <code>conditional</code>.</li>
         <li><code>nao_avaliado</code> — parâmetro opcional sem valor preenchido.</li>
-        <li><code>invalido</code> — parâmetro obrigatório sem valor preenchido.</li>
+        <li><code>invalido</code> — parâmetro obrigatório sem valor preenchido, ou valor incompatível com um campo <code>number</code> ou <code>boolean</code>.</li>
         <li><code>erro</code> — regra apontando para parâmetro inexistente, ou valor informado que nenhuma condição cobre.</li>
       </ul>
     </section>
