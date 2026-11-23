@@ -128,15 +128,16 @@ async function save() {
   }
 }
 
-function onProjectAction(action, project) {
+function onProjectAction(action, project, opener) {
   if (action === "rename") startEdit(project);
-  else remove(project);
+  else remove(project, opener);
 }
 
-function remove(project) {
+function remove(project, opener) {
   confirmPopup.open({
     title: `Excluir projeto “${project.name}”?`,
     details: `Também serão removidos ${plural(project.environmentCount, "ambiente", "ambientes")}, ${plural(project.elementCount, "elemento", "elementos")} e todas as avaliações registradas.`,
+    returnFocusTo: opener,
     onAccept: () => deleteProject(project),
   });
 }
@@ -204,7 +205,7 @@ onMounted(loadProjects);
         class="card__action"
         :label="`Ações de ${project.name}`"
         :items="projectMenuItems"
-        @select="(action) => onProjectAction(action, project)"
+        @select="(action, opener) => onProjectAction(action, project, opener)"
       />
     </article>
   </div>

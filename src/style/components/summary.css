@@ -78,6 +78,7 @@
 .evaluation-summary__card strong { font-size: 1.375rem; color: var(--text); }
 .evaluation-summary__card--conforme strong { color: var(--success); }
 .evaluation-summary__card--nao_conforme strong { color: var(--error); }
+.evaluation-summary__card--nao_avaliado strong { color: var(--text-2); }
 
 @media (max-width: 440px) {
   .evaluation-summary__cards { grid-template-columns: 1fr; }

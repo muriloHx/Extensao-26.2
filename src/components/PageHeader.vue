@@ -25,9 +25,10 @@ const menuItems = [
   { id: "delete", label: "Excluir", icon: Trash2, danger: true },
 ];
 
-// Os ids do menu são os mesmos nomes dos eventos: "rename" e "delete".
-function onMenuSelect(id) {
-  emit(id);
+// Os ids do menu são os mesmos nomes dos eventos: "rename" e "delete". O
+// botão que abriu o menu acompanha o evento para receber o foco de volta.
+function onMenuSelect(id, opener) {
+  emit(id, opener);
 }
 </script>
 
@@ -72,9 +73,7 @@ function onMenuSelect(id) {
         <p v-if="description" class="page-header__description">{{ description }}</p>
       </div>
 
-      <div v-if="$slots.action" class="page-header__tools">
-        <slot name="action" />
-      </div>
+      <div v-if="$slots.action" class="page-header__tools"><slot name="action" /></div>
     </div>
   </header>
 </template>

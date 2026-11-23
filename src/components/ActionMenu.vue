@@ -1,6 +1,6 @@
 <script setup>
 import { Ellipsis } from "@lucide/vue";
-import { nextTick, onBeforeUnmount, ref } from "vue";
+import { nextTick, onBeforeUnmount, ref, useId } from "vue";
 
 defineProps({
   label: { type: String, default: "Mais ações" },
@@ -15,6 +15,8 @@ const list = ref(null);
 const itemButtons = ref([]);
 const open = ref(false);
 const position = ref({ top: 0, right: 0 });
+// O id só existe no DOM enquanto a lista está aberta.
+const listId = `action-menu-${useId()}`;
 
 function buttons() {
   return itemButtons.value.filter(Boolean);
@@ -43,7 +45,7 @@ function onScroll() {
   close({ restoreFocus: false });
 }
 
-// Setas percorrem os itens; o Tab sai do menu sem devolver o foco ao botão.
+// Setas percorrem os itens; o Tab fecha o menu e segue a partir do botão.
 function onKeyDown(event) {
   if (event.key === "Escape") {
     event.preventDefault();
@@ -52,26 +54,28 @@ function onKeyDown(event) {
   }
 
   if (event.key === "Tab") {
+    // Devolve o foco ao botão antes da ação padrão: o Tab continua a partir dele.
+    trigger.value?.focus?.();
     close({ restoreFocus: false });
     return;
   }
 
   if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
 
-  const options = buttons();
-  if (!options.length) return;
+  // Fora da lista, as setas continuam rolando a página.
+  if (!buttons().some((button) => button === document.activeElement)) return;
 
+  const options = buttons();
   event.preventDefault();
-  const current = options.indexOf(document.activeElement);
 
   if (event.key === "Home") {
     options[0].focus();
   } else if (event.key === "End") {
     options[options.length - 1].focus();
-  } else if (event.key === "ArrowDown") {
-    options[(current + 1) % options.length].focus();
   } else {
-    options[(current - 1 + options.length) % options.length].focus();
+    const current = options.indexOf(document.activeElement);
+    const step = event.key === "ArrowDown" ? 1 : -1;
+    options[(current + step + options.length) % options.length].focus();
   }
 }
 
@@ -109,8 +113,10 @@ function toggle() {
 }
 
 function select(item) {
+  // Quem abriu o menu recebe o foco de volta quando a ação terminar.
+  const opener = trigger.value;
   close({ restoreFocus: false });
-  emit("select", item.id);
+  emit("select", item.id, opener);
 }
 
 onBeforeUnmount(() => close({ restoreFocus: false }));
@@ -124,6 +130,7 @@ onBeforeUnmount(() => close({ restoreFocus: false }));
       type="button"
       :aria-label="label"
       aria-haspopup="menu"
+      :aria-controls="open ? listId : null"
       :aria-expanded="open"
       @click="toggle"
     >
@@ -133,13 +140,14 @@ onBeforeUnmount(() => close({ restoreFocus: false }));
     <Teleport to="body">
       <ul
         v-if="open"
+        :id="listId"
         ref="list"
         class="action-menu__list"
         role="menu"
         :aria-label="label"
         :style="{ top: `${position.top}px`, right: `${position.right}px` }"
       >
-        <li v-for="item in items" :key="item.id">
+        <li v-for="item in items" :key="item.id" role="none">
           <button
             ref="itemButtons"
             class="action-menu__item"

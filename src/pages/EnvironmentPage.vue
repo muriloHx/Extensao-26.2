@@ -86,16 +86,17 @@ async function saveName() {
   }
 }
 
-function removeElement(element) {
+function removeElement(element, opener) {
   confirmPopup.open({
     title: `Excluir elemento “${element.name}”?`,
     details: "As avaliações registradas neste elemento também serão removidas.",
+    returnFocusTo: opener,
     onAccept: () => deleteElement(element),
   });
 }
 
-function onElementAction(action, element) {
-  if (action === "delete") removeElement(element);
+function onElementAction(action, element, opener) {
+  if (action === "delete") removeElement(element, opener);
 }
 
 async function deleteElement(element) {
@@ -103,10 +104,11 @@ async function deleteElement(element) {
   await loadData();
 }
 
-function removeEnvironment() {
+function removeEnvironment(opener) {
   confirmPopup.open({
     title: `Excluir ambiente “${environment.value.name}”?`,
     details: `Também serão removidos ${plural(rows.value.length, "elemento", "elementos")} e as avaliações registradas neles.`,
+    returnFocusTo: opener,
     onAccept: deleteEnvironment,
   });
 }
@@ -222,7 +224,7 @@ onMounted(loadData);
           class="card__action"
           :label="`Ações de ${row.element.name}`"
           :items="elementMenuItems"
-          @select="(action) => onElementAction(action, row.element)"
+          @select="(action, opener) => onElementAction(action, row.element, opener)"
         />
       </article>
     </div>

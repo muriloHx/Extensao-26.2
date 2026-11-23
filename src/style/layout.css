@@ -155,6 +155,11 @@
   gap: 8px;
 }
 
+/* Slot de ação que só renderiza nada (v-if interno) não abre espaço. */
+.page-header__tools:empty {
+  display: none;
+}
+
 .back-link {
   display: inline-flex;
   align-items: center;

@@ -18,6 +18,9 @@ const describedBy = computed(() => {
 });
 
 let target = null;
+// Elemento que recebe o foco de volta ao fechar (o botão "⋯" de um menu, por
+// exemplo). Fica separado de `target`, que também anuncia o diálogo por ARIA.
+let returnFocusTo = null;
 let acceptAction = null;
 let previousBodyOverflow = "";
 
@@ -62,6 +65,13 @@ function focusContent() {
   document.getElementById("conteudo")?.focus?.();
 }
 
+function restoreFocusTo(element) {
+  nextTick(() => {
+    if (element?.isConnected) element.focus?.();
+    else focusContent();
+  });
+}
+
 function close({ restoreFocus = true } = {}) {
   if (!visible.value) return;
 
@@ -69,23 +79,20 @@ function close({ restoreFocus = true } = {}) {
   removeListeners();
   target?.removeAttribute("aria-expanded");
   target?.removeAttribute("aria-controls");
-  const previousTarget = target;
+  const previousFocus = returnFocusTo ?? target;
   target = null;
+  returnFocusTo = null;
   acceptAction = null;
 
   // Sem alvo (ex.: exclusão aberta por um menu que já fechou), o foco volta
   // para o conteúdo em vez de se perder no body.
-  if (restoreFocus) {
-    nextTick(() => {
-      if (previousTarget?.isConnected) previousTarget.focus?.();
-      else focusContent();
-    });
-  }
+  if (restoreFocus) restoreFocusTo(previousFocus);
 }
 
 async function open(options) {
   close({ restoreFocus: false });
   target = options.target ?? null;
+  returnFocusTo = options.returnFocusTo ?? null;
   title.value = options.title ?? "Confirmar exclusão";
   message.value = options.message ?? "";
   details.value = options.details ?? "";
@@ -110,16 +117,13 @@ function confirm(event, message, onAccept) {
 
 async function accept() {
   const action = acceptAction;
-  const previousTarget = target;
+  const previousFocus = returnFocusTo ?? target;
   close({ restoreFocus: false });
   await action?.();
 
   // A ação pode ter removido o botão que abriu o diálogo: nesse caso o foco
   // volta para o conteúdo da página em vez de se perder no body.
-  nextTick(() => {
-    if (previousTarget?.isConnected) previousTarget.focus?.();
-    else focusContent();
-  });
+  restoreFocusTo(previousFocus);
 }
 
 defineExpose({ open, confirm });

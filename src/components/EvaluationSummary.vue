@@ -56,7 +56,7 @@ const compactItems = computed(() => {
 <template>
   <!-- Contadores do cabeçalho: uma linha só, abaixo do título. -->
   <p v-if="compact" class="evaluation-summary evaluation-summary--compact">
-    <template v-for="(item, index) in compactItems" :key="item">
+    <template v-for="(item, index) in compactItems" :key="`${index}-${item}`">
       <span v-if="index" class="evaluation-summary__separator" aria-hidden="true">·</span>
       <span>{{ item }}</span>
     </template>

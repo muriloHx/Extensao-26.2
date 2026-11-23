@@ -123,17 +123,18 @@ async function save() {
   }
 }
 
-function removeEnvironment(environment) {
+function removeEnvironment(environment, opener) {
   confirmPopup.open({
     title: `Excluir ambiente “${environment.name}”?`,
     details: `Também serão removidos ${plural(environment.elementCount, "elemento", "elementos")} e as avaliações registradas neles.`,
+    returnFocusTo: opener,
     onAccept: () => deleteEnvironment(environment),
   });
 }
 
-function onEnvironmentAction(action, environment) {
+function onEnvironmentAction(action, environment, opener) {
   if (action === "rename") startRenameEnvironment(environment);
-  else removeEnvironment(environment);
+  else removeEnvironment(environment, opener);
 }
 
 async function deleteEnvironment(environment) {
@@ -141,10 +142,11 @@ async function deleteEnvironment(environment) {
   await loadData();
 }
 
-function removeProject() {
+function removeProject(opener) {
   confirmPopup.open({
     title: `Excluir projeto “${project.value.name}”?`,
     details: `Também serão removidos ${plural(environments.value.length, "ambiente", "ambientes")}, ${plural(summary.value?.totalElements ?? 0, "elemento", "elementos")} e todas as avaliações registradas.`,
+    returnFocusTo: opener,
     onAccept: deleteProject,
   });
 }
@@ -249,7 +251,7 @@ onMounted(loadData);
           class="card__action"
           :label="`Ações de ${environment.name}`"
           :items="environmentMenuItems"
-          @select="(action) => onEnvironmentAction(action, environment)"
+          @select="(action, opener) => onEnvironmentAction(action, environment, opener)"
         />
       </article>
     </div>
