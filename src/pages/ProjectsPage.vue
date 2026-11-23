@@ -196,9 +196,11 @@ onMounted(loadProjects);
         <span class="card__icon"><FolderKanban :size="22" aria-hidden="true" /></span>
         <div class="card__body">
           <h2>{{ project.name }}</h2>
-          <span class="card__meta">{{ projectMeta(project) }}</span>
+          <span class="card__meta">
+            <span>{{ projectMeta(project) }}</span>
+            <StatusBadge :status="project.status" />
+          </span>
         </div>
-        <StatusBadge :status="project.status" />
       </RouterLink>
 
       <ActionMenu

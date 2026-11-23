@@ -60,7 +60,7 @@
   font-size: 1.125rem;
 }
 
-/* Nome e contagem do item; o badge fica na outra ponta do card. */
+/* Nome e subtítulo do item. */
 .card__body {
   display: grid;
   flex: 1;
@@ -68,12 +68,14 @@
   min-width: 0;
 }
 
+/* Subtítulo do card: contagem e situação na mesma linha. */
 .card__meta {
-  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
   color: var(--text-2);
   font-size: 0.875rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* Card com menu de ações: o link cede o canto superior direito ao "⋯". */

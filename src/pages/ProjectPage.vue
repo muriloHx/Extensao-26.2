@@ -241,10 +241,10 @@ onMounted(loadData);
           <div class="card__body">
             <h2>{{ environment.name }}</h2>
             <span class="card__meta">
-              {{ plural(environment.elementCount, "elemento", "elementos") }}
+              <span>{{ plural(environment.elementCount, "elemento", "elementos") }}</span>
+              <StatusBadge :status="environment.status" />
             </span>
           </div>
-          <StatusBadge :status="environment.status" />
         </RouterLink>
 
         <ActionMenu

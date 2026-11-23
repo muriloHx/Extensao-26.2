@@ -215,9 +215,11 @@ onMounted(loadData);
           <span class="card__icon"><Box :size="22" aria-hidden="true" /></span>
           <div class="card__body">
             <h2>{{ row.element.name }}</h2>
-            <span class="card__meta">{{ elementMeta(row) }}</span>
+            <span class="card__meta">
+              <span>{{ elementMeta(row) }}</span>
+              <StatusBadge :status="row.status" />
+            </span>
           </div>
-          <StatusBadge :status="row.status" />
         </RouterLink>
 
         <ActionMenu
