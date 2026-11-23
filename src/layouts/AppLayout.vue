@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { ClipboardCheck, Folder } from "@lucide/vue";
+import { BookOpen, Folder, Zap } from "@lucide/vue";
 import { RouterLink, useRoute } from "vue-router";
 
 const route = useRoute();
@@ -52,11 +52,11 @@ watch(() => route.fullPath, () => {
           <span>Projetos</span>
         </RouterLink>
         <RouterLink class="nav-item" :class="{ 'is-active': area === 'quick' }" to="/quick-evaluation">
-          <ClipboardCheck :size="20" aria-hidden="true" />
+          <Zap :size="20" aria-hidden="true" />
           <span>Avaliação rápida</span>
         </RouterLink>
         <RouterLink class="nav-item" :class="{ 'is-active': area === 'rules' }" to="/rules">
-          <ClipboardCheck :size="20" aria-hidden="true" />
+          <BookOpen :size="20" aria-hidden="true" />
           <span>Regras</span>
         </RouterLink>
       </nav>
@@ -68,11 +68,11 @@ watch(() => route.fullPath, () => {
         <span>Projetos</span>
       </RouterLink>
       <RouterLink class="nav-item" :class="{ 'is-active': area === 'quick' }" to="/quick-evaluation">
-        <ClipboardCheck :size="20" aria-hidden="true" />
+        <Zap :size="20" aria-hidden="true" />
         <span>Avaliação rápida</span>
       </RouterLink>
       <RouterLink class="nav-item" :class="{ 'is-active': area === 'rules' }" to="/rules">
-        <ClipboardCheck :size="20" aria-hidden="true" />
+        <BookOpen :size="20" aria-hidden="true" />
         <span>Regras</span>
       </RouterLink>
     </nav>

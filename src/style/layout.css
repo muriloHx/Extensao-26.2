@@ -239,13 +239,14 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  min-height: 68px;
-  padding: 8px max(16px, env(safe-area-inset-left));
+  min-height: var(--bottom-nav-height);
+  padding: 8px max(16px, env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom));
   border-top: 1px solid var(--line);
   background: var(--surface);
 }
 
 .nav-item {
+  position: relative;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -276,6 +277,30 @@
   background: var(--fill);
   color: var(--brand);
   font-weight: 600;
+}
+
+/* O item ativo ganha um indicador além da cor: sob sol a cor não basta. */
+.nav-item.is-active::before {
+  content: "";
+  position: absolute;
+  border-radius: var(--radius-pill);
+  background: var(--brand);
+}
+
+.bottom-nav .nav-item.is-active::before {
+  top: 0;
+  left: 50%;
+  width: 24px;
+  height: 3px;
+  transform: translateX(-50%);
+}
+
+.sidebar .nav-item.is-active::before {
+  top: 50%;
+  left: 0;
+  width: 3px;
+  height: 20px;
+  transform: translateY(-50%);
 }
 
 @media (min-width: 760px) {
