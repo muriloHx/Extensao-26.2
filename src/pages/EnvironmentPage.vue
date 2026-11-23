@@ -1,11 +1,14 @@
 <script setup>
-import { inject, onMounted, ref } from "vue";
-import { Box, ChevronLeft, ChevronRight, Plus, Trash2 } from "@lucide/vue";
+import { computed, inject, nextTick, onMounted, ref } from "vue";
+import { Box, Plus, Trash2 } from "@lucide/vue";
 import { RouterLink, useRouter } from "vue-router";
 import PageHeader from "../components/PageHeader.vue";
+import ActionMenu from "../components/ActionMenu.vue";
 import EmptyState from "../components/EmptyState.vue";
+import ErrorMessage from "../components/ErrorMessage.vue";
 import StatusBadge from "../components/StatusBadge.vue";
 import EvaluationSummary from "../components/EvaluationSummary.vue";
+import { plural } from "../core/plural.js";
 import { getEvaluationStatus } from "../services/evaluationService.js";
 
 const props = defineProps({
@@ -21,6 +24,19 @@ const environment = ref(null);
 const project = ref(null);
 const rows = ref([]);
 const summary = ref(null);
+const editing = ref(false);
+const name = ref("");
+const error = ref("");
+const nameInput = ref(null);
+
+const elementMenuItems = [
+  { id: "delete", label: "Excluir", icon: Trash2, danger: true },
+];
+
+const newElementRoute = computed(() => ({
+  path: "/elements/new",
+  query: { environmentId: environment.value?.id },
+}));
 
 // Pendente abre a edição do elemento; concluído abre o resultado da avaliação.
 function elementLink(row) {
@@ -29,12 +45,57 @@ function elementLink(row) {
     : `/elements/${row.element.id}/evaluation`;
 }
 
-function removeElement(element, event) {
-  confirmPopup.confirm(
-    event,
-    `Excluir o elemento ${element.name} e suas avaliações?`,
-    () => deleteElement(element)
-  );
+// Tipo e quantas regras a última avaliação verificou.
+function elementMeta(row) {
+  return row.ruleCount
+    ? `${row.element.type} · ${plural(row.ruleCount, "regra", "regras")}`
+    : row.element.type;
+}
+
+function focusContent() {
+  nextTick(() => document.getElementById("conteudo")?.focus?.());
+}
+
+async function startRename() {
+  editing.value = true;
+  name.value = environment.value.name;
+  error.value = "";
+
+  await nextTick();
+  nameInput.value?.focus();
+  nameInput.value?.select();
+}
+
+function cancelRename() {
+  editing.value = false;
+  name.value = "";
+  error.value = "";
+  focusContent();
+}
+
+async function saveName() {
+  error.value = "";
+
+  try {
+    await services.projectService.renameEnvironment(environment.value.id, name.value);
+    editing.value = false;
+    await loadData();
+    focusContent();
+  } catch (e) {
+    error.value = e.message;
+  }
+}
+
+function removeElement(element) {
+  confirmPopup.open({
+    title: `Excluir elemento “${element.name}”?`,
+    details: "As avaliações registradas neste elemento também serão removidas.",
+    onAccept: () => deleteElement(element),
+  });
+}
+
+function onElementAction(action, element) {
+  if (action === "delete") removeElement(element);
 }
 
 async function deleteElement(element) {
@@ -42,19 +103,18 @@ async function deleteElement(element) {
   await loadData();
 }
 
-function removeEnvironment(event) {
-  confirmPopup.confirm(
-    event,
-    `Excluir o ambiente “${environment.value.name}” e seus elementos?`,
-    deleteEnvironment
-  );
+function removeEnvironment() {
+  confirmPopup.open({
+    title: `Excluir ambiente “${environment.value.name}”?`,
+    details: `Também serão removidos ${plural(rows.value.length, "elemento", "elementos")} e as avaliações registradas neles.`,
+    onAccept: deleteEnvironment,
+  });
 }
 
 async function deleteEnvironment() {
   await services.projectService.deleteEnvironment(environment.value.id);
   router.push(`/projects/${environment.value.projectId}`);
 }
-
 
 async function loadData() {
   environment.value = await services.projectService.getEnvironment(
@@ -83,6 +143,7 @@ async function loadData() {
         return {
           element,
           status: getEvaluationStatus(evaluations),
+          ruleCount: evaluations[0]?.result?.length ?? 0,
         };
       })
     ),
@@ -98,91 +159,95 @@ onMounted(loadData);
 
 <template>
   <template v-if="environment">
-    <RouterLink
-      class="back-link"
-      :to="`/projects/${environment.projectId}`"
-    >
-      <ChevronLeft :size="18" aria-hidden="true" /><span class="back-link__label">{{ project?.name ?? "Projeto" }}</span>
-    </RouterLink>
-
     <PageHeader
       :title="environment.name"
+      :parent="project?.name ?? 'Projetos'"
+      :back-to="`/projects/${environment.projectId}`"
+      menu
+      @rename="startRename"
+      @delete="removeEnvironment"
     >
-      <template #action>
-        <div class="project-header__actions">
-          <RouterLink v-if="rows.length"
-            class="button"
-            :to="{
-              path: '/elements/new',
-              query: { environmentId: environment.id },
-            }"
-          >
-            <Plus :size="18" aria-hidden="true" />Adicionar elemento
-          </RouterLink>
-        </div>
+      <template #summary>
+        <EvaluationSummary
+          v-if="summary"
+          compact
+          :summary="summary"
+          show-evaluated
+        />
       </template>
     </PageHeader>
 
-    <EvaluationSummary v-if="summary && rows.length" :summary="summary" scope="ambiente" />
+    <form
+      v-if="editing"
+      class="form-card collection-form"
+      @submit.prevent="saveName"
+      @keydown.esc="cancelRename"
+    >
+      <div class="collection-form__heading">
+        <h2>Nome do ambiente</h2>
+        <p>Use um nome que ajude a identificar este espaço no projeto.</p>
+      </div>
+
+      <label class="field">
+        <span>Nome do ambiente</span>
+        <input ref="nameInput" v-model="name" required />
+      </label>
+
+      <ErrorMessage :message="error" />
+
+      <div class="form-actions">
+        <button class="button button--ghost" type="button" @click="cancelRename">
+          Cancelar
+        </button>
+        <button class="button" type="submit">Salvar</button>
+      </div>
+    </form>
 
     <div v-if="rows.length" class="card-list collection-list">
       <article
         v-for="row in rows"
         :key="row.element.id"
-        class="card card--interactive"
+        class="card card--interactive card--with-action"
       >
-        <RouterLink
-          class="card__link"
-          :to="elementLink(row)"
-        >
+        <RouterLink class="card__link" :to="elementLink(row)">
           <span class="card__icon"><Box :size="22" aria-hidden="true" /></span>
-          <div>
+          <div class="card__body">
             <h2>{{ row.element.name }}</h2>
-            <p>{{ row.element.type }}</p>
+            <span class="card__meta">{{ elementMeta(row) }}</span>
           </div>
           <StatusBadge :status="row.status" />
-          <ChevronRight :size="20" class="chevron" aria-hidden="true" />
         </RouterLink>
 
-        <div class="card__menu">
-          <button
-            class="icon-button icon-button--danger"
-            title="Excluir"
-            aria-label="Excluir"
-            @click="removeElement(row.element, $event)"
-          >
-            <Trash2 :size="18" aria-hidden="true" />
-          </button>
-        </div>
+        <ActionMenu
+          class="card__action"
+          :label="`Ações de ${row.element.name}`"
+          :items="elementMenuItems"
+          @select="(action) => onElementAction(action, row.element)"
+        />
       </article>
     </div>
 
     <EmptyState
-      v-if="!rows.length"
-      class="collection-empty"
+      v-else-if="!editing"
+      :icon="Box"
       title="Nenhum elemento ainda"
-      text="Cadastre portas, rampas, sanitários e outros itens para avaliar."
+      text="Cadastre portas, rampas e sanitários."
     >
-      <RouterLink
-        class="button"
-        :to="{
-          path: '/elements/new',
-          query: { environmentId: environment.id },
-        }"
-      >
+      <RouterLink class="button" :to="newElementRoute">
         <Plus :size="18" aria-hidden="true" />Adicionar elemento
       </RouterLink>
     </EmptyState>
 
-    <div class="page-footer-actions">
-      <button class="text-button text-button--danger" @click="removeEnvironment">
-        Excluir ambiente
-      </button>
+    <div v-if="rows.length && !editing" class="page-action">
+      <RouterLink class="button" :to="newElementRoute">
+        <Plus :size="18" aria-hidden="true" />Adicionar elemento
+      </RouterLink>
     </div>
   </template>
 
   <EmptyState
     v-else
+    :icon="Box"
     title="Ambiente não encontrado"
     text="Ele pode ter sido removido."
   >
