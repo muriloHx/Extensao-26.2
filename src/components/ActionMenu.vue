@@ -2,7 +2,7 @@
 import { Ellipsis } from "@lucide/vue";
 import { nextTick, onBeforeUnmount, ref } from "vue";
 
-const props = defineProps({
+defineProps({
   label: { type: String, default: "Mais ações" },
   // [{ id, label, icon, danger }]
   items: { type: Array, required: true },
