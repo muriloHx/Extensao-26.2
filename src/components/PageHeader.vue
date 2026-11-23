@@ -34,7 +34,7 @@ function onMenuSelect(id, opener) {
 
 <template>
   <header class="page-header">
-    <div v-if="backTo || helpButton || menu" class="page-header__bar">
+    <div v-if="backTo || menu" class="page-header__bar">
       <RouterLink
         v-if="backTo"
         class="page-header__back"
@@ -45,20 +45,8 @@ function onMenuSelect(id, opener) {
         <span v-if="parent" class="page-header__back-label">{{ parent }}</span>
       </RouterLink>
 
-      <div v-if="helpButton || menu" class="page-header__bar-actions">
-        <button
-          v-if="helpButton"
-          class="page-header__help"
-          type="button"
-          title="Ajuda"
-          aria-label="Ajuda"
-          @click="emit('help')"
-        >
-          <CircleHelp :size="20" aria-hidden="true" />
-        </button>
-
+      <div v-if="menu" class="page-header__bar-actions">
         <ActionMenu
-          v-if="menu"
           :label="`Ações de ${title}`"
           :items="menuItems"
           @select="onMenuSelect"
@@ -68,7 +56,21 @@ function onMenuSelect(id, opener) {
 
     <div class="page-header__row">
       <div class="page-header__main">
-        <h1>{{ title }}</h1>
+        <div class="page-header__heading">
+          <h1>{{ title }}</h1>
+
+          <button
+            v-if="helpButton"
+            class="page-header__help"
+            type="button"
+            title="Ajuda"
+            aria-label="Ajuda"
+            @click="emit('help')"
+          >
+            <CircleHelp :size="20" aria-hidden="true" />
+          </button>
+        </div>
+
         <slot name="summary" />
         <p v-if="description" class="page-header__description">{{ description }}</p>
       </div>

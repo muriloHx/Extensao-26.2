@@ -89,7 +89,7 @@
   margin-bottom: 24px;
 }
 
-/* Linha superior: voltar com o nome do pai à esquerda, ajuda e menu à direita. */
+/* Linha superior: voltar com o nome do pai à esquerda, menu à direita. */
 .page-header__bar {
   display: flex;
   align-items: center;
@@ -139,6 +139,20 @@
 .page-header__back:hover {
   background: var(--fill);
   color: var(--brand-hover);
+}
+
+/* Título e ajuda dividem a mesma linha: o botão acompanha a altura do texto. */
+.page-header__heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.page-header__heading h1 {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-bottom: 0;
 }
 
 /* Ajuda: alvo de toque de 48px mesmo com o ícone pequeno. */
