@@ -54,7 +54,7 @@
 
   /* Medidas de apoio — alvos de toque, navegação inferior e ação fixa */
   --touch-lg: 48px;              /* voltar e menu de ações */
-  --bottom-nav-height: 68px;
+  --bottom-nav-height: 60px;
   --fixed-action-space: 76px;    /* botão de ação fixo + respiro */
   --empty-state-icon: 64px;
 }
