@@ -4,6 +4,7 @@ import { EvaluationRepository } from "../repositories/evaluationRepository.js";
 import { openDatabase } from "../repositories/indexedDb.js";
 import { ProjectRepository } from "../repositories/projectRepository.js";
 import { RuleSetRepository } from "../repositories/ruleSetRepository.js";
+import { CloudSyncService } from "./cloudSyncService.js";
 import { EvaluationService } from "./evaluationService.js";
 import { ProjectService } from "./projectService.js";
 import { QuickEvaluationService } from "./quickEvaluationService.js";
@@ -21,12 +22,17 @@ export async function createApplicationServices({ indexedDB } = {}) {
   };
 
   const evaluationService = new EvaluationService(repositories);
+  const cloudSyncService = new CloudSyncService({ database });
 
   return {
     projectService: new ProjectService(repositories),
     evaluationService,
     quickEvaluationService: new QuickEvaluationService({ evaluationService }),
     ruleSetService: new RuleSetService(repositories),
-    close: () => database.close()
+    cloudSyncService,
+    close: () => {
+      cloudSyncService.dispose();
+      database.close();
+    }
   };
 }

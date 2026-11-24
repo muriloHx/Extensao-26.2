@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, provide, ref } from "vue";
+import { onBeforeUnmount, onMounted, provide, ref } from "vue";
 import { RouterView, useRoute } from "vue-router";
 import AppLayout from "./layouts/AppLayout.vue";
 import ConfirmPopup from "./components/ConfirmPopup.vue";
@@ -15,7 +15,14 @@ provide("confirmPopup", {
     confirmPopup.value?.confirm(event, message, onAccept),
 });
 
+// A troca do IndexedDB por um snapshot remoto pode terminar depois de o usuário
+// sair da tela Conta. Nesse caso, a rota atual precisa reler os dados.
+function refreshAfterRestore() {
+  if (route.name !== "account") window.location.reload();
+}
+
 onMounted(async () => {
+  window.addEventListener("cloud-data-restored", refreshAfterRestore);
   await router.isReady();
 
   const isPwa = window.matchMedia?.("(display-mode: standalone)")?.matches
@@ -26,6 +33,10 @@ onMounted(async () => {
     localStorage.setItem("welcomePopupSeen", "true");
     showWelcome.value = true;
   }
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener("cloud-data-restored", refreshAfterRestore);
 });
 </script>
 

@@ -9,6 +9,7 @@ import "./style/index.css";
 async function bootstrap() {
   const [services, builtInRuleSets] = await Promise.all([createApplicationServices(), loadBuiltInRuleSets()]);
   createApp(App).provide("services", services).provide("builtInRuleSets", builtInRuleSets).use(router).mount("#app");
+  services.cloudSyncService.init().catch(() => {});
   registerSW({ immediate: true });
 }
 

@@ -307,6 +307,13 @@
   background: var(--surface);
 }
 
+/* Quatro itens no celular: cada um divide a largura disponível. */
+.bottom-nav .nav-item {
+  flex: 1;
+  min-width: 0;
+  padding-inline: 4px;
+}
+
 .nav-item {
   position: relative;
   text-align: center;

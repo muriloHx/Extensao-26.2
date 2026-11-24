@@ -1,10 +1,15 @@
 <script setup>
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { BookOpen, Folder, Zap } from "@lucide/vue";
+import { BookOpen, Folder, UserRound, Zap } from "@lucide/vue";
 import { RouterLink, useRoute } from "vue-router";
 
 const route = useRoute();
-const area = computed(() => route.path.startsWith("/rules") ? "rules" : route.path.startsWith("/quick-evaluation") ? "quick" : "projects");
+const area = computed(() => {
+  if (route.path.startsWith("/rules")) return "rules";
+  if (route.path.startsWith("/quick-evaluation")) return "quick";
+  if (route.path.startsWith("/account")) return "account";
+  return "projects";
+});
 const year = new Date().getFullYear();
 const repositoryUrl = "https://github.com/muriloHx/Extensao-26.2";
 const content = ref(null);
@@ -61,6 +66,10 @@ watch(() => route.fullPath, () => {
           <BookOpen :size="20" aria-hidden="true" />
           <span>Regras</span>
         </RouterLink>
+        <RouterLink class="nav-item" :class="{ 'is-active': area === 'account' }" to="/account">
+          <UserRound :size="20" aria-hidden="true" />
+          <span>Conta</span>
+        </RouterLink>
       </nav>
     </aside>
     <main id="conteudo" ref="content" class="content" tabindex="-1"><slot /></main>
@@ -69,13 +78,17 @@ watch(() => route.fullPath, () => {
         <Folder :size="20" aria-hidden="true" />
         <span>Projetos</span>
       </RouterLink>
-      <RouterLink class="nav-item" :class="{ 'is-active': area === 'quick' }" to="/quick-evaluation">
+      <RouterLink class="nav-item" :class="{ 'is-active': area === 'quick' }" to="/quick-evaluation" aria-label="Avaliação rápida">
         <Zap :size="20" aria-hidden="true" />
-        <span>Avaliação rápida</span>
+        <span>Rápida</span>
       </RouterLink>
       <RouterLink class="nav-item" :class="{ 'is-active': area === 'rules' }" to="/rules">
         <BookOpen :size="20" aria-hidden="true" />
         <span>Regras</span>
+      </RouterLink>
+      <RouterLink class="nav-item" :class="{ 'is-active': area === 'account' }" to="/account">
+        <UserRound :size="20" aria-hidden="true" />
+        <span>Conta</span>
       </RouterLink>
     </nav>
     <footer class="app-footer">

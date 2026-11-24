@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 
+import AccountPage from "../pages/AccountPage.vue";
 import ElementPage from "../pages/ElementPage.vue";
 import EnvironmentPage from "../pages/EnvironmentPage.vue";
 import EvaluationPage from "../pages/EvaluationPage.vue";
@@ -92,6 +93,13 @@ const routes = [
     name: "rules-group",
     component: RulesGroupPage,
     props: true,
+  },
+
+  // Conta e sincronização
+  {
+    path: "/account",
+    name: "account",
+    component: AccountPage,
   },
 
   // Fallback (Página não encontrada)

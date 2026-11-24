@@ -1,0 +1,106 @@
+/* Tela Conta: perfil, estado da sincronização e ações da nuvem. */
+
+.account-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.account-card {
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+}
+
+.account-card--profile {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.account-card__identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1 1 220px;
+}
+
+.account-card__identity > div {
+  min-width: 0;
+}
+
+.account-card__identity h2 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.account-card__identity p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.account-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.account-status > div {
+  min-width: 0;
+}
+
+.account-status h2 {
+  margin: 0;
+}
+
+.account-status__dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  margin-top: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--text-3);
+}
+
+.account-status--synced .account-status__dot {
+  background: var(--success);
+}
+
+.account-status--pending .account-status__dot,
+.account-status--syncing .account-status__dot {
+  background: var(--brand);
+}
+
+.account-status--offline .account-status__dot {
+  background: var(--accent);
+}
+
+.account-status--error .account-status__dot,
+.account-status--auth .account-status__dot {
+  background: var(--error);
+}
+
+.account-note {
+  color: var(--text-2);
+  font-size: 0.9375rem;
+}
+
+.account-card .alert {
+  margin: 0;
+}
+
+.account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+@media (max-width: 600px) {
+  .account-card--profile .button {
+    width: 100%;
+  }
+}

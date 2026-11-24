@@ -11,7 +11,7 @@ Aplicação web para organizar e apoiar avaliações de acessibilidade em ambien
 - Checklists padrão baseados na ABNT NBR 9050:2020, agrupados por assunto.
 - Importação e exportação de conjuntos personalizados em YAML e JSON.
 - Resumo dos resultados por projeto e ambiente.
-- Persistência local no navegador, sem necessidade de uma conta ou backend.
+- Persistência local no navegador, com conta opcional para guardar uma cópia no Supabase.
 
 ## Começando
 
@@ -27,6 +27,22 @@ npm run dev
 ```
 
 O Vite exibirá o endereço local para abrir a aplicação no navegador.
+
+### Conta e sincronização (opcional)
+
+Sem conta, o app funciona normalmente e mantém tudo no IndexedDB. Para habilitar
+o backup na nuvem, crie um projeto no Supabase, rode o SQL de
+[`supabase/schema.sql`](supabase/schema.sql) e preencha o `.env`:
+
+```env
+VITE_SUPABASE_URL=https://<project-ref>.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+```
+
+Em **Authentication → Providers → Email**, desative a confirmação de e-mail
+para o demo. A publishable key é pública; a proteção dos dados fica por conta da
+RLS. Ao entrar na seção **Conta**, o app envia um snapshot dos dados locais e
+pode baixá-lo em outro dispositivo.
 
 ### Outros comandos
 
@@ -74,9 +90,22 @@ Parâmetros podem ser do tipo `number`, `boolean` ou `select`. Regras podem usar
 
 ## Dados e privacidade
 
-Projetos, ambientes, elementos, avaliações e regras importadas são armazenados localmente no navegador, usando IndexedDB. Não há serviço de backend configurado para sincronizar esses dados. Limpar os dados do site ou trocar de navegador/dispositivo pode removê-los ou torná-los indisponíveis; exporte conjuntos personalizados para mantê-los fora do navegador.
+Projetos, ambientes, elementos, avaliações e regras importadas são armazenados
+localmente no navegador, usando IndexedDB. Limpar os dados do site ou trocar de
+navegador/dispositivo pode removê-los; exporte conjuntos personalizados para
+mantê-los fora do navegador.
 
-Os conjuntos padrão são incluídos no bundle da aplicação e não precisam ser importados.
+Ao criar uma conta, o app envia um snapshot desses dados para o Supabase. O
+acesso é restrito ao dono por Row Level Security; a publishable key usada no
+frontend é pública e não concede acesso aos dados de outra conta. O modo local
+continua disponível sem login.
+
+A sincronização do demo é um snapshot por conta, com última escrita vencendo:
+não edite a mesma conta em dois dispositivos ao mesmo tempo. O snapshot inclui
+projetos, ambientes, elementos, avaliações e regras personalizadas.
+
+Os conjuntos padrão são incluídos no bundle da aplicação e não precisam ser
+importados.
 
 ## Estrutura do projeto
 
@@ -102,5 +131,6 @@ O aplicativo avalia os dados informados nos checklists. Não interpreta plantas 
 - Vite
 - JavaScript (ES modules)
 - IndexedDB para persistência local
+- Supabase (Postgres, Auth e RLS) para o backup opcional
 - YAML para os conjuntos de regras padrão
 
