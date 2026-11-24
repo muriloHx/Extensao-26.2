@@ -44,6 +44,11 @@ para o demo. A publishable key é pública; a proteção dos dados fica por cont
 RLS. Ao entrar na seção **Conta**, o app envia um snapshot dos dados locais e
 pode baixá-lo em outro dispositivo.
 
+O arquivo [`.env.production`](.env.production) já leva a URL e a publishable key
+públicas para o build do GitHub Pages. Se o projeto Supabase for trocado,
+atualize esse arquivo. Nunca coloque a senha do banco ou a chave `service_role`
+nele.
+
 ### Outros comandos
 
 ```bash
