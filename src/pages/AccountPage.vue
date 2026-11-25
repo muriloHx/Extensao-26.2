@@ -124,6 +124,25 @@ async function submit() {
 }
 
 async function logout() {
+  let pending = false;
+
+  try {
+    pending = await cloud.hasUnsyncedChanges();
+  } catch {
+    // Sem acesso ao IndexedDB, segue com o aviso padrão.
+  }
+
+  confirmPopup.open({
+    title: "Sair da conta?",
+    details: pending
+      ? "Há alterações que ainda não foram enviadas para a nuvem. Elas continuam salvas neste dispositivo; para guardá-las na conta, cancele e sincronize antes de sair."
+      : "Os dados continuam salvos neste dispositivo. Para voltar a sincronizar, entre novamente.",
+    acceptLabel: "Sair",
+    onAccept: confirmLogout
+  });
+}
+
+async function confirmLogout() {
   busy.value = true;
   error.value = "";
   notice.value = "";

@@ -1,9 +1,13 @@
 <script setup>
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, inject, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { BookOpen, Folder, UserRound, Zap } from "@lucide/vue";
 import { RouterLink, useRoute } from "vue-router";
 
 const route = useRoute();
+const services = inject("services");
+const cloud = services?.cloudSyncService;
+const syncState = ref(cloud?.getStatus().state ?? "local");
+let unsubscribeSync = null;
 const area = computed(() => {
   if (route.path.startsWith("/rules")) return "rules";
   if (route.path.startsWith("/quick-evaluation")) return "quick";
@@ -14,6 +18,29 @@ const year = new Date().getFullYear();
 const repositoryUrl = "https://github.com/muriloHx/Extensao-26.2";
 const content = ref(null);
 let interacted = false;
+
+const syncAlert = computed(() =>
+  ["pending", "offline", "error", "auth"].includes(syncState.value)
+);
+
+const syncAlertText = computed(() => {
+  switch (syncState.value) {
+    case "pending":
+      return "sincronização pendente";
+    case "offline":
+      return "sem conexão; alterações aguardando envio";
+    case "error":
+      return "falha ao sincronizar";
+    case "auth":
+      return "sessão expirada";
+    default:
+      return "";
+  }
+});
+
+const accountLabel = computed(() =>
+  syncAlert.value ? `Conta, ${syncAlertText.value}` : undefined
+);
 
 // Leva o foco para o conteúdo depois de cada navegação: quem usa teclado ou
 // leitor de tela continua de onde a tela nova começa, em vez de tabular pela
@@ -33,11 +60,15 @@ function markInteraction() {
 onMounted(() => {
   document.addEventListener("pointerdown", markInteraction, { passive: true });
   document.addEventListener("keydown", markInteraction);
+  unsubscribeSync = cloud?.subscribe?.((next) => {
+    syncState.value = next.state;
+  });
 });
 
 onBeforeUnmount(() => {
   document.removeEventListener("pointerdown", markInteraction);
   document.removeEventListener("keydown", markInteraction);
+  unsubscribeSync?.();
 });
 
 watch(() => route.fullPath, () => {
@@ -51,7 +82,7 @@ watch(() => route.fullPath, () => {
     <aside class="sidebar">
       <RouterLink class="brand" to="/projects">
         <img class="brand__mark" src="/icon-512.png" alt="Acesso Verificador">
-        <span>Acesso<br><small>Verificador</small></span>
+        <span>Acesso Verificador</span>
       </RouterLink>
       <nav>
         <RouterLink class="nav-item" :class="{ 'is-active': area === 'projects' }" to="/projects">
@@ -66,8 +97,21 @@ watch(() => route.fullPath, () => {
           <BookOpen :size="20" aria-hidden="true" />
           <span>Regras</span>
         </RouterLink>
-        <RouterLink class="nav-item" :class="{ 'is-active': area === 'account' }" to="/account">
-          <UserRound :size="20" aria-hidden="true" />
+        <RouterLink
+          class="nav-item"
+          :class="{ 'is-active': area === 'account' }"
+          to="/account"
+          :aria-label="accountLabel"
+        >
+          <span class="nav-item__icon">
+            <UserRound :size="20" aria-hidden="true" />
+            <span
+              v-if="syncAlert"
+              class="nav-item__alert"
+              :class="`nav-item__alert--${syncState}`"
+              aria-hidden="true"
+            ></span>
+          </span>
           <span>Conta</span>
         </RouterLink>
       </nav>
@@ -86,8 +130,21 @@ watch(() => route.fullPath, () => {
         <BookOpen :size="20" aria-hidden="true" />
         <span>Regras</span>
       </RouterLink>
-      <RouterLink class="nav-item" :class="{ 'is-active': area === 'account' }" to="/account">
-        <UserRound :size="20" aria-hidden="true" />
+      <RouterLink
+        class="nav-item"
+        :class="{ 'is-active': area === 'account' }"
+        to="/account"
+        :aria-label="accountLabel"
+      >
+        <span class="nav-item__icon">
+          <UserRound :size="20" aria-hidden="true" />
+          <span
+            v-if="syncAlert"
+            class="nav-item__alert"
+            :class="`nav-item__alert--${syncState}`"
+            aria-hidden="true"
+          ></span>
+        </span>
         <span>Conta</span>
       </RouterLink>
     </nav>

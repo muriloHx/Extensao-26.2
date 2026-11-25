@@ -3,7 +3,7 @@ import { isSupabaseConfigured, supabase } from "./supabaseClient.js";
 
 const SNAPSHOT_VERSION = 1;
 const STORE_NAMES = Object.values(STORES);
-const AUTO_SYNC_INTERVAL = 15000;
+const AUTO_SYNC_INTERVAL = 30000;
 const TABLE = "snapshots";
 
 function transactionDone(transaction) {
@@ -106,6 +106,15 @@ export class CloudSyncService {
     return { ...this.status };
   }
 
+  // A checagem é local: compara o snapshot atual com o último enviado, sem
+  // consultar a nuvem. Serve para avisar antes de sair da conta.
+  async hasUnsyncedChanges() {
+    if (!this.user) return false;
+    const snapshot = await this.#readSnapshot();
+    if (this.#isEmpty(snapshot) && !this.lastUploadedHash) return false;
+    return this.#hash(snapshot) !== this.lastUploadedHash;
+  }
+
   subscribe(listener) {
     this.listeners.add(listener);
     listener(this.getStatus());
@@ -152,7 +161,9 @@ export class CloudSyncService {
     if (this.syncing) throw new Error("Aguarde a sincronização em andamento.");
     const snapshot = await this.#readSnapshot();
 
-    if (this.#isEmpty(snapshot)) {
+    // Sem histórico de sync, uma base vazia é um dispositivo novo e deve
+    // receber a nuvem; com histórico, o vazio é uma exclusão local.
+    if (this.#isEmpty(snapshot) && !this.lastUploadedHash) {
       await this.download();
       return;
     }
@@ -256,7 +267,15 @@ export class CloudSyncService {
       return;
     }
 
-    if (this.#isEmpty(local) || this.#hash(local) === this.lastUploadedHash) {
+    if (this.#isEmpty(local)) {
+      // Um dispositivo que já sincronizou e ficou vazio foi esvaziado aqui:
+      // enviar o snapshot vazio é o que propaga a exclusão para a nuvem.
+      if (this.lastUploadedHash) await this.#uploadSnapshot(local);
+      else await this.#applyRemote(remote);
+      return;
+    }
+
+    if (this.#hash(local) === this.lastUploadedHash) {
       await this.#applyRemote(remote);
       return;
     }
@@ -468,15 +487,18 @@ export class CloudSyncService {
     if (!this.user || this.syncing || this.needsChoice) return;
     if (globalThis.document?.visibilityState === "hidden") return;
 
-    if (typeof navigator !== "undefined" && !navigator.onLine) {
-      this.#setStatus({ state: "offline" });
-      return;
-    }
-
     try {
       const snapshot = await this.#readSnapshot();
-      if (this.#isEmpty(snapshot)) return;
+      if (this.#isEmpty(snapshot) && !this.lastUploadedHash) return;
       if (this.#hash(snapshot) === this.lastUploadedHash) return;
+
+      // Sem alterações locais não há motivo para marcar offline nem acessar a
+      // nuvem; o aviso só aparece quando existe algo esperando envio.
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        this.#setStatus({ state: "offline" });
+        return;
+      }
+
       await this.#uploadSnapshot(snapshot);
     } catch (error) {
       this.#fail(error);
