@@ -27,7 +27,14 @@ export function toIsoDate(value = new Date(), field = "data") {
 
 export function copyValue(value) {
   if (typeof structuredClone === "function") {
-    return structuredClone(value);
+    try {
+      return structuredClone(value);
+    } catch (error) {
+      // Resultados do motor podem carregar referências a objetos reativos do
+      // Vue (como unidades { singular, plural }); Proxies não são clonáveis,
+      // mas o conteúdo continua serializável.
+      if (error?.name !== "DataCloneError") throw error;
+    }
   }
 
   return JSON.parse(JSON.stringify(value));

@@ -29,6 +29,18 @@ test("entidades de domínio geram IDs e datas serializáveis", () => {
   assert.deepEqual(JSON.parse(JSON.stringify(evaluation)).data, { largura: 80 });
 });
 
+test("createEvaluation copia valores que o structuredClone não aceita", () => {
+  const unidade = new Proxy({ singular: "ponto", plural: "pontos" }, {});
+
+  const evaluation = createEvaluation({
+    elementId: "elemento-1",
+    data: { contraste: 0.5 },
+    result: [{ status: "conforme", unidade }]
+  });
+
+  assert.deepEqual(evaluation.result[0].unidade, { singular: "ponto", plural: "pontos" });
+});
+
 function createInMemoryRepositories() {
   const stores = {
     projects: new Map(),
