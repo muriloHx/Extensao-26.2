@@ -1,7 +1,8 @@
 <script setup>
-import { CloudDownload, CloudUpload, LogOut, UserRound } from "@lucide/vue";
+import { CloudDownload, CloudOff, CloudUpload, LogOut, UserRound } from "@lucide/vue";
 import { computed, inject, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
+import { VueClientRecaptcha } from "vue-client-recaptcha";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import PageHeader from "../components/PageHeader.vue";
 
@@ -17,6 +18,9 @@ const password = ref("");
 const error = ref("");
 const notice = ref("");
 const busy = ref(false);
+const captchaInput = ref("");
+const captchaValid = ref(false);
+const captchaRef = ref(null);
 const status = ref(cloud.getStatus());
 const user = ref(cloud.getUser());
 let unsubscribe = null;
@@ -85,16 +89,29 @@ const statusDetail = computed(() => {
   }
 });
 
+function resetCaptcha() {
+  captchaInput.value = "";
+  captchaValid.value = false;
+  captchaRef.value?.resetCaptcha();
+}
+
 function toggleMode() {
   mode.value = mode.value === "login" ? "signup" : "login";
   error.value = "";
   notice.value = "";
+  resetCaptcha();
 }
 
 async function submit() {
-  busy.value = true;
   error.value = "";
   notice.value = "";
+
+  if (!captchaValid.value) {
+    error.value = "Resolva a verificação de segurança para continuar.";
+    return;
+  }
+
+  busy.value = true;
 
   try {
     if (mode.value === "signup") {
@@ -116,6 +133,8 @@ async function submit() {
       await cloud.signIn({ email: email.value, password: password.value });
       password.value = "";
     }
+
+    resetCaptcha();
   } catch (cause) {
     error.value = cause.message;
   } finally {
@@ -215,7 +234,7 @@ onBeforeUnmount(() => unsubscribe?.());
 <template>
   <PageHeader
     title="Conta"
-    description="Guarde uma cópia dos seus dados na nuvem."
+    description="Sincronize seus projetos entre dispositivos."
   />
 
   <section v-if="!configured" class="card account-card">
@@ -229,15 +248,15 @@ onBeforeUnmount(() => unsubscribe?.());
 
   <form
     v-else-if="!isSignedIn"
-    class="form-card collection-form account-form"
+    class="form-card account-auth"
     @submit.prevent="submit"
   >
-    <div class="collection-form__heading">
+    <div class="account-auth__heading">
       <h2>{{ mode === "login" ? "Entrar" : "Criar conta" }}</h2>
       <p>
         {{ mode === "login"
-          ? "Acesse sua conta para sincronizar os dados."
-          : "Crie uma conta para guardar os dados na nuvem." }}
+          ? "Acesse com seu e-mail e senha."
+          : "Crie uma conta para guardar seus dados na nuvem." }}
       </p>
     </div>
 
@@ -264,40 +283,70 @@ onBeforeUnmount(() => unsubscribe?.());
       </label>
     </div>
 
+    <div class="field account-captcha">
+      <label for="captcha-answer">Verificação de segurança</label>
+      <div class="account-captcha__row">
+        <VueClientRecaptcha
+          ref="captchaRef"
+          v-model="captchaInput"
+          v-model:valid="captchaValid"
+          :count="5"
+          :width="150"
+          :height="46"
+          theme="light"
+          refresh-label="Gerar novo código"
+          canvas-label="Código de verificação"
+          class="account-captcha__canvas"
+        />
+        <input
+          id="captcha-answer"
+          v-model="captchaInput"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+          placeholder="Digite o código"
+        />
+      </div>
+      <span class="account-captcha__status" role="status">
+        {{ captchaValid ? "Verificação concluída." : "" }}
+      </span>
+    </div>
+
     <ErrorMessage :message="error" />
     <p v-if="notice" class="account-note" role="status">{{ notice }}</p>
 
-    <div class="form-actions">
-      <button class="text-button" type="button" @click="toggleMode">
-        {{ mode === "login" ? "Criar conta" : "Já tenho conta" }}
-      </button>
-      <button class="button" type="submit" :disabled="busy">
-        {{ busy ? "Aguarde…" : mode === "login" ? "Entrar" : "Criar conta" }}
-      </button>
-    </div>
+    <button class="button account-auth__submit" type="submit" :disabled="busy">
+      {{ busy ? "Aguarde…" : mode === "login" ? "Entrar" : "Criar conta" }}
+    </button>
 
-    <p class="account-note">
-      Você pode continuar usando o app sem conta; os dados ficam neste dispositivo.
+    <p class="account-auth__switch">
+      {{ mode === "login" ? "Ainda não tem conta?" : "Já tem conta?" }}
+      <button class="text-button" type="button" @click="toggleMode">
+        {{ mode === "login" ? "Criar conta" : "Entrar" }}
+      </button>
+    </p>
+
+    <p class="account-auth__offline">
+      <CloudOff :size="16" aria-hidden="true" />
+      Você pode continuar sem conta; os dados ficam neste dispositivo.
     </p>
   </form>
 
   <div v-else class="account-stack">
-    <section class="card account-card account-card--profile">
-      <div class="account-card__identity">
+    <section class="card account-card" aria-live="polite">
+      <div class="account-card__profile">
         <span class="card__icon"><UserRound :size="22" aria-hidden="true" /></span>
         <div>
           <h2>{{ profileName }}</h2>
           <p>{{ user.email }}</p>
         </div>
+        <button class="text-button account-signout" type="button" :disabled="busy" @click="logout">
+          <LogOut :size="16" aria-hidden="true" />
+          Sair
+        </button>
       </div>
 
-      <button class="button button--ghost" type="button" :disabled="busy" @click="logout">
-        <LogOut :size="18" aria-hidden="true" />
-        Sair
-      </button>
-    </section>
-
-    <section class="card account-card" aria-live="polite">
       <div class="account-status" :class="`account-status--${status.state}`">
         <span class="account-status__dot" aria-hidden="true"></span>
         <div>

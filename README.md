@@ -44,6 +44,10 @@ para o demo. A publishable key é pública; a proteção dos dados fica por cont
 RLS. Ao entrar na seção **Conta**, o app envia um snapshot dos dados locais e
 pode baixá-lo em outro dispositivo.
 
+O login e o cadastro pedem um captcha local (`vue-client-recaptcha`), sem chamada
+a serviço externo. Ele reduz bots casuais; como roda no cliente, não substitui
+validação no servidor.
+
 O build do GitHub Pages recebe `VITE_SUPABASE_URL` e
 `VITE_SUPABASE_PUBLISHABLE_KEY` das variáveis de repositório do GitHub Actions
 (**Settings → Secrets and variables → Actions → Variables**). Elas são
@@ -108,8 +112,11 @@ frontend é pública e não concede acesso aos dados de outra conta. O modo loca
 continua disponível sem login.
 
 A sincronização do demo é um snapshot por conta, com última escrita vencendo:
-não edite a mesma conta em dois dispositivos ao mesmo tempo. O snapshot inclui
-projetos, ambientes, elementos, avaliações e regras personalizadas.
+não edite a mesma conta em dois dispositivos ao mesmo tempo. Quando há alterações
+locais, o envio automático acontece a cada 30s; **Sincronizar agora** força o
+envio e **Baixar da nuvem** baixa a cópia remota. Se as duas versões mudarem, o
+app pede para escolher entre enviar ou baixar. O snapshot inclui projetos,
+ambientes, elementos, avaliações e regras personalizadas.
 
 Os conjuntos padrão são incluídos no bundle da aplicação e não precisam ser
 importados.
@@ -139,5 +146,6 @@ O aplicativo avalia os dados informados nos checklists. Não interpreta plantas 
 - JavaScript (ES modules)
 - IndexedDB para persistência local
 - Supabase (Postgres, Auth e RLS) para o backup opcional
+- `vue-client-recaptcha` para a verificação local no login
 - YAML para os conjuntos de regras padrão
 
