@@ -2,7 +2,7 @@
 import { CloudDownload, CloudOff, CloudUpload, LogOut, UserRound } from "@lucide/vue";
 import { computed, inject, onBeforeUnmount, onMounted, ref } from "vue";
 import { useRouter } from "vue-router";
-import { VueClientRecaptcha } from "vue-client-recaptcha";
+import CaptchaCanvas from "../components/CaptchaCanvas.vue";
 import ErrorMessage from "../components/ErrorMessage.vue";
 import PageHeader from "../components/PageHeader.vue";
 
@@ -92,7 +92,7 @@ const statusDetail = computed(() => {
 function resetCaptcha() {
   captchaInput.value = "";
   captchaValid.value = false;
-  captchaRef.value?.resetCaptcha();
+  captchaRef.value?.reset();
 }
 
 function toggleMode() {
@@ -286,16 +286,13 @@ onBeforeUnmount(() => unsubscribe?.());
     <div class="field account-captcha">
       <label for="captcha-answer">Verificação de segurança</label>
       <div class="account-captcha__row">
-        <VueClientRecaptcha
+        <CaptchaCanvas
           ref="captchaRef"
-          v-model="captchaInput"
+          :model-value="captchaInput"
           v-model:valid="captchaValid"
           :count="5"
           :width="150"
           :height="46"
-          theme="light"
-          refresh-label="Gerar novo código"
-          canvas-label="Código de verificação"
           class="account-captcha__canvas"
         />
         <input

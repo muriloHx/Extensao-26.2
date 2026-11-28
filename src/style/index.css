@@ -16,6 +16,7 @@
 @import "./components/collections.css";
 @import "./components/empty-state.css";
 @import "./components/forms.css";
+@import "./components/captcha.css";
 @import "./components/dialogs.css";
 @import "./components/popups.css";
 

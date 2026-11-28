@@ -1,0 +1,35 @@
+/* Captcha local: código desenhado no canvas, sem texto no DOM. */
+
+.captcha-canvas {
+  display: flex;
+  align-items: stretch;
+  flex: none;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: var(--fill);
+}
+
+.captcha-canvas canvas {
+  display: block;
+}
+
+.captcha-canvas__refresh {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+}
+
+.captcha-canvas__refresh:hover {
+  background: rgb(18 23 21 / 0.06);
+}
+
+.captcha-canvas__refresh:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: -3px;
+}

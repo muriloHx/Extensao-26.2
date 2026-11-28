@@ -1,5 +1,3 @@
-@import "../vendor/vue-client-recaptcha.css";
-
 /* Tela Conta: acesso, perfil, estado da sincronização e ações da nuvem. */
 
 .account-stack {
@@ -188,18 +186,7 @@
 }
 
 .account-captcha__canvas {
-  --vcr-bg: var(--fill);
-  --vcr-icon-color: var(--text-2);
-  --vcr-radius: var(--radius-control);
   flex: none;
-  overflow: hidden;
-  border-radius: var(--radius-control);
-}
-
-/* O componente anuncia "Captcha verified" em inglês; a confirmação em
-   português fica no status abaixo, só para leitores de tela. */
-.account-captcha__canvas .vue_client_recaptcha_sr_only {
-  display: none;
 }
 
 .account-captcha__status {
